@@ -32,8 +32,8 @@ fun App(windChange: () -> Unit) {
         MenuBar(active, activeChange, modifier = Modifier.background(Colores.color5))
         when (active) {
             1 -> MyMenu()
-            /*          2 -> Prueb2()
-                        3 -> Prueb3()
+            2 -> Stock()
+            /*            3 -> Prueb3()
                         4 -> Prueb4()*/
         }
     }

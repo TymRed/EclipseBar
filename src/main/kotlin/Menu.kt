@@ -5,12 +5,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
@@ -22,11 +24,6 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun PanelPrincipal() {
-    var active by remember { mutableStateOf(1) }
-
-    val activeChange: (Int) -> Unit = { index ->
-        if (active != index) active = index
-    }
 
     val pedidoItems: MutableList<Pedido> = remember { mutableStateListOf() }
     val borrarItems: () -> Unit = {
@@ -48,7 +45,7 @@ fun PanelPrincipal() {
                     Boton("Cobrar", modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F), funcionLista = borrarItems)
                 }
             }
-            CuadradoGrande(active, activeChange, pedidoItems)
+            CuadradoGrande(pedidoItems)
         }
     }
 }
@@ -71,7 +68,7 @@ fun MenuBar(
         MenuBarText("Estadísticas", active == 4) { activeChange(4) }
         Image(
             painterResource("Logo.svg"), "Logo atrás",
-            modifier = Modifier.clickable(onClick = windChange)
+            modifier = Modifier.clip(CircleShape).clickable(onClick = windChange)
                 .size(40.dp)
         )
     }
@@ -186,38 +183,26 @@ fun PedidoProduct(pedido: Pedido, pedidoItems: MutableList<Pedido>) {
 }
 
 @Composable
-fun CuadradoGrande(active: Int, activeChange: (Int) -> Unit, pedidoItems: MutableList<Pedido>) {
+fun CuadradoGrande(pedidoItems: MutableList<Pedido>) {
     Column(
         modifier = Modifier.fillMaxHeight().fillMaxWidth(0.98F)
             .background(Color.White, shape = RoundedCornerShape(20.dp))
     ) {
-        /*MenuBar(
-            active,
-            activeChange,
-            Modifier.background(Colores.color5, shape = RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
-        )*/
-
         var tipoEleg by remember { mutableStateOf(1) }
-
-        for (i in 1..10){
-            val numero = i * 2
-        }
-
-        var textoTipo = when (tipoEleg) {
+        val textoTipo = when (tipoEleg) {
             1 -> "Todos"
             2 -> "Refrescos"
             3 -> "Cocteles"
             4 -> "Comida"
             else -> ""
         }
-
-        val activeChange: (Int) -> Unit = { index ->
+        val cambiarTipo: (Int) -> Unit = { index ->
             if (tipoEleg != index) tipoEleg = index
         }
 
-        EligTipo(activeChange, tipoEleg)
+        EligTipo(cambiarTipo, tipoEleg)
 
-        var cards: MutableList<Producto> = remember {
+        val cards: MutableList<Producto> = remember {
             mutableStateListOf(
                 Producto("Coca-Cola", 1.5, Photo("Fanta.png", "sfsdf"), "Refrescos"),
                 Producto("Fanta", 2.5, Photo("Fanta.png", "sfsdf"), "Cocteles"),
@@ -235,7 +220,7 @@ fun CuadradoGrande(active: Int, activeChange: (Int) -> Unit, pedidoItems: Mutabl
             )
         }
 
-        var cardsSelected: MutableList<Producto> = mutableListOf()
+        val cardsSelected: MutableList<Producto> = mutableListOf()
 
         for (producto in cards) {
             if (textoTipo == "Todos") {
@@ -255,7 +240,7 @@ fun CuadradoGrande(active: Int, activeChange: (Int) -> Unit, pedidoItems: Mutabl
                     val cartItemData = cardsSelected[index]
                     if (textoTipo == "Todos") {
                         MenuItem(cartItemData, pedidoItems)
-                    } else if (cartItemData.tipo.equals(textoTipo)) {
+                    } else if (cartItemData.tipo == textoTipo) {
                         MenuItem(cartItemData, pedidoItems)
                     }
                 }
@@ -265,7 +250,7 @@ fun CuadradoGrande(active: Int, activeChange: (Int) -> Unit, pedidoItems: Mutabl
 }
 
 @Composable
-fun EligTipo(activeChange: (Int) -> Unit, tipoEleg: Int) {
+fun EligTipo(cambiarTipo: (Int) -> Unit, tipoEleg: Int) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -276,15 +261,23 @@ fun EligTipo(activeChange: (Int) -> Unit, tipoEleg: Int) {
             RoundedCornerShape(topStart = 20.dp),
             Modifier.weight(1F),
             tipoEleg == 1
-        ) { activeChange(1) }
-        BotonFiltro("REFRESCOS", modifier = Modifier.weight(1F), active = tipoEleg == 2) { activeChange(2) }
-        BotonFiltro("CÓCTELES", modifier = Modifier.weight(1F), active = tipoEleg == 3) { activeChange(3) }
+        ) { cambiarTipo(1) }
+        BotonFiltro(
+            "REFRESCOS",
+            modifier = Modifier.weight(1F),
+            active = tipoEleg == 2
+        ) { cambiarTipo(2) }
+        BotonFiltro(
+            "CÓCTELES",
+            modifier = Modifier.weight(1F),
+            active = tipoEleg == 3
+        ) { cambiarTipo(3) }
         BotonFiltro(
             "COMIDA",
             RoundedCornerShape(topEnd = 20.dp),
             Modifier.weight(1F),
             tipoEleg == 4
-        ) { activeChange(4) }
+        ) { cambiarTipo(4) }
     }
 }
 
@@ -320,7 +313,7 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<Pedido>) {
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.padding(10.dp).fillMaxWidth(0.23F).height(250.dp),
         onClick = {
-            var hay = pedidoItems.find { it.producto.name == card.name }
+            val hay = pedidoItems.find { it.producto.name == card.name }
             if (hay == null) {
                 pedidoItems.add(Pedido(card, 1))
             } else {

@@ -1,4 +1,3 @@
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,8 +22,8 @@ import androidx.compose.ui.window.rememberWindowState
 fun Aplicacion() {
     var wind by remember { mutableStateOf(1) }
     val windChange: () -> Unit = {
-        if (wind == 1) wind = 2
-        else wind = 1
+        wind = if (wind == 1) 2
+        else 1
     }
 
     println(wind)
@@ -152,9 +151,7 @@ fun comprobarNombre(nombreUsuario: String): Boolean {
     val may1 = nombreUsuario[0] in 'A'..'Z'
     val adecuado = nombreUsuario.substring(1).matches("[a-z]*".toRegex())
 
-    if (may1 && adecuado) return true
-
-    return false
+    return may1 && adecuado
 }
 
 fun comprobarContrasena(contrasena: String): Boolean {
@@ -168,8 +165,7 @@ fun comprobarContrasena(contrasena: String): Boolean {
     val hayMay = contrasena.matches(".*[A-Z].*".toRegex())
     val hayNum = contrasena.matches(".*[1-9].*".toRegex())
 
-    if (hayMin && hayMay && hayNum) return true
-    return false
+    return hayMin && hayMay && hayNum
 }
 
 fun main() = application {

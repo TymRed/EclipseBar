@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,6 +86,7 @@ fun ProductCard(
     productList: MutableList<Product>
 )
 {
+    var visiblePopUp by remember { mutableStateOf(false) }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -150,16 +152,21 @@ fun ProductCard(
             Spacer(modifier = Modifier.width(20.dp))
             Boton(
                 text = "X",
-                function = {
-                    productList.remove(prod)
-                    database.productQueries.delete(prod.name)
-                           },
+                function = { visiblePopUp = true },
                 color = Color.Red.copy(alpha = 0.9f),
                 modifier = Modifier.weight(1F)
             )
         }
         Spacer(
             modifier = Modifier.width(0.dp)
+        )
+    }
+    if (visiblePopUp){
+        AreYouSurePopUp(
+            { productList.remove(prod)
+            database.productQueries.delete(prod.name)
+            visiblePopUp = false },
+            { visiblePopUp = false }
         )
     }
 }
@@ -387,5 +394,48 @@ fun ChangeProduct(
     ) { platformFile ->
         showFilePicker = false
         filePath = platformFile?.path ?: filePath
+    }
+}
+
+@Composable
+fun AreYouSurePopUp(
+    agree: () -> Unit,
+    upsie: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = upsie
+    ) {
+        Column (
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .width(370.dp)
+                .height(190.dp)
+                .background(Colores.color1, RoundedCornerShape(16.dp))
+                .background(Colores.color2.copy(alpha = 0.1f))
+                .padding(horizontal = 30.dp)
+        ){
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Estas seguro?",
+                    color = Colores.color5,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier.fillMaxWidth()
+
+            ) {
+                Boton("Cancelar", function = upsie, modifier = Modifier.height(65.dp).width(130.dp))
+                Boton("Confirmar", function = agree, modifier = Modifier.height(65.dp).width(130.dp))
+            }
+        }
     }
 }

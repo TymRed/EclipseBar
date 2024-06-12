@@ -9,7 +9,7 @@ import example.EclipseDb.Companion.Schema
 
 class DbSetup {
     val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:eclipse.db")
-    var version: Long
+    private var version: Long
         get() {
             val queryResult = driver.executeQuery(
                 identifier = null,

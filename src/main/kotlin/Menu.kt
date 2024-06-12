@@ -385,8 +385,8 @@ private fun CustomTextField(
         singleLine = true,
         cursorBrush = SolidColor(MaterialTheme.colors.primary),
         textStyle = LocalTextStyle.current.copy(
-            color = MaterialTheme.colors.onSurface,
-            fontSize = fontSize
+            color = MaterialTheme.colors.onSurface, fontSize = fontSize,
+            textAlign = TextAlign.Center
         ),
         decorationBox = { innerTextField ->
             Row(
@@ -403,8 +403,11 @@ private fun CustomTextField(
                             style = LocalTextStyle.current.copy(
 //                            color = Colores.color2.copy(alpha = 0.3f),
                                 color = Colores.color2,
-                                fontSize = fontSize
-                            )
+                                fontSize = fontSize,
+                                textAlign = TextAlign.Center,
+
+                                ),
+                            modifier = Modifier.fillMaxWidth()
                         )
                     innerTextField()
                 }

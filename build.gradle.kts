@@ -29,8 +29,13 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Try"
+            packageName = "Eclipse"
             packageVersion = "1.0.0"
+            description = "TPV(Point of Sale) for Eclipse Bar"
+            vendor = "Timasostima&RedondoDEV"
+            windows {
+                iconFile.set(project.file("src/main/resources/Logo.ico"))
+            }
         }
     }
 

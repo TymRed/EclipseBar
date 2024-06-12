@@ -104,6 +104,28 @@ fun LogIn(windChange: () -> Unit) {
 }
 
 @Composable
+fun App(windChange: () -> Unit) {
+    var active by remember { mutableStateOf(1) }
+
+    val activeChange: (Int) -> Unit = { index ->
+        active = index
+    }
+
+    Column {
+        MenuBar(active, activeChange, modifier = Modifier.background(Colores.color5), windChange)
+        when (active) {
+            1 -> PanelPrincipal()
+            2 -> Stock()
+            /*            3 -> Prueb3()
+                        4 -> Prueb4()*/
+        }
+    }
+}
+
+
+
+
+@Composable
 fun MyTextField(nombre: String, placeholder: String, verif: Boolean, change: (String) -> Unit) {
     TextField(
         value = nombre,
@@ -134,7 +156,6 @@ fun comprobarNombre(nombreUsuario: String): Boolean {
 
     return false
 }
-
 
 fun comprobarContrasena(contrasena: String): Boolean {
     val longitudAdecuada = contrasena.length in 4..16

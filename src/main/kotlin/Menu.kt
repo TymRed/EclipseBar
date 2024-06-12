@@ -29,7 +29,7 @@ fun App(windChange: () -> Unit) {
     }
 
     Column {
-        MenuBar(active, activeChange, modifier = Modifier.background(Colores.color5))
+        MenuBar(active, activeChange, modifier = Modifier.background(Colores.color5), windChange)
         when (active) {
             1 -> MyMenu()
             2 -> Stock()
@@ -332,7 +332,8 @@ fun PedidoProduct(pedido: Pedido, pedidoItems: MutableList<Pedido>) {
 fun MenuBar(
     active: Int,
     activeChange: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    windChange: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
@@ -343,6 +344,10 @@ fun MenuBar(
         MenuBarText("Stock", active == 2) { activeChange(2) }
         MenuBarText("Historial", active == 3) { activeChange(3) }
         MenuBarText("Estadísticas", active == 4) { activeChange(4) }
+        Image(painterResource("Logo.svg"), "Logo atrás",
+            modifier = Modifier.clickable(onClick = windChange)
+                .size(40.dp)
+        )
     }
 }
 

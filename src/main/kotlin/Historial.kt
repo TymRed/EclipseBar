@@ -59,10 +59,11 @@ fun Filtros() {
                         range.start.toInt().toFloat()..range.endInclusive.toInt().toFloat()
                 }
 
-            val min = String.format("%.2f", sliderPosition.start)
-            val max = String.format("%.2f", sliderPosition.endInclusive)
+            val min = String.format("%.2f", sliderPosition.start).split(",")[0].toInt()
+            val max = String.format("%.2f", sliderPosition.endInclusive).split(",")[0].toInt()
+
             Text(
-                text = "Numero pedido: ${min} - ${max}",
+                text = "Numero pedido: $min - $max",
                 modifier = Modifier.offset(y = 7.dp, x = 6.dp)
             )
             RangeSliderFloat(sliderPosition, ajustarRango, rangeMax)

@@ -13,6 +13,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
@@ -127,15 +128,16 @@ fun App(windChange: () -> Unit) {
 
 @Composable
 fun MyTextField(nombre: String, placeholder: String, verif: Boolean, change: (String) -> Unit) {
+    val fontSize = if (placeholder == "Contraseña") 20.sp else 16.sp
     TextField(
         value = nombre,
-        textStyle = TextStyle(color = Colores.color3),
+        textStyle = TextStyle(color = Colores.color3, fontSize = fontSize),
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color.White, focusedIndicatorColor = Colores.color3, cursorColor = Colores.color3
         ),
         onValueChange = change,
         shape = RoundedCornerShape(20.dp, 20.dp),
-        placeholder = { Text(placeholder, color = Colores.color2, modifier = Modifier.offset(y = (-3).dp)) },
+        placeholder = { Text(placeholder, color = Colores.color2) },
         isError = !verif,
         singleLine = true,
         visualTransformation = if (placeholder == "Contraseña") PasswordVisualTransformation() else VisualTransformation.None,

@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -79,7 +81,7 @@ fun MenuBarText(text: String, active: Boolean, prueba: () -> Unit) {
     Text(
         text,
         color = if (active) Colores.color3 else Colores.color1,
-        modifier = Modifier.clickable(onClick = prueba)
+        modifier = Modifier.clickable(onClick = prueba).padding(10.dp)
     )
 }
 
@@ -101,7 +103,7 @@ fun Pedidos(pedidoItems: MutableList<Pedido>) {
         val state = rememberLazyListState()
 
         LazyColumn(
-            modifier = Modifier.fillMaxHeight(0.9F).padding(10.dp), state = state
+            modifier = Modifier.fillMaxHeight(0.92F).padding(10.dp), state = state
         ) {
             items(pedidoItems) { x ->
                 PedidoProduct(x, pedidoItems)
@@ -115,6 +117,7 @@ fun Pedidos(pedidoItems: MutableList<Pedido>) {
             )
 //            ,style = ScrollbarStyle(hoverColor = Color.blue)
         )
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -177,7 +180,7 @@ fun PedidoProduct(pedido: Pedido, pedidoItems: MutableList<Pedido>) {
             shape = RoundedCornerShape(8.dp)
         )
         {
-            Text("-", fontSize = 15.sp)
+            Icon(Icons.Filled.Close, contentDescription = "Abrir calendario", tint = Color.White)
         }
     }
 }

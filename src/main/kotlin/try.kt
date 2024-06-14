@@ -146,3 +146,29 @@ pedidoItems[index]*/
                     { it.producto.name == card.name },
                     { it.apply { cantidad++ } }
                 )*/
+
+
+
+/*DropdownMenu(
+        expanded = visible, onDismissRequest = { visible = false }, modifier = Modifier.width(IntrinsicSize.Min)
+    ) {
+        DropdownMenuItem(onClick = { visible = false; camarero = "Toño" }) {
+            Text("Toño")
+        }
+        Divider()
+        DropdownMenuItem(onClick = { visible = false; camarero = "Camarero 1" }) {
+            Text("Camarero 1")
+        }
+        Divider()
+        DropdownMenuItem(onClick = { visible = false; camarero = "Camarero 1" }) {
+            Text("Camarero 1")
+        }
+        Divider()
+        DropdownMenuItem(onClick = { visible = false; camarero = "Camarero 1" }) {
+            Text("Camarero 1")
+        }
+        Divider()
+        DropdownMenuItem(onClick = { visible = false; camarero = "Camarero 1" }) {
+            Text("Camarero 1")
+        }
+    }*/

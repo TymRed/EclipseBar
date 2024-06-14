@@ -1,7 +1,6 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -11,7 +10,6 @@ import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -19,14 +17,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 
 @Composable
-fun DialogDatePicker(gestionCalendar: () -> Unit) {
+fun DialogDatePicker(gestionCalendar: () -> Unit, cambiarFecha: (String) -> Unit) {
     Dialog(onDismissRequest = gestionCalendar) {
         Column(modifier = Modifier.width(IntrinsicSize.Min).background(Color.White)) {
-            DatePicker()
+            var selected = DatePicker()
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -37,26 +36,31 @@ fun DialogDatePicker(gestionCalendar: () -> Unit) {
                     Text("Cerrar")
                 }
                 TextButton(
-                    onClick = gestionCalendar,
-
-                    ) {
+                    onClick = {
+                        if (selected != null) {
+                            cambiarFecha(selected)
+                        }
+                    },
+                ) {
                     Text("Confirmar")
                 }
             }
+
         }
     }
 }
 
+
+val loc = Locale("es", "Es")
+val weeks = arrayOf("L", "M", "M", "J", "V", "S", "D")
+val cellSize = 35.dp
+
 @Composable
 @Preview
-fun DatePicker() {
-
+fun DatePicker(): String? {
     var showingMonth by remember { mutableStateOf(Calendar.getInstance()) }
     var selected by remember { mutableStateOf(Calendar.getInstance().apply { time = showingMonth.time }) }
     var list by remember { mutableStateOf(getDatesList(showingMonth)) }
-    val weeks = arrayOf("L", "M", "M", "J", "V", "S", "D")
-    val cellSize = 35.dp
-    val loc = Locale("es", "Es")
 
     Column(
         modifier = Modifier.background(Colores.color1).width(IntrinsicSize.Min)
@@ -66,7 +70,7 @@ fun DatePicker() {
             Icon(
                 Icons.Outlined.ArrowDropDown,
                 "",
-                tint = Color(0xFF212121),
+                tint = Color.Black,
                 modifier = Modifier.size((16 * 3).dp).align(Alignment.CenterStart).clickable {
                     showingMonth = Calendar.getInstance()
                         .apply { timeInMillis = showingMonth.timeInMillis;add(Calendar.MONTH, -1) }
@@ -75,13 +79,13 @@ fun DatePicker() {
             )
             Text(
                 SimpleDateFormat("MMM yyyy", loc).format(showingMonth.time),
-                color = Color(0xFF212121),
+                color = Color.Black,
                 modifier = Modifier.align(Alignment.Center)
             )
             Icon(
                 Icons.Outlined.ArrowDropDown,
                 "",
-                tint = Color(0xFF212121),
+                tint = Color.Black,
                 modifier = Modifier.size((16 * 3).dp).align(Alignment.CenterEnd).clickable {
                     showingMonth = Calendar.getInstance()
                         .apply { timeInMillis = showingMonth.timeInMillis;add(Calendar.MONTH, +1) }
@@ -92,14 +96,14 @@ fun DatePicker() {
         }
 
 
-        Row(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
+        Row(modifier = Modifier.padding(start = 15.dp, end = 10.dp)) {
             weeks.forEach {
                 Text(
                     it,
                     color = Color.Black.copy(alpha = 0.5f),
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.size(
+                    modifier = Modifier.width(
                         cellSize
                     )
                 )
@@ -139,15 +143,8 @@ fun DatePicker() {
             }
         }
     }
+    return SimpleDateFormat("EEE, d MMM", loc).format(selected.time)
 }
-
-
-private fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
-    clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) {
-        onClick()
-    }
-}
-
 
 private fun getDatesList(calIncoming: Calendar): ArrayList<Pair<Long, Boolean>?> {
 
@@ -178,8 +175,6 @@ private fun getDatesList(calIncoming: Calendar): ArrayList<Pair<Long, Boolean>?>
     }
 
     return list
-
-
 }
 
 
@@ -204,15 +199,5 @@ private fun isSameMonth(first: Long?, showing: Calendar): Boolean {
 
 private fun toDate(first: Long?): String {
     if (first == null) return ""
-    return SimpleDateFormat("d", Locale.ENGLISH).format(Date(first))
+    return SimpleDateFormat("d", loc).format(Date(first))
 }
-
-
-/*****
-implementation("androidx.compose.foundation:foundation:1.3.1")
-implementation("androidx.compose.ui:ui:1.3.2")
-implementation("androidx.compose.ui:ui-graphics:1.3.2")
-implementation("androidx.compose.material:material-icons-core:1.3.1")
-implementation("androidx.compose.material:material:1.3.1")
-implementation("androidx.compose.material:material-icons-extended:1.3.1")
- ******/

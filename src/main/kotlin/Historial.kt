@@ -3,12 +3,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -38,8 +42,15 @@ fun Filtros() {
             .background(color = Colores.color2, shape = RoundedCornerShape(20.dp))
             .padding(horizontal = 10.dp)
     ) {
+        Text(
+            text = "FILTROS:", fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-        Surface(color = Color.White, shape = RoundedCornerShape(10.dp)) {
+        Column (modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))
+        ){
             val rangeMax = 1000f
             var sliderPosition by remember { mutableStateOf(0f..rangeMax) }
             val ajustarRango: (ClosedFloatingPointRange<Float>) -> Unit =
@@ -50,8 +61,10 @@ fun Filtros() {
 
             val min = String.format("%.2f", sliderPosition.start)
             val max = String.format("%.2f", sliderPosition.endInclusive)
-            Text(text = "Numero pedido: ${min} - ${max}")
-            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Numero pedido: ${min} - ${max}",
+                modifier = Modifier.offset(y = 7.dp, x = 6.dp)
+            )
             RangeSliderFloat(sliderPosition, ajustarRango, rangeMax)
         }
 
@@ -59,7 +72,8 @@ fun Filtros() {
             EligCamarero()
         }
 
-        Surface(color = Color.White, shape = RoundedCornerShape(10.dp)) {
+        Column (modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))
+        ){
             val rangeMax = 100f
             var sliderPosition by remember { mutableStateOf(0f..rangeMax) }
             val ajustarRango: (ClosedFloatingPointRange<Float>) -> Unit = { range -> sliderPosition = range }
@@ -67,13 +81,15 @@ fun Filtros() {
 
             val min = String.format("%.2f", sliderPosition.start)
             val max = String.format("%.2f", sliderPosition.endInclusive)
-            Text(text = "Importe: Minimo: $min  Maximo: $max")
-            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Importe: Minimo: $min  Maximo: $max",
+                modifier = Modifier.offset(y = 7.dp, x = 6.dp)
+            )
             RangeSliderFloat(sliderPosition, ajustarRango, rangeMax, steps)
         }
 
-        fechas("Inicio")
-        fechas("Final")
+
+        Fechas("Inicio")
+        Fechas("Final")
 
         Boton("AplicarFiltros", funcionLista = {})
     }
@@ -81,12 +97,12 @@ fun Filtros() {
 
 
 @Composable
-fun fechas(tipo: String){
+fun Fechas(tipo: String){
     var abierto by remember { mutableStateOf(false) }
     val cerrarCalendario = { abierto = false }
 
-    var fecha by remember { mutableStateOf(SimpleDateFormat("EEE, d MMM", Locale("es","Es")).format(Date())) }
-    val cambiarFecha: (String) -> Unit = { abierto = false; fecha = it }
+    var fecha by remember { mutableStateOf(SimpleDateFormat("EEE, d MMM", Locale.Builder().setRegion("ES").setLanguage("es").build()).format(Date())) }
+    val cambiarFecha: (String?) -> Unit = { abierto = false; fecha = if (it.isNullOrEmpty()) "" else it }
 
     Row (
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -108,7 +124,7 @@ fun fechas(tipo: String){
 @Composable
 fun EligCamarero() {
     var visible by remember { mutableStateOf(false) }
-    var camarero by remember { mutableStateOf("Toño") }
+    var camarero by remember { mutableStateOf("Todos") }
 
     ExposedDropdownMenuBox(expanded = false, onExpandedChange = {}) {
         Row(
@@ -118,7 +134,7 @@ fun EligCamarero() {
         ) {
             Text("Camarero: $camarero")
             IconButton(onClick = { visible = true }) {
-                Icon(Icons.Default.MoreVert, contentDescription = "Abrir lista camareros")
+                Icon(Icons.Default.ArrowDropDown, contentDescription = "Abrir lista camareros")
             }
         }
         ExposedDropdownMenu(
@@ -161,6 +177,12 @@ fun RangeSliderFloat(
             steps = steps,
             onValueChange = ajustarRango,
             valueRange = 0f..rangeMax,
+            colors = SliderDefaults.colors(
+                thumbColor = Colores.color3,
+                activeTrackColor = Colores.color3,
+                activeTickColor = Colores.color1,
+                inactiveTrackColor = Colores.color3.copy(alpha = 0.3f)
+            ),
 //            onValueChangeFinished = {
 //            },
         )

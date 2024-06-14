@@ -386,7 +386,7 @@ private fun CustomTextField(
                     .background(color = Colores.color1, shape = RoundedCornerShape(10.dp))
             ) {
                 if (leadingIcon != null) leadingIcon()
-                Box() {
+                Box {
                     if (text.isEmpty())
                         Text(
                             placeholderText,

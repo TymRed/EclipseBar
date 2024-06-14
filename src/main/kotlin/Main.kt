@@ -89,7 +89,7 @@ fun LogIn(windChange: () -> Unit) {
                 )
             }
             Row(
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5F).offset(y = 340.dp),
+                modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth().offset (y = (-40).dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.Bottom
             ) {
@@ -115,6 +115,7 @@ fun App(windChange: () -> Unit) {
         when (active) {
             1 -> PanelPrincipal()
             2 -> Stock()
+            3 -> Historial()
             /*            3 -> Prueb3()
                         4 -> Prueb4()*/
         }

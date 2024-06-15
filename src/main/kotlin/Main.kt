@@ -27,7 +27,6 @@ fun Aplicacion() {
         else 1
     }
 
-    println(wind)
     when (wind) {
         1 -> LogIn(windChange)
         2 -> App(windChange)

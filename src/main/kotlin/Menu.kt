@@ -12,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,7 +28,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun PanelPrincipal() {
 
-    val pedidoItems: MutableList<Pedido> = remember { mutableStateListOf() }
+    val pedidoItems: SnapshotStateList<ProdInPed> = remember { mutableStateListOf() }
     val borrarItems: () -> Unit = {
         pedidoItems.removeAll(pedidoItems)
     }
@@ -86,7 +87,7 @@ fun MenuBarText(text: String, active: Boolean, prueba: () -> Unit) {
 }
 
 @Composable
-fun Pedidos(pedidoItems: MutableList<Pedido>) {
+fun Pedidos(pedidoItems: MutableList<ProdInPed>) {
     var importe: String by remember { mutableStateOf("") }
     val importeDouble: Double = if (importe.isEmpty()) 0.0 else importe.toDouble()
     val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
@@ -152,7 +153,7 @@ fun Pedidos(pedidoItems: MutableList<Pedido>) {
 }
 
 @Composable
-fun PedidoProduct(pedido: Pedido, pedidoItems: MutableList<Pedido>) {
+fun PedidoProduct(pedido: ProdInPed, pedidoItems: MutableList<ProdInPed>) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -169,12 +170,9 @@ fun PedidoProduct(pedido: Pedido, pedidoItems: MutableList<Pedido>) {
         Button(
             onClick = {
                 val index = pedidoItems.indexOf(pedido)
-                //no se, no funciona el puto repaint.... que dolor
-                //ya funciona, pero voy a dejar el mensaje
-                pedidoItems.removeAt(index)
-                pedido.cantidad--
-                if (pedido.cantidad > 0)
-                    pedidoItems.add(index, Pedido(pedido))
+                val c = pedido.cantidad - 1
+                if (c > 0) pedidoItems[index] = pedido.copy(cantidad = c)
+                else pedidoItems.remove(pedido)
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
             shape = RoundedCornerShape(8.dp)
@@ -186,7 +184,7 @@ fun PedidoProduct(pedido: Pedido, pedidoItems: MutableList<Pedido>) {
 }
 
 @Composable
-fun CuadradoGrande(pedidoItems: MutableList<Pedido>) {
+fun CuadradoGrande(pedidoItems: MutableList<ProdInPed>) {
     Column(
         modifier = Modifier.fillMaxHeight().fillMaxWidth(0.98F)
             .background(Color.White, shape = RoundedCornerShape(20.dp))
@@ -310,7 +308,7 @@ fun BotonFiltro(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MenuItem(card: Producto, pedidoItems: MutableList<Pedido>) {
+fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
     Card(
         backgroundColor = Colores.color1,
         shape = RoundedCornerShape(20.dp),
@@ -318,13 +316,10 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<Pedido>) {
         onClick = {
             val hay = pedidoItems.find { it.producto.name == card.name }
             if (hay == null) {
-                pedidoItems.add(Pedido(card, 1))
+                pedidoItems.add(ProdInPed(card, 1))
             } else {
                 val index = pedidoItems.indexOf(hay)
-                //no se, no funciona el puto repaint.... que dolor
-                //ya funciona, pero voy a dejar el mensaje
-                pedidoItems.removeAt(index)
-                pedidoItems.add(index, Pedido(card, hay.cantidad + 1))
+                pedidoItems[index] = hay.copy(cantidad = hay.cantidad + 1)
             }
         }
     ) {

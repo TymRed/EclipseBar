@@ -1,29 +1,37 @@
-class Producto {
-    var name: String
-    var price: Double
-    var photo: Photo
-    var tipo: String = "no hay"
+import java.time.LocalDate
+import java.time.LocalTime
 
-    constructor(name: String, price: Double, photo: Photo) {
-        this.name = name
-        this.price = price
-        this.photo = photo
-    }
+data class Producto (
+    var name: String,
+    var price: Double,
+    var photo: Photo,
+    var tipo: String? = null
+)
 
-    constructor(name: String, price: Double, photo: Photo, tipo:String) {
-        this.name = name
-        this.price = price
-        this.photo = photo
-        this.tipo = tipo
-    }
-}
 
-class Photo (var ruta: String,
+data class Photo (var ruta: String,
              var descripcion: String){
 }
 
-class Pedido (var producto: Producto,
+data class ProdInPed (var producto: Producto,
              var cantidad: Int){
 
-    constructor(pedido: Pedido) : this(pedido.producto, pedido.cantidad){}
+    constructor(pedido: ProdInPed) : this(pedido.producto, pedido.cantidad){}
 }
+
+data class Pedido(
+    val numero: Int,
+    val fecha: LocalDate,
+    val hora: LocalTime,
+    val importe: Double,
+    val camarero: String
+)
+
+data class Filter(
+    val numPedidos: IntRange = (0..1000),
+//    val fechaMin: LocalDate = LocalDate.of(2022,8,10),
+//    val fechaMax: LocalDate = LocalDate.now(),
+    val fechas: ClosedRange<LocalDate> = LocalDate.of(2022,8,10)..LocalDate.now(),
+    val camarero: String = "Todos",
+    val importeRange: ClosedFloatingPointRange<Float> = (0.0f..1000.00f)
+)

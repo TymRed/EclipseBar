@@ -1,4 +1,6 @@
+
 import androidx.compose.foundation.background
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -15,14 +17,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
 
 @Composable
-fun DialogDatePicker(gestionCalendar: () -> Unit, cambiarFecha: (String?) -> Unit) {
+fun DialogDatePicker(gestionCalendar: () -> Unit, cambiarFecha: (String?) -> Unit, cambiarFecha2: (LocalDate) -> Unit) {
     Dialog(onDismissRequest = gestionCalendar) {
         Column(modifier = Modifier.width(IntrinsicSize.Min).background(Color.White)) {
-            val selected = DatePicker()
+            val pair = DatePicker()
+            val fechaSelected = pair.first
+            val selected = pair.second
             Divider(thickness = 2.dp)
             Row(
                 modifier = Modifier.fillMaxWidth().background(Colores.color1),
@@ -30,7 +35,21 @@ fun DialogDatePicker(gestionCalendar: () -> Unit, cambiarFecha: (String?) -> Uni
             ) {
                 Boton("Cerrar", modifier = Modifier.width(120.dp), funcionLista = gestionCalendar)
                 Spacer(modifier = Modifier.width(10.dp))
-                Boton("Confirmar", modifier = Modifier.width(120.dp), funcionLista = { cambiarFecha(selected) })
+                Boton("Confirmar", modifier = Modifier.width(120.dp),
+                    funcionLista = {
+                        cambiarFecha(fechaSelected)
+
+                        val year = selected[Calendar.YEAR]
+                        val month = if(selected.get(Calendar.MONTH)+1 < 10){
+                            "0"+ (selected[Calendar.MONTH]+1)
+                        } else selected[Calendar.MONTH]+1
+                        val date = if(selected[Calendar.DATE] < 10){
+                            "0"+selected.get(Calendar.DATE)
+                        } else selected.get(Calendar.DATE)
+
+                        cambiarFecha2(LocalDate.parse("$year-$month-$date"))
+                    }
+                )
             }
 
         }
@@ -43,7 +62,7 @@ val weeks = arrayOf("L", "M", "M", "J", "V", "S", "D")
 val cellSize = 45.dp
 
 @Composable
-fun DatePicker(): String? {
+fun DatePicker(): Pair<String, Calendar> {
     var showingMonth by remember { mutableStateOf(Calendar.getInstance()) }
     var selected by remember { mutableStateOf(Calendar.getInstance().apply { time = showingMonth.time }) }
     var list by remember { mutableStateOf(getDatesList(showingMonth)) }
@@ -129,7 +148,7 @@ fun DatePicker(): String? {
             }
         }
     }
-    return SimpleDateFormat("EEE, d MMM", loc).format(selected.time)
+    return Pair(SimpleDateFormat("EEE, d MMM", loc).format(selected.time), selected)
 }
 
 private fun getDatesList(calIncoming: Calendar): ArrayList<Pair<Long, Boolean>?> {

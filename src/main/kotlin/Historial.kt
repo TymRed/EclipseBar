@@ -39,7 +39,6 @@ fun Historial() {
             Filtros(filChange)
 
             val hora = LocalTime.now()
-
             val pedidos: SnapshotStateList<Pedido> = remember { mutableStateListOf(
                 Pedido(1, fecha(), hora, importe(), "Toño"),
                 Pedido(367, fecha(), hora, importe(),"Camarero 1" ),
@@ -68,7 +67,7 @@ fun Historial() {
             val filterList = pedidos.filter{pedido ->
                 pedido.numero in fil.numPedidos  &&
                 passCamarero(pedido) && passImporte(pedido) && passFecha(pedido)
-            }
+            }.mySort(4,false)
 
             LazyColumn (
                 modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(10.dp)
@@ -82,6 +81,18 @@ fun Historial() {
     }
 }
 
+private fun List<Pedido>.mySort(type: Int, asc:Boolean): List<Pedido> {
+    return when (type){
+        1 -> if (asc) this.sortedBy { it.numero } else this.sortedByDescending { it.numero }
+        2-> if (asc) this.sortedBy { it.fecha } else this.sortedByDescending { it.fecha }
+        3 -> if (asc) this.sortedBy { it.hora } else this.sortedByDescending { it.hora }
+        4 -> if (asc) this.sortedBy { it.importe } else this.sortedByDescending { it.importe }
+        5 -> if (asc) this.sortedBy { it.camarero } else this.sortedByDescending { it.camarero }
+        else -> this
+    }
+}
+
+
 //For Debug
 fun importe(): Double {
     return (1..200).random().toDouble()
@@ -89,7 +100,7 @@ fun importe(): Double {
 //For Debug
 fun fecha(): LocalDate {
     val year = 2024
-    val month = (1..12).random()
+    val month = (1..6).random()
     val day = (1..28).random()
     return LocalDate.of(year, month, day)
 }

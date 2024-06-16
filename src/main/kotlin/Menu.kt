@@ -5,7 +5,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
@@ -15,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
@@ -27,10 +25,15 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun PanelPrincipal() {
-
+    var importe: String by remember { mutableStateOf("") }
+    val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
+    val cambiarImporte: (String) -> Unit = {
+        if (it.isEmpty() || it.matches(pattern) && it.length <= 6) importe = it
+    }
     val pedidoItems: SnapshotStateList<ProdInPed> = remember { mutableStateListOf() }
     val borrarItems: () -> Unit = {
         pedidoItems.removeAll(pedidoItems)
+        importe = ""
     }
 
     Surface(color = Colores.color1) {
@@ -39,7 +42,7 @@ fun PanelPrincipal() {
                 modifier = Modifier.fillMaxHeight().fillMaxWidth(0.3F),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Pedidos(pedidoItems)
+                Pedidos(pedidoItems, importe, cambiarImporte)
                 Row(
                     modifier = Modifier.fillMaxHeight(0.9F).fillMaxWidth(),
                 ) {
@@ -54,46 +57,8 @@ fun PanelPrincipal() {
 }
 
 @Composable
-fun MenuBar(
-    active: Int,
-    activeChange: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-    windChange: () -> Unit
-) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth().fillMaxHeight(0.1F)
-    ) {
-        MenuBarText("Panel Principal", active == 1) { activeChange(1) }
-        MenuBarText("Stock", active == 2) { activeChange(2) }
-        MenuBarText("Historial", active == 3) { activeChange(3) }
-        MenuBarText("Estadísticas", active == 4) { activeChange(4) }
-        Image(
-            painterResource("Logo.svg"), "Logo atrás",
-            modifier = Modifier.clip(CircleShape).clickable(onClick = windChange)
-                .size(40.dp)
-        )
-    }
-}
-
-@Composable
-fun MenuBarText(text: String, active: Boolean, prueba: () -> Unit) {
-    Text(
-        text,
-        color = if (active) Colores.color3 else Colores.color1,
-        modifier = Modifier.clickable(onClick = prueba).padding(10.dp)
-    )
-}
-
-@Composable
-fun Pedidos(pedidoItems: MutableList<ProdInPed>) {
-    var importe: String by remember { mutableStateOf("") }
+fun Pedidos(pedidoItems: MutableList<ProdInPed>, importe: String, cambiarImporte: (String) -> Unit) {
     val importeDouble: Double = if (importe.isEmpty()) 0.0 else importe.toDouble()
-    val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
-    val cambiarImporte: (String) -> Unit = {
-        if (it.isEmpty() || it.matches(pattern) && it.length <= 6) importe = it
-    }
 
     Box(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(0.9F)
@@ -365,7 +330,7 @@ private fun CustomTextField(
     modifier: Modifier = Modifier,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
-    placeholderText: String = "0.0"
+    placeholderText: String = "0.0€"
 ) {
     val fontSize = 16.sp
     BasicTextField(

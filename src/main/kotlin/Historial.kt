@@ -39,6 +39,7 @@ fun Historial() {
 
             Filtros(filChange)
 
+
             val hora = LocalTime.now()
             val pedidos: SnapshotStateList<Pedido> = remember {
                 mutableStateListOf(
@@ -57,7 +58,6 @@ fun Historial() {
             }
 
             val passImporte: (Pedido) -> Boolean = { pedido ->
-
                 pedido.importe in fil.importeRange || (fil.importeRange.endInclusive == 100f && pedido.importe >= 100f)
             }
             val passCamarero: (Pedido) -> Boolean = { pedido ->
@@ -89,7 +89,8 @@ fun Historial() {
                     modifier = Modifier.padding(10.dp).fillMaxWidth().fillMaxHeight(0.05F)
                         .background(Color.Transparent, RoundedCornerShape(10.dp))
                 ) {
-                    TextSort("Numero", { changeSort(1) }, Modifier.weight(1F))
+                    //TextSort("Numero", { changeSort(1) }, typeSort==1, asc, Modifier.weight(1F))
+                    TextSort("Numero", { changeSort(1) },  Modifier.weight(1F))
                     TextSort("Fecha", { changeSort(2) }, Modifier.weight(1F))
                     TextSort("Hora", { changeSort(3) }, Modifier.weight(1F))
                     TextSort("Importe", { changeSort(4) }, Modifier.weight(1F))
@@ -107,7 +108,7 @@ fun Historial() {
         }
     }
 }
-
+// " \uD83E\uDC61 \uD83E\uDC6B"
 @Composable
 fun TextSort(
     text: String,
@@ -160,7 +161,6 @@ fun PedidoRow(pedido: Pedido) {
         Text(pedido.camarero, textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
     }
 }
-
 
 @Composable
 fun Filtros(filChange: (Filter) -> Unit) {

@@ -29,8 +29,6 @@ data class Pedido(
 
 data class Filter(
     val numPedidos: IntRange = (0..1000),
-//    val fechaMin: LocalDate = LocalDate.of(2022,8,10),
-//    val fechaMax: LocalDate = LocalDate.now(),
     val fechas: ClosedRange<LocalDate> = LocalDate.of(2022,8,10)..LocalDate.now(),
     val camarero: String = "Todos",
     val importeRange: ClosedFloatingPointRange<Float> = (0.0f..1000.00f)

@@ -182,11 +182,6 @@ fun main() = application {
 
 
     ) {
-/*        WindowStyle(
-            backdropType = WindowBackdrop.Tabbed,
-            frameStyle = WindowFrameStyle(cornerPreference = WindowCornerPreference.NOT_ROUNDED),
-        )*/
-
         Aplicacion()
     }
 }

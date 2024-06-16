@@ -1,4 +1,5 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,19 +40,21 @@ fun Historial() {
             Filtros(filChange)
 
             val hora = LocalTime.now()
-            val pedidos: SnapshotStateList<Pedido> = remember { mutableStateListOf(
-                Pedido(1, fecha(), hora, importe(), "Toño"),
-                Pedido(367, fecha(), hora, importe(),"Camarero 1" ),
-                Pedido(23, fecha(), hora, importe(), "Toño"),
-                Pedido(500, fecha(), hora, importe(), "Camarero 2"),
-                Pedido(85, fecha(), hora, importe(), "Toño"),
-                Pedido(75, fecha(), hora, importe(), "Toño"),
-                Pedido(457, fecha(), hora, importe(), "Camarero 3"),
-                Pedido(125, fecha(), hora, importe(), "Camarero 2"),
-                Pedido(824, fecha(), hora, importe(), "Camarero 2"),
-                Pedido(1002, fecha(), hora, importe(), "Camarero 3"),
-                Pedido(253, fecha(), hora, importe(), "Camarero 1"),
-            ) }
+            val pedidos: SnapshotStateList<Pedido> = remember {
+                mutableStateListOf(
+                    Pedido(1, fecha(), hora, importe(), "Toño"),
+                    Pedido(367, fecha(), hora, importe(), "Camarero 1"),
+                    Pedido(23, fecha(), hora, importe(), "Toño"),
+                    Pedido(500, fecha(), hora, importe(), "Camarero 2"),
+                    Pedido(85, fecha(), hora, importe(), "Toño"),
+                    Pedido(75, fecha(), hora, importe(), "Toño"),
+                    Pedido(457, fecha(), hora, importe(), "Camarero 3"),
+                    Pedido(125, fecha(), hora, importe(), "Camarero 2"),
+                    Pedido(824, fecha(), hora, importe(), "Camarero 2"),
+                    Pedido(1002, fecha(), hora, importe(), "Camarero 3"),
+                    Pedido(253, fecha(), hora, importe(), "Camarero 1"),
+                )
+            }
 
             val passImporte: (Pedido) -> Boolean = { pedido ->
 
@@ -64,27 +67,65 @@ fun Historial() {
                 println(fil.fechas)
                 pedido.fecha in fil.fechas
             }
-            val filterList = pedidos.filter{pedido ->
-                pedido.numero in fil.numPedidos  &&
-                passCamarero(pedido) && passImporte(pedido) && passFecha(pedido)
-            }.mySort(4,false)
 
-            LazyColumn (
+            var typeSort by remember { mutableStateOf(1) }
+            var asc by remember { mutableStateOf(true) }
+            val changeSort: (Int) -> Unit = { type ->
+                if (typeSort != type) {
+                    typeSort = type
+                    asc = true
+                } else asc = !asc
+            }
+
+            val filterList = pedidos.filter { pedido ->
+                pedido.numero in fil.numPedidos &&
+                        passCamarero(pedido) && passImporte(pedido) && passFecha(pedido)
+            }.mySort(typeSort, asc)
+
+            Column(
                 modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(10.dp)
-            ){
-                items(filterList.size) { index ->
-                    PedidoRow(filterList[index])
-                    Spacer(modifier = Modifier.height(10.dp))
+            ) {
+                Row(
+                    modifier = Modifier.padding(10.dp).fillMaxWidth().fillMaxHeight(0.05F)
+                        .background(Color.Transparent, RoundedCornerShape(10.dp))
+                ) {
+                    TextSort("Numero", { changeSort(1) }, Modifier.weight(1F))
+                    TextSort("Fecha", { changeSort(2) }, Modifier.weight(1F))
+                    TextSort("Hora", { changeSort(3) }, Modifier.weight(1F))
+                    TextSort("Importe", { changeSort(4) }, Modifier.weight(1F))
+                    TextSort("Camarero", { changeSort(5) }, Modifier.weight(1F))
+                }
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight()
+                ) {
+                    items(filterList.size) { index ->
+                        PedidoRow(filterList[index])
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
                 }
             }
         }
     }
 }
 
-private fun List<Pedido>.mySort(type: Int, asc:Boolean): List<Pedido> {
-    return when (type){
+@Composable
+fun TextSort(
+    text: String,
+    changeSort: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        textAlign = TextAlign.Center,
+        color = Colores.color4,
+        modifier = modifier.clickable(onClick = changeSort)
+    )
+}
+
+private fun List<Pedido>.mySort(type: Int, asc: Boolean): List<Pedido> {
+    return when (type) {
         1 -> if (asc) this.sortedBy { it.numero } else this.sortedByDescending { it.numero }
-        2-> if (asc) this.sortedBy { it.fecha } else this.sortedByDescending { it.fecha }
+        2 -> if (asc) this.sortedBy { it.fecha } else this.sortedByDescending { it.fecha }
         3 -> if (asc) this.sortedBy { it.hora } else this.sortedByDescending { it.hora }
         4 -> if (asc) this.sortedBy { it.importe } else this.sortedByDescending { it.importe }
         5 -> if (asc) this.sortedBy { it.camarero } else this.sortedByDescending { it.camarero }
@@ -97,6 +138,7 @@ private fun List<Pedido>.mySort(type: Int, asc:Boolean): List<Pedido> {
 fun importe(): Double {
     return (1..200).random().toDouble()
 }
+
 //For Debug
 fun fecha(): LocalDate {
     val year = 2024
@@ -106,22 +148,22 @@ fun fecha(): LocalDate {
 }
 
 @Composable
-fun PedidoRow(pedido: Pedido){
-    Row (
+fun PedidoRow(pedido: Pedido) {
+    Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth().background(Colores.color2, RoundedCornerShape(10.dp)).padding(10.dp)
-    ){
-        Text(pedido.numero.toString(), modifier = Modifier.weight(1F))
-        Text(pedido.fecha.toString(), modifier = Modifier.weight(1F))
-        Text(pedido.hora.format(DateTimeFormatter.ofPattern("HH:mm")), modifier = Modifier.weight(1F))
-        Text(pedido.importe.toString(), modifier = Modifier.weight(1F))
-        Text(pedido.camarero, modifier = Modifier.weight(1F))
+    ) {
+        Text(pedido.numero.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+        Text(pedido.fecha.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+        Text(pedido.hora.format(DateTimeFormatter.ofPattern("HH:mm")), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+        Text(pedido.importe.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+        Text(pedido.camarero, textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
     }
 }
 
 
 @Composable
-fun Filtros(filChange: (Filter) -> Unit){
+fun Filtros(filChange: (Filter) -> Unit) {
     Column(
         verticalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
@@ -178,8 +220,8 @@ fun Filtros(filChange: (Filter) -> Unit){
             val ajustarRango: (ClosedFloatingPointRange<Float>) -> Unit = { range -> sliderPosition = range }
             val steps = (rangeMax / 5).toInt() - 1
 
-            importeMin = String.format("%.2f", sliderPosition.start).replace(',','.').toFloat()
-            importeMax = String.format("%.2f", sliderPosition.endInclusive).replace(',','.').toFloat()
+            importeMin = String.format("%.2f", sliderPosition.start).replace(',', '.').toFloat()
+            importeMax = String.format("%.2f", sliderPosition.endInclusive).replace(',', '.').toFloat()
             Text(
                 text = "Importe: Minimo: $importeMin  Maximo: $importeMax",
                 modifier = Modifier.offset(y = 7.dp, x = 6.dp)
@@ -188,7 +230,7 @@ fun Filtros(filChange: (Filter) -> Unit){
         }
 
 
-        var fechaInicio by remember { mutableStateOf(LocalDate.of(2024,1,1)) }
+        var fechaInicio by remember { mutableStateOf(LocalDate.of(2024, 1, 1)) }
         var fechaFinal by remember { mutableStateOf(LocalDate.now()) }
         val cambiarFechaIn: (LocalDate) -> Unit = { fechaInicio = it }
         val cambiarFechaFin: (LocalDate) -> Unit = { fechaFinal = it }
@@ -198,41 +240,45 @@ fun Filtros(filChange: (Filter) -> Unit){
 
         Boton(
             "AplicarFiltros",
-            funcionLista = {filChange(
-                Filter(
-                    numPedidos = numPedidoMin..numPedidoMax,
-                    fechas = (fechaInicio..fechaFinal),
-                    camarero = camarero,
-                    importeRange = importeMin..importeMax
-                ),
-            ) }
+            funcionLista = {
+                filChange(
+                    Filter(
+                        numPedidos = numPedidoMin..numPedidoMax,
+                        fechas = (fechaInicio..fechaFinal),
+                        camarero = camarero,
+                        importeRange = importeMin..importeMax
+                    ),
+                )
+            }
         )
     }
 }
 
 
 @Composable
-fun Fechas(tipo: String, cambiarFechaDate: (LocalDate) -> Unit){
+fun Fechas(tipo: String, cambiarFechaDate: (LocalDate) -> Unit) {
     var abierto by remember { mutableStateOf(false) }
     val cerrarCalendario = { abierto = false }
 
-    val date: Date = if (tipo == "Inicio"){
+    val date: Date = if (tipo == "Inicio") {
         SimpleDateFormat("dd/mm/yyyy").parse("01/01/2024")
     } else Date()
 
     val loc = Locale.Builder().setRegion("ES").setLanguage("es").build()
 
-    var fecha by remember { mutableStateOf(
-        SimpleDateFormat("EEE, d MMM (YYYY)", loc).format(date)
-    ) }
+    var fecha by remember {
+        mutableStateOf(
+            SimpleDateFormat("EEE, d MMM (YYYY)", loc).format(date)
+        )
+    }
 
     val cambiarFecha: (String?) -> Unit = { abierto = false; fecha = if (it.isNullOrEmpty()) "" else it }
 
-    Row (
+    Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(10.dp))
-    ){
+    ) {
         Text("Fecha $tipo : $fecha")
         IconButton(onClick = { abierto = true }) {
             Icon(Icons.Default.MoreVert, contentDescription = "Abrir calendario")

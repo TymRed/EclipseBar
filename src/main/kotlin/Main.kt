@@ -1,11 +1,14 @@
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -122,7 +125,38 @@ fun App(windChange: () -> Unit) {
     }
 }
 
+@Composable
+fun MenuBar(
+    active: Int,
+    activeChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    windChange: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.fillMaxWidth().fillMaxHeight(0.1F)
+    ) {
+        MenuBarText("Panel Principal", active == 1) { activeChange(1) }
+        MenuBarText("Stock", active == 2) { activeChange(2) }
+        MenuBarText("Historial", active == 3) { activeChange(3) }
+        MenuBarText("Estadísticas", active == 4) { activeChange(4) }
+        Image(
+            painterResource("Logo.svg"), "Logo atrás",
+            modifier = Modifier.clip(CircleShape).clickable(onClick = windChange)
+                .size(40.dp)
+        )
+    }
+}
 
+@Composable
+fun MenuBarText(text: String, active: Boolean, prueba: () -> Unit) {
+    Text(
+        text,
+        color = if (active) Colores.color3 else Colores.color1,
+        modifier = Modifier.clickable(onClick = prueba).padding(10.dp)
+    )
+}
 
 
 @Composable

@@ -21,6 +21,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.roundToInt
 
 @Composable
 fun Historial() {
@@ -89,7 +90,7 @@ fun Historial() {
                         .background(Color.Transparent, RoundedCornerShape(10.dp))
                 ) {
                     //TextSort("Numero", { changeSort(1) }, typeSort==1, asc, Modifier.weight(1F))
-                    TextSort("Numero", { changeSort(1) },  Modifier.weight(1F))
+                    TextSort("Numero", { changeSort(1) }, Modifier.weight(1F))
                     TextSort("Fecha", { changeSort(2) }, Modifier.weight(1F))
                     TextSort("Hora", { changeSort(3) }, Modifier.weight(1F))
                     TextSort("Importe", { changeSort(4) }, Modifier.weight(1F))
@@ -107,6 +108,7 @@ fun Historial() {
         }
     }
 }
+
 // " \uD83E\uDC61 \uD83E\uDC6B"
 @Composable
 fun TextSort(
@@ -189,8 +191,9 @@ fun Filtros(filChange: (Filter) -> Unit) {
                 sliderPosition = range.start.toInt().toFloat()..range.endInclusive.toInt().toFloat()
             }
 
-            numPedidoMin = String.format("%.2f", sliderPosition.start).split(",")[0].toInt()
-            numPedidoMax = String.format("%.2f", sliderPosition.endInclusive).split(",")[0].toInt()
+            println(String.format("%.2f", 0.0f))
+            numPedidoMin = sliderPosition.start.toInt()
+            numPedidoMax = sliderPosition.endInclusive.toInt()
 
             Text(
                 text = "Numero pedido: $numPedidoMin - $numPedidoMax", modifier = Modifier.offset(y = 7.dp, x = 6.dp)
@@ -219,8 +222,8 @@ fun Filtros(filChange: (Filter) -> Unit) {
             }
             val steps = (rangeMax / 5).toInt() - 1
 
-            importeMin = String.format("%.2f", sliderPosition.start).replace(',', '.').toFloat()
-            importeMax = String.format("%.2f", sliderPosition.endInclusive).replace(',', '.').toFloat()
+            importeMin = ((sliderPosition.start * 100.0).roundToInt() / 100.0).toFloat()
+            importeMax = ((sliderPosition.endInclusive * 100.0).roundToInt() / 100.0).toFloat()
             Text(
                 text = "Importe: Minimo: $importeMin  Maximo: $importeMax",
                 modifier = Modifier.offset(y = 7.dp, x = 6.dp)

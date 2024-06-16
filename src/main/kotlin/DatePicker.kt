@@ -148,7 +148,7 @@ fun DatePicker(): Pair<String, Calendar> {
             }
         }
     }
-    return Pair(SimpleDateFormat("EEE, d MMM", loc).format(selected.time), selected)
+    return Pair(SimpleDateFormat("EEE, d MMM (YYYY)", loc).format(selected.time), selected)
 }
 
 private fun getDatesList(calIncoming: Calendar): ArrayList<Pair<Long, Boolean>?> {

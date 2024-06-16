@@ -47,8 +47,12 @@ fun Historial() {
                 Pedido(500, fecha(), hora, importe(), "Camarero 2"),
                 Pedido(85, fecha(), hora, importe(), "Toño"),
                 Pedido(75, fecha(), hora, importe(), "Toño"),
-                Pedido(457, fecha(), hora, importe(), "Camarero 3"))
-            }
+                Pedido(457, fecha(), hora, importe(), "Camarero 3"),
+                Pedido(125, fecha(), hora, importe(), "Camarero 2"),
+                Pedido(824, fecha(), hora, importe(), "Camarero 2"),
+                Pedido(1002, fecha(), hora, importe(), "Camarero 3"),
+                Pedido(253, fecha(), hora, importe(), "Camarero 1"),
+            ) }
 
             val passImporte: (Pedido) -> Boolean = { pedido ->
 
@@ -84,7 +88,7 @@ fun importe(): Double {
 }
 //For Debug
 fun fecha(): LocalDate {
-    val year = (2023..2024).random()
+    val year = 2024
     val month = (1..12).random()
     val day = (1..28).random()
     return LocalDate.of(year, month, day)
@@ -173,7 +177,7 @@ fun Filtros(filChange: (Filter) -> Unit){
         }
 
 
-        var fechaInicio by remember { mutableStateOf(LocalDate.of(2022,8,10)) }
+        var fechaInicio by remember { mutableStateOf(LocalDate.of(2024,1,1)) }
         var fechaFinal by remember { mutableStateOf(LocalDate.now()) }
         val cambiarFechaIn: (LocalDate) -> Unit = { fechaInicio = it }
         val cambiarFechaFin: (LocalDate) -> Unit = { fechaFinal = it }
@@ -183,11 +187,13 @@ fun Filtros(filChange: (Filter) -> Unit){
 
         Boton(
             "AplicarFiltros",
-            funcionLista = {filChange(Filter(
-                numPedidos = numPedidoMin..numPedidoMax,
-                fechas = (fechaInicio..fechaFinal),
-                camarero = camarero,
-                importeRange = importeMin..importeMax),
+            funcionLista = {filChange(
+                Filter(
+                    numPedidos = numPedidoMin..numPedidoMax,
+                    fechas = (fechaInicio..fechaFinal),
+                    camarero = camarero,
+                    importeRange = importeMin..importeMax
+                ),
             ) }
         )
     }
@@ -199,7 +205,15 @@ fun Fechas(tipo: String, cambiarFechaDate: (LocalDate) -> Unit){
     var abierto by remember { mutableStateOf(false) }
     val cerrarCalendario = { abierto = false }
 
-    var fecha by remember { mutableStateOf(SimpleDateFormat("EEE, d MMM", Locale.Builder().setRegion("ES").setLanguage("es").build()).format(Date())) }
+    val date: Date = if (tipo == "Inicio"){
+        SimpleDateFormat("dd/mm/yyyy").parse("01/01/2024")
+    } else Date()
+
+    val loc = Locale.Builder().setRegion("ES").setLanguage("es").build()
+
+    var fecha by remember { mutableStateOf(
+        SimpleDateFormat("EEE, d MMM (YYYY)", loc).format(date)
+    ) }
 
     val cambiarFecha: (String?) -> Unit = { abierto = false; fecha = if (it.isNullOrEmpty()) "" else it }
 

@@ -157,7 +157,7 @@ fun PedidoProduct(pedido: ProdInPed, pedidoItems: MutableList<ProdInPed>) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().background(Colores.color2, shape = RoundedCornerShape(10.dp)).padding(3.dp)
+        modifier = Modifier.fillMaxWidth().background(Colores.color2, shape = RoundedCornerShape(10.dp)).padding(7.dp)
     ) {
 
         Text(pedido.producto.name, modifier = Modifier.fillMaxWidth().weight(3F))
@@ -175,10 +175,11 @@ fun PedidoProduct(pedido: ProdInPed, pedidoItems: MutableList<ProdInPed>) {
                 else pedidoItems.remove(pedido)
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.height(IntrinsicSize.Max).weight(0.8F)
         )
         {
-            Icon(Icons.Filled.Close, contentDescription = "Abrir calendario", tint = Color.White)
+            Icon(Icons.Filled.Close, contentDescription = "Abrir calendario", tint = Color.White, modifier = Modifier.size(27.dp))
         }
     }
 }

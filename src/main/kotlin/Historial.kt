@@ -78,8 +78,7 @@ fun Historial() {
             }
 
             val filterList = pedidos.filter { pedido ->
-                pedido.numero in fil.numPedidos &&
-                        passCamarero(pedido) && passImporte(pedido) && passFecha(pedido)
+                pedido.numero in fil.numPedidos && passCamarero(pedido) && passImporte(pedido) && passFecha(pedido)
             }.mySort(typeSort, asc)
 
             Column(
@@ -110,9 +109,7 @@ fun Historial() {
 
 @Composable
 fun TextSort(
-    text: String,
-    changeSort: () -> Unit,
-    modifier: Modifier = Modifier
+    text: String, changeSort: () -> Unit, modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
@@ -155,7 +152,11 @@ fun PedidoRow(pedido: Pedido) {
     ) {
         Text(pedido.numero.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
         Text(pedido.fecha.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
-        Text(pedido.hora.format(DateTimeFormatter.ofPattern("HH:mm")), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+        Text(
+            pedido.hora.format(DateTimeFormatter.ofPattern("HH:mm")),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.weight(1F)
+        )
         Text(pedido.importe.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
         Text(pedido.camarero, textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
     }
@@ -166,15 +167,12 @@ fun PedidoRow(pedido: Pedido) {
 fun Filtros(filChange: (Filter) -> Unit) {
     Column(
         verticalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier
-            .padding(10.dp)
-            .fillMaxHeight()
-            .fillMaxWidth(0.25F)
-            .background(color = Colores.color2, shape = RoundedCornerShape(20.dp))
-            .padding(horizontal = 10.dp)
+        modifier = Modifier.padding(10.dp).fillMaxHeight().fillMaxWidth(0.25F)
+            .background(color = Colores.color2, shape = RoundedCornerShape(20.dp)).padding(horizontal = 10.dp)
     ) {
         Text(
-            text = "FILTROS:", fontSize = 20.sp,
+            text = "FILTROS:",
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -187,18 +185,15 @@ fun Filtros(filChange: (Filter) -> Unit) {
             modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))
         ) {
             var sliderPosition by remember { mutableStateOf(0f..1000f) }
-            val ajustarRango: (ClosedFloatingPointRange<Float>) -> Unit =
-                { range ->
-                    sliderPosition =
-                        range.start.toInt().toFloat()..range.endInclusive.toInt().toFloat()
-                }
+            val ajustarRango: (ClosedFloatingPointRange<Float>) -> Unit = { range ->
+                sliderPosition = range.start.toInt().toFloat()..range.endInclusive.toInt().toFloat()
+            }
 
             numPedidoMin = String.format("%.2f", sliderPosition.start).split(",")[0].toInt()
             numPedidoMax = String.format("%.2f", sliderPosition.endInclusive).split(",")[0].toInt()
 
             Text(
-                text = "Numero pedido: $numPedidoMin - $numPedidoMax",
-                modifier = Modifier.offset(y = 7.dp, x = 6.dp)
+                text = "Numero pedido: $numPedidoMin - $numPedidoMax", modifier = Modifier.offset(y = 7.dp, x = 6.dp)
             )
             RangeSliderFloat(sliderPosition, ajustarRango, 1000f)
         }
@@ -217,7 +212,11 @@ fun Filtros(filChange: (Filter) -> Unit) {
         ) {
             val rangeMax = 100f
             var sliderPosition by remember { mutableStateOf(0f..rangeMax) }
-            val ajustarRango: (ClosedFloatingPointRange<Float>) -> Unit = { range -> sliderPosition = range }
+            val ajustarRango: (ClosedFloatingPointRange<Float>) -> Unit = { range ->
+                if (range.start <= range.endInclusive) {
+                    sliderPosition = range
+                }
+            }
             val steps = (rangeMax / 5).toInt() - 1
 
             importeMin = String.format("%.2f", sliderPosition.start).replace(',', '.').toFloat()
@@ -238,19 +237,16 @@ fun Filtros(filChange: (Filter) -> Unit) {
         Fechas("Inicio", cambiarFechaIn)
         Fechas("Final", cambiarFechaFin)
 
-        Boton(
-            "AplicarFiltros",
-            funcionLista = {
-                filChange(
-                    Filter(
-                        numPedidos = numPedidoMin..numPedidoMax,
-                        fechas = (fechaInicio..fechaFinal),
-                        camarero = camarero,
-                        importeRange = importeMin..importeMax
-                    ),
-                )
-            }
-        )
+        Boton("AplicarFiltros", funcionLista = {
+            filChange(
+                Filter(
+                    numPedidos = numPedidoMin..numPedidoMax,
+                    fechas = (fechaInicio..fechaFinal),
+                    camarero = camarero,
+                    importeRange = importeMin..importeMax
+                ),
+            )
+        })
     }
 }
 
@@ -308,9 +304,7 @@ fun EligCamarero(): String {
             }
         }
         ExposedDropdownMenu(
-            expanded = visible,
-            onDismissRequest = { visible = false },
-            modifier = Modifier.width(IntrinsicSize.Min)
+            expanded = visible, onDismissRequest = { visible = false }, modifier = Modifier.width(IntrinsicSize.Min)
         ) {
             DropdownMenuItem(onClick = { visible = false; camarero = "Todos" }) {
                 Text("Todos")

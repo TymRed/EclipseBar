@@ -1,3 +1,5 @@
+package gui
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +23,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import structure.Colores
 
 @Composable
 fun Aplicacion() {
@@ -119,8 +122,7 @@ fun App(windChange: () -> Unit) {
             1 -> PanelPrincipal()
             2 -> Stock()
             3 -> Historial()
-            /*            3 -> Prueb3()
-                        4 -> Prueb4()*/
+            4 -> Estadisticas()
         }
     }
 }

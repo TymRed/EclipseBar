@@ -1,3 +1,5 @@
+package structure
+
 import androidx.compose.ui.graphics.Color
 
 abstract class Colores {

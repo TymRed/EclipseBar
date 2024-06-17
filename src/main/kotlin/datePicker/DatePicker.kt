@@ -1,4 +1,6 @@
-
+package datePicker
+import gui.Boton
+import structure.Colores
 import androidx.compose.foundation.background
 
 import androidx.compose.foundation.clickable
@@ -40,11 +42,11 @@ fun DialogDatePicker(gestionCalendar: () -> Unit, cambiarFecha: (String?) -> Uni
                         cambiarFecha(fechaSelected)
 
                         val year = selected[Calendar.YEAR]
-                        val month = if(selected.get(Calendar.MONTH)+1 < 10){
-                            "0"+ (selected[Calendar.MONTH]+1)
-                        } else selected[Calendar.MONTH]+1
-                        val date = if(selected[Calendar.DATE] < 10){
-                            "0"+selected.get(Calendar.DATE)
+                        val month = if (selected.get(Calendar.MONTH) + 1 < 10) {
+                            "0" + (selected[Calendar.MONTH] + 1)
+                        } else selected[Calendar.MONTH] + 1
+                        val date = if (selected[Calendar.DATE] < 10) {
+                            "0" + selected.get(Calendar.DATE)
                         } else selected.get(Calendar.DATE)
 
                         cambiarFecha2(LocalDate.parse("$year-$month-$date"))

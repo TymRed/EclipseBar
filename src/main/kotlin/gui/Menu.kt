@@ -1,3 +1,5 @@
+package gui
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +24,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import structure.Colores
+import structure.Photo
+import structure.ProdInPed
+import structure.Producto
 
 @Composable
 fun PanelPrincipal() {
@@ -355,7 +361,7 @@ private fun CustomTextField(
                         Text(
                             placeholderText,
                             style = LocalTextStyle.current.copy(
-//                            color = Colores.color2.copy(alpha = 0.3f),
+//                            color = structure.Colores.color2.copy(alpha = 0.3f),
                                 color = Colores.color2,
                                 fontSize = fontSize,
                                 textAlign = TextAlign.Center,

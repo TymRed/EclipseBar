@@ -1,3 +1,5 @@
+package structure
+
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -14,7 +16,7 @@ data class Photo (var ruta: String,
 }
 
 data class ProdInPed (var producto: Producto,
-             var cantidad: Int){
+                      var cantidad: Int){
 
 //    constructor(pedido: ProdInPed) : this(pedido.producto, pedido.cantidad){}
 }

@@ -1,3 +1,6 @@
+package gui
+
+import datePicker.DialogDatePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,6 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import structure.Colores
+import structure.Filter
+import structure.Pedido
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalTime
@@ -40,70 +46,77 @@ fun Historial() {
 
             Filtros(filChange)
 
+            HistorialPedidos(fil)
+        }
+    }
+}
 
-            val hora = LocalTime.now()
-            val pedidos: SnapshotStateList<Pedido> = remember {
-                mutableStateListOf(
-                    Pedido(1, fecha(), hora, importe(), "Toño"),
-                    Pedido(367, fecha(), hora, importe(), "Camarero 1"),
-                    Pedido(23, fecha(), hora, importe(), "Toño"),
-                    Pedido(500, fecha(), hora, importe(), "Camarero 2"),
-                    Pedido(85, fecha(), hora, importe(), "Toño"),
-                    Pedido(75, fecha(), hora, importe(), "Toño"),
-                    Pedido(457, fecha(), hora, importe(), "Camarero 3"),
-                    Pedido(125, fecha(), hora, importe(), "Camarero 2"),
-                    Pedido(824, fecha(), hora, importe(), "Camarero 2"),
-                    Pedido(1002, fecha(), hora, importe(), "Camarero 3"),
-                    Pedido(253, fecha(), hora, importe(), "Camarero 1"),
-                )
-            }
+@Composable
+fun HistorialPedidos(fil: Filter) {
+    val hora = LocalTime.now()
+    val pedidos: SnapshotStateList<Pedido> = remember {
+        mutableStateListOf(
+            Pedido(1, fecha(), hora, importe(), "Toño"),
+            Pedido(367, fecha(), hora, importe(), "Camarero 1"),
+            Pedido(23, fecha(), hora, importe(), "Toño"),
+            Pedido(500, fecha(), hora, importe(), "Camarero 2"),
+            Pedido(85, fecha(), hora, importe(), "Toño"),
+            Pedido(75, fecha(), hora, importe(), "Toño"),
+            Pedido(457, fecha(), hora, importe(), "Camarero 3"),
+            Pedido(125, fecha(), hora, importe(), "Camarero 2"),
+            Pedido(824, fecha(), hora, importe(), "Camarero 2"),
+            Pedido(1002, fecha(), hora, importe(), "Camarero 3"),
+            Pedido(253, fecha(), hora, importe(), "Camarero 1"),
+        )
+    }
 
-            val passImporte: (Pedido) -> Boolean = { pedido ->
-                pedido.importe in fil.importeRange || (fil.importeRange.endInclusive == 100f && pedido.importe >= 100f)
-            }
-            val passCamarero: (Pedido) -> Boolean = { pedido ->
-                pedido.camarero == fil.camarero || fil.camarero == "Todos"
-            }
-            val passFecha: (Pedido) -> Boolean = { pedido ->
-                println(fil.fechas)
-                pedido.fecha in fil.fechas
-            }
+    val passNumPedido: (Pedido) -> Boolean = { pedido ->
+        pedido.numero in fil.numPedidos
+    }
+    val passImporte: (Pedido) -> Boolean = { pedido ->
+        pedido.importe in fil.importeRange || (fil.importeRange.endInclusive == 100f && pedido.importe >= 100f)
+    }
+    val passCamarero: (Pedido) -> Boolean = { pedido ->
+        pedido.camarero == fil.camarero || fil.camarero == "Todos"
+    }
+    val passFecha: (Pedido) -> Boolean = { pedido ->
+        println(fil.fechas)
+        pedido.fecha in fil.fechas
+    }
 
-            var typeSort by remember { mutableStateOf(1) }
-            var asc by remember { mutableStateOf(true) }
-            val changeSort: (Int) -> Unit = { type ->
-                if (typeSort != type) {
-                    typeSort = type
-                    asc = true
-                } else asc = !asc
-            }
+    var typeSort by remember { mutableStateOf(1) }
+    var asc by remember { mutableStateOf(true) }
+    val changeSort: (Int) -> Unit = { type ->
+        if (typeSort != type) {
+            typeSort = type
+            asc = true
+        } else asc = !asc
+    }
 
-            val filterList = pedidos.filter { pedido ->
-                pedido.numero in fil.numPedidos && passCamarero(pedido) && passImporte(pedido) && passFecha(pedido)
-            }.mySort(typeSort, asc)
+    val filterList = pedidos.filter { pedido ->
+        passNumPedido(pedido) && passCamarero(pedido) && passImporte(pedido) && passFecha(pedido)
+    }.mySort(typeSort, asc)
 
-            Column(
-                modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(10.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(10.dp).fillMaxWidth().fillMaxHeight(0.05F)
-                        .background(Color.Transparent, RoundedCornerShape(10.dp))
-                ) {
-                    //TextSort("Numero", { changeSort(1) }, typeSort==1, asc, Modifier.weight(1F))
-                    TextSort("Numero", { changeSort(1) }, Modifier.weight(1F))
-                    TextSort("Fecha", { changeSort(2) }, Modifier.weight(1F))
-                    TextSort("Hora", { changeSort(3) }, Modifier.weight(1F))
-                    TextSort("Importe", { changeSort(4) }, Modifier.weight(1F))
-                    TextSort("Camarero", { changeSort(5) }, Modifier.weight(1F))
-                }
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight()
-                ) {
-                    items(filterList.size) { index ->
-                        PedidoRow(filterList[index])
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                }
+    Column(
+        modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(10.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(10.dp).fillMaxWidth().fillMaxHeight(0.05F)
+                .background(Color.Transparent, RoundedCornerShape(10.dp))
+        ) {
+            //TextSort("Numero", { changeSort(1) }, typeSort==1, asc, Modifier.weight(1F))
+            TextSort("Numero", { changeSort(1) }, Modifier.weight(1F))
+            TextSort("Fecha", { changeSort(2) }, Modifier.weight(1F))
+            TextSort("Hora", { changeSort(3) }, Modifier.weight(1F))
+            TextSort("Importe", { changeSort(4) }, Modifier.weight(1F))
+            TextSort("Camarero", { changeSort(5) }, Modifier.weight(1F))
+        }
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth().fillMaxHeight()
+        ) {
+            items(filterList.size) { index ->
+                PedidoRow(filterList[index])
+                Spacer(modifier = Modifier.height(10.dp))
             }
         }
     }

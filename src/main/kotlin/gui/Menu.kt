@@ -52,9 +52,17 @@ fun PanelPrincipal() {
                 Row(
                     modifier = Modifier.fillMaxHeight(0.9F).fillMaxWidth(),
                 ) {
-                    Boton("Borrar", modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F), funcionLista = borrarItems)
+                    Boton(
+                        "Borrar",
+                        modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
+                        funcionLista = borrarItems
+                    )
                     Spacer(modifier = Modifier.fillMaxWidth().weight(0.5F))
-                    Boton("Cobrar", modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F), funcionLista = borrarItems)
+                    Boton(
+                        "Cobrar",
+                        modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
+                        funcionLista = borrarItems
+                    )
                 }
             }
             CuadradoGrande(pedidoItems)
@@ -113,7 +121,12 @@ fun Pedidos(pedidoItems: MutableList<ProdInPed>, importe: String, cambiarImporte
                 Modifier.weight(1F),
                 color = Colores.color1
             )
-            CustomTextField(importe, cambiarImporte)
+            CustomTextField(
+                importe,
+                cambiarImporte,
+                modifier = Modifier.fillMaxHeight(0.7F)
+                    .background(color = Colores.color1, shape = RoundedCornerShape(10.dp))
+            )
             Text(
                 text = String.format("Cambio: %.2f€", importeDouble - suma),
                 textAlign = TextAlign.Right, modifier = Modifier.weight(1F),
@@ -150,7 +163,12 @@ fun PedidoProduct(pedido: ProdInPed, pedidoItems: MutableList<ProdInPed>) {
             modifier = Modifier.height(IntrinsicSize.Max).weight(0.8F)
         )
         {
-            Icon(Icons.Filled.Close, contentDescription = "Abrir calendario", tint = Color.White, modifier = Modifier.size(27.dp))
+            Icon(
+                Icons.Filled.Close,
+                contentDescription = "Abrir calendario",
+                tint = Color.White,
+                modifier = Modifier.size(27.dp)
+            )
         }
     }
 }
@@ -180,7 +198,7 @@ fun CuadradoGrande(pedidoItems: MutableList<ProdInPed>) {
                 Producto("Coca-Cola", 1.5, Photo("Fanta.png", "sfsdf"), "Refrescos"),
                 Producto("Fanta", 2.5, Photo("Fanta.png", "sfsdf"), "Cocteles"),
                 Producto("Aquarius", 1.9, Photo("Fanta.png", "sfsdf"), "Comida"),
-                Producto("Cerveza", 2.2, Photo("Fanta.png", "sfsdf"),"Refrescos" ),
+                Producto("Cerveza", 2.2, Photo("Fanta.png", "sfsdf"), "Refrescos"),
                 Producto("Vino", 3.5, Photo("Fanta.png", "sfsdf"), "Refrescos"),
                 Producto("Café", 3.1, Photo("Fanta.png", "sfsdf"), "Cocteles"),
                 Producto("Té", 2.0, Photo("Fanta.png", "sfsdf"), "Cocteles"),
@@ -311,7 +329,6 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
 }
 
 
-
 @Composable
 fun Boton(
     texto: String,
@@ -330,7 +347,7 @@ fun Boton(
 }
 
 @Composable
-private fun CustomTextField(
+fun CustomTextField(
     text: String,
     cambiarImporte: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -351,9 +368,8 @@ private fun CustomTextField(
         decorationBox = { innerTextField ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier.fillMaxHeight(0.7F)
+                modifier = modifier
                     .fillMaxWidth(0.15F)
-                    .background(color = Colores.color1, shape = RoundedCornerShape(10.dp))
             ) {
                 if (leadingIcon != null) leadingIcon()
                 Box {

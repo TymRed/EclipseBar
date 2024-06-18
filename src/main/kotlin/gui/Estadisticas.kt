@@ -18,6 +18,7 @@ import kotlin.random.Random
 @Composable
 fun Estadisticas() {
 
+
     Surface(color = Colores.color1) {
         Column(
             modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(20.dp)
@@ -51,7 +52,7 @@ fun PieChartView() {
 private fun randomLength(): Float = Random.Default.nextInt(25, 125).toFloat()
 private fun randomColor(): Color {
     val idx = Random.Default.nextInt(colors.size)
-    return colors.removeAt(idx)
+    return colors[idx]
 }
 
 private var colors = mutableListOf(

@@ -95,7 +95,7 @@ fun LogIn(windChange: () -> Unit) {
                 )
             }
             Row(
-                modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth().offset (y = (-40).dp),
+                modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth().offset(y = (-40).dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.Bottom
             ) {
@@ -129,10 +129,7 @@ fun App(windChange: () -> Unit) {
 
 @Composable
 fun MenuBar(
-    active: Int,
-    activeChange: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-    windChange: () -> Unit
+    active: Int, activeChange: (Int) -> Unit, modifier: Modifier = Modifier, windChange: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
@@ -144,9 +141,9 @@ fun MenuBar(
         MenuBarText("Historial", active == 3) { activeChange(3) }
         MenuBarText("Estadísticas", active == 4) { activeChange(4) }
         Image(
-            painterResource("Logo.svg"), "Logo atrás",
-            modifier = Modifier.clip(CircleShape).clickable(onClick = windChange)
-                .size(40.dp)
+            painterResource("Logo.svg"),
+            "Logo atrás",
+            modifier = Modifier.clip(CircleShape).clickable(onClick = windChange).size(40.dp)
         )
     }
 }
@@ -176,7 +173,8 @@ fun MyTextField(nombre: String, placeholder: String, verif: Boolean, change: (St
         isError = !verif,
         singleLine = true,
         visualTransformation = if (placeholder == "Contraseña") PasswordVisualTransformation() else VisualTransformation.None,
-        modifier = Modifier.fillMaxWidth(0.4F))
+        modifier = Modifier.fillMaxWidth(0.4F)
+    )
 }
 
 fun comprobarNombre(nombreUsuario: String): Boolean {
@@ -215,9 +213,7 @@ fun main() = application {
         state = state,
         title = "Eclipse",
         icon = painterResource("Logo.svg"),
-
-
-    ) {
+        ) {
         Aplicacion()
     }
 }

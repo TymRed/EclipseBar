@@ -195,19 +195,19 @@ fun CuadradoGrande(pedidoItems: MutableList<ProdInPed>) {
 
         val cards: MutableList<Producto> = remember {
             mutableStateListOf(
-                Producto("Coca-Cola", 1.5, Photo("Fanta.png", "sfsdf"), "Refrescos"),
-                Producto("Fanta", 2.5, Photo("Fanta.png", "sfsdf"), "Cocteles"),
-                Producto("Aquarius", 1.9, Photo("Fanta.png", "sfsdf"), "Comida"),
-                Producto("Cerveza", 2.2, Photo("Fanta.png", "sfsdf"), "Refrescos"),
-                Producto("Vino", 3.5, Photo("Fanta.png", "sfsdf"), "Refrescos"),
-                Producto("Café", 3.1, Photo("Fanta.png", "sfsdf"), "Cocteles"),
-                Producto("Té", 2.0, Photo("Fanta.png", "sfsdf"), "Cocteles"),
-                Producto("Zumo", 1.3, Photo("Fanta.png", "sfsdf"), "Comida"),
-                Producto("Leche", 1.7, Photo("Fanta.png", "sfsdf"), "Comida"),
-                Producto("Agua", 2.4, Photo("Fanta.png", "sfsdf")),
-                Producto("Sprite", 1.1, Photo("Fanta.png", "sfsdf")),
-                Producto("7up", 2.1, Photo("Fanta.png", "sfsdf")),
-                Producto("Pepsi", 2.7, Photo("Fanta.png", "sfsdf")),
+                Producto("Coca-Cola", 1.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
+                Producto("Fanta", 2.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
+                Producto("Aquarius", 1.9, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
+                Producto("Cerveza", 2.2, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
+                Producto("Vino", 3.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
+                Producto("Café", 3.1, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
+                Producto("Té", 2.0, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
+                Producto("Zumo", 1.3, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
+                Producto("Leche", 1.7, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
+                Producto("Agua", 2.4, Photo("prodImgs/Fanta.png", "sfsdf")),
+                Producto("Sprite", 1.1, Photo("prodImgs/Fanta.png", "sfsdf")),
+                Producto("7up", 2.1, Photo("prodImgs/Fanta.png", "sfsdf")),
+                Producto("Pepsi", 2.7, Photo("prodImgs/Fanta.png", "sfsdf")),
             )
         }
 

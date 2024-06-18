@@ -214,10 +214,13 @@ fun Filtros(filChange: (Filter) -> Unit) {
             RangeSliderFloat(sliderPosition, ajustarRango, 1000f)
         }
 
-        var camarero = "Todos"
+        var camarero by remember { mutableStateOf("Todos") }
 
         Surface(color = Color.White, shape = RoundedCornerShape(10.dp)) {
-            camarero = EligCamarero()
+            val camareros = remember { listOf("Todos", "Toño", "Camarero 2", "Camarero 3")}
+            val cambiarCamarero: (String) -> Unit = { camarero = it }
+            val text = "Camarero: $camarero"
+            ComboBox(text, camareros,cambiarCamarero)
         }
 
         var importeMin = 0f
@@ -304,9 +307,8 @@ fun Fechas(tipo: String, cambiarFechaDate: (LocalDate) -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EligCamarero(): String {
+fun ComboBox(text: String, lista: List<String>, cambiarCamarero: (String) -> Unit){
     var visible by remember { mutableStateOf(false) }
-    var camarero by remember { mutableStateOf("Todos") }
 
     ExposedDropdownMenuBox(expanded = false, onExpandedChange = {}) {
         Row(
@@ -314,32 +316,22 @@ fun EligCamarero(): String {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(10.dp))
         ) {
-            Text("Camarero: $camarero")
+            Text(text)
             IconButton(onClick = { visible = true }) {
-                Icon(Icons.Default.ArrowDropDown, contentDescription = "Abrir lista camareros")
+                Icon(Icons.Default.ArrowDropDown, contentDescription = "Abrir lista")
             }
         }
         ExposedDropdownMenu(
             expanded = visible, onDismissRequest = { visible = false }, modifier = Modifier.width(IntrinsicSize.Min)
         ) {
-            DropdownMenuItem(onClick = { visible = false; camarero = "Todos" }) {
-                Text("Todos")
-            }
-            Divider()
-            DropdownMenuItem(onClick = { visible = false; camarero = "Toño" }) {
-                Text("Toño")
-            }
-            Divider()
-            DropdownMenuItem(onClick = { visible = false; camarero = "Camarero 2" }) {
-                Text("Camarero 2")
-            }
-            Divider()
-            DropdownMenuItem(onClick = { visible = false; camarero = "Camarero 3" }) {
-                Text("Camarero 3")
+            for (item in lista) {
+                DropdownMenuItem(onClick = { visible = false; cambiarCamarero(item) }) {
+                    Text(item)
+                }
+                Divider()
             }
         }
     }
-    return camarero
 }
 
 

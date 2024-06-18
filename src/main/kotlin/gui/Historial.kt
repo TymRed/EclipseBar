@@ -80,7 +80,6 @@ fun HistorialPedidos(fil: Filter) {
         pedido.camarero == fil.camarero || fil.camarero == "Todos"
     }
     val passFecha: (Pedido) -> Boolean = { pedido ->
-        println(fil.fechas)
         pedido.fecha in fil.fechas
     }
 
@@ -204,7 +203,6 @@ fun Filtros(filChange: (Filter) -> Unit) {
                 sliderPosition = range.start.toInt().toFloat()..range.endInclusive.toInt().toFloat()
             }
 
-            println(String.format("%.2f", 0.0f))
             numPedidoMin = sliderPosition.start.toInt()
             numPedidoMax = sliderPosition.endInclusive.toInt()
 
@@ -252,7 +250,6 @@ fun Filtros(filChange: (Filter) -> Unit) {
         var fechaFinal by remember { mutableStateOf(LocalDate.now()) }
         val cambiarFechaIn: (LocalDate) -> Unit = { fechaInicio = it }
         val cambiarFechaFin: (LocalDate) -> Unit = { fechaFinal = it }
-        println("$fechaInicio  $fechaFinal")
         Fechas("Inicio", cambiarFechaIn)
         Fechas("Final", cambiarFechaFin)
 

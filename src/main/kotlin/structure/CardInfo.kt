@@ -5,17 +5,16 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 data class Producto(
-    var name: String,
-    var price: Double,
-    var photo: Photo,
+    var nombre: String,
+    var precio: Double,
+    var foto: Photo,
     var tipo: String? = null
 )
 
 data class Photo(
     var ruta: String,
     var descripcion: String
-) {
-}
+)
 
 val listaProductos: MutableList<Producto> = mutableStateListOf(
     Producto("Coca-Cola", 1.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),

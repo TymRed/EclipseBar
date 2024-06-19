@@ -77,10 +77,10 @@ fun Stock() {
                                 .height(50.dp)
                                 .background(Colores.color2, shape = RoundedCornerShape(10.dp))
                         ) {
-                            if (prod.photo.ruta.startsWith("C:")){
+                            if (prod.foto.ruta.startsWith("C:")){
                                 Image(
-                                    bitmap = loadImageBitmap(File(prod.photo.ruta).inputStream()),
-                                    contentDescription = prod.photo.descripcion,
+                                    bitmap = loadImageBitmap(File(prod.foto.ruta).inputStream()),
+                                    contentDescription = prod.foto.descripcion,
                                     modifier = Modifier
                                         .fillMaxWidth(0.05F)
                                         .fillMaxHeight(0.8F)
@@ -88,8 +88,8 @@ fun Stock() {
                             }
                             else{
                                 Image(
-                                    painter = painterResource(prod.photo.ruta),
-                                    contentDescription = prod.photo.descripcion,
+                                    painter = painterResource(prod.foto.ruta),
+                                    contentDescription = prod.foto.descripcion,
                                     modifier = Modifier
                                         .fillMaxWidth(0.05F)
                                         .fillMaxHeight(0.8F)
@@ -158,10 +158,21 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
             loadImageBitmap(file.inputStream())
         }
     }
-
     var showFilePicker by remember { mutableStateOf(false) }
 
+
+
     Dialog(onDismissRequest = close) {
+        val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
+        var nombre by remember { mutableStateOf("") }
+        var stock by remember { mutableStateOf("") }
+        var precio1 by remember { mutableStateOf("") }
+        var precio2 by remember { mutableStateOf("") }
+
+        val tipos = remember { listOf("Refrescos", "Cocteles", "Comida") }
+        var tipo by remember { mutableStateOf("Refrescos") }
+        val cambiarTipo: (String) -> Unit = { tipo = it }
+
         Column(
             modifier = Modifier
                 .width(600.dp)
@@ -201,12 +212,11 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
                             .fillMaxHeight(0.5F)
                             .background(Color.White)){  }
                     }
-                    val tipos = remember { listOf("Refrescos", "Cocteles", "Comida") }
-                    var text by remember { mutableStateOf("Refrescos") }
-                    val cambiarTipo: (String) -> Unit = { text = it }
-                    ComboBox(text, tipos, cambiarTipo)
+
+                    ComboBox(tipo, tipos, cambiarTipo)
                     Spacer(modifier = Modifier.height(10.dp))
                 }
+
                 Column(
                     verticalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
@@ -218,6 +228,7 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
                     Text("Precio1")
                     Text("Precio2")
                 }
+
                 Column(
                     verticalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
@@ -225,36 +236,44 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
                         .fillMaxWidth(0.7F)
                 ) {
                     CustomTextField(
-                        "", {},
+                        text = nombre,
+                        cambio = { nombre = it },
                         modifier = Modifier
                             .height(50.dp)
                             .fillMaxWidth()
                             .padding(end = 10.dp)
-                            .background(color = Color.White, shape = RoundedCornerShape(10.dp))
+                            .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
+                        centrado = false
                     )
                     CustomTextField(
-                        "", {},
+                        text = stock,
+                        cambio = { stock = it },
                         modifier = Modifier
                             .height(50.dp)
                             .fillMaxWidth()
                             .padding(end = 10.dp)
-                            .background(color = Color.White, shape = RoundedCornerShape(10.dp))
+                            .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
+                        centrado = false
                     )
                     CustomTextField(
-                        "", {},
+                        text = precio1,
+                        cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio1 = it},
                         modifier = Modifier
                             .height(50.dp)
                             .fillMaxWidth()
                             .padding(end = 10.dp)
-                            .background(color = Color.White, shape = RoundedCornerShape(10.dp))
+                            .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
+                        centrado = false
                     )
                     CustomTextField(
-                        "", {},
+                        text = precio2,
+                        cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio2 = it},
                         modifier = Modifier
                             .height(50.dp)
                             .fillMaxWidth()
                             .padding(end = 10.dp)
-                            .background(color = Color.White, shape = RoundedCornerShape(10.dp))
+                            .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
+                        centrado = false
                     )
                 }
             }
@@ -267,7 +286,7 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
                 Boton("Cancelar", funcionLista = close)
                 Boton("Añadir",
                     funcionLista = {
-                        addCard(Producto("Fanta", 2.2, Photo(filePath, "sfsdf"), "Refrescos"))
+                        addCard(Producto(nombre, precio1.toDouble(), Photo(filePath, "imagen producto"), tipo))
                     }
                 )
             }

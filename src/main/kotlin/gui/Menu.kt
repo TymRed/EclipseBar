@@ -115,7 +115,7 @@ fun Pedidos(pedidoItems: MutableList<ProdInPed>, importe: String, cambiarImporte
                 .padding(10.dp, 0.dp, 10.dp, 0.dp),
         ) {
 
-            val suma = pedidoItems.sumOf { it.producto.price * it.cantidad }
+            val suma = pedidoItems.sumOf { it.producto.precio * it.cantidad }
             Text(
                 text = String.format("Total: %.2f€", suma),
                 Modifier.weight(1F),
@@ -144,10 +144,10 @@ fun PedidoProduct(pedido: ProdInPed, pedidoItems: MutableList<ProdInPed>) {
         modifier = Modifier.fillMaxWidth().background(Colores.color2, shape = RoundedCornerShape(10.dp)).padding(7.dp)
     ) {
 
-        Text(pedido.producto.name, modifier = Modifier.fillMaxWidth().weight(3F))
+        Text(pedido.producto.nombre, modifier = Modifier.fillMaxWidth().weight(3F))
         Text(pedido.cantidad.toString() + "u", modifier = Modifier.fillMaxWidth().weight(1F))
         Text(
-            String.format("%.2f€", pedido.producto.price * pedido.cantidad),
+            String.format("%.2f€", pedido.producto.precio * pedido.cantidad),
             modifier = Modifier.fillMaxWidth().weight(1F)
         )
 
@@ -286,7 +286,7 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.padding(10.dp).fillMaxWidth(0.23F).height(250.dp),
         onClick = {
-            val hay = pedidoItems.find { it.producto.name == card.name }
+            val hay = pedidoItems.find { it.producto.nombre == card.nombre }
             if (hay == null) {
                 pedidoItems.add(ProdInPed(card, 1))
             } else {
@@ -297,10 +297,10 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
     ) {
         Column(modifier = Modifier.padding(15.dp)) {
 
-            if (card.photo.ruta.startsWith("C:")){
+            if (card.foto.ruta.startsWith("C:")){
                 Image(
-                    bitmap = loadImageBitmap(File(card.photo.ruta).inputStream()),
-                    contentDescription = card.photo.descripcion,
+                    bitmap = loadImageBitmap(File(card.foto.ruta).inputStream()),
+                    contentDescription = card.foto.descripcion,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -310,8 +310,8 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
             }
             else{
                 Image(
-                    painter = painterResource(card.photo.ruta),
-                    contentDescription = card.photo.descripcion,
+                    painter = painterResource(card.foto.ruta),
+                    contentDescription = card.foto.descripcion,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -321,8 +321,8 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
             }
 
             Spacer(modifier = Modifier.height(30.dp))
-            Text(card.price.toString())
-            Text(card.name)
+            Text(card.precio.toString())
+            Text(card.nombre)
         }
     }
 }
@@ -348,21 +348,25 @@ fun Boton(
 @Composable
 fun CustomTextField(
     text: String,
-    cambiarImporte: (String) -> Unit,
+    cambio: (String) -> Unit,
     modifier: Modifier = Modifier,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
-    placeholderText: String = "0.0€"
+    placeholderText: String = "0.0€",
+    centrado: Boolean = true
 ) {
     val fontSize = 16.sp
+    val align = if (centrado) TextAlign.Center else TextAlign.Start
+
     BasicTextField(
         value = text,
-        onValueChange = cambiarImporte,
+        onValueChange = cambio,
         singleLine = true,
         cursorBrush = SolidColor(MaterialTheme.colors.primary),
         textStyle = LocalTextStyle.current.copy(
-            color = MaterialTheme.colors.onSurface, fontSize = fontSize,
-            textAlign = TextAlign.Center
+            color = MaterialTheme.colors.onSurface,
+            fontSize = fontSize,
+            textAlign = align
         ),
         decorationBox = { innerTextField ->
             Row(
@@ -379,8 +383,7 @@ fun CustomTextField(
 //                            color = structure.Colores.color2.copy(alpha = 0.3f),
                                 color = Colores.color2,
                                 fontSize = fontSize,
-                                textAlign = TextAlign.Center,
-
+                                textAlign = align,
                                 ),
                             modifier = Modifier.fillMaxWidth()
                         )

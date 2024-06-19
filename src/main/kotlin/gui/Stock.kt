@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -21,12 +22,38 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import structure.Colores
+import structure.Photo
+import structure.Producto
 import java.io.File
+
 
 @Composable
 fun Stock() {
+    val cards: MutableList<Producto> = remember {
+        mutableStateListOf(
+            Producto("Coca-Cola", 1.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
+            Producto("Fanta", 2.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
+            Producto("Aquarius", 1.9, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
+            Producto("Cerveza", 2.2, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
+            Producto("Vino", 3.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
+            Producto("Café", 3.1, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
+            Producto("Té", 2.0, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
+            Producto("Zumo", 1.3, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
+            Producto("Leche", 1.7, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
+            Producto("Agua", 2.4, Photo("prodImgs/Fanta.png", "sfsdf")),
+            Producto("Sprite", 1.1, Photo("prodImgs/Fanta.png", "sfsdf")),
+            Producto("7up", 2.1, Photo("prodImgs/Fanta.png", "sfsdf")),
+            Producto("Pepsi", 2.7, Photo("prodImgs/Fanta.png", "sfsdf")),
+        )
+    }
+
     var isOpen by remember { mutableStateOf(false) }
     val changeDialog = { isOpen = !isOpen }
+    val addProduct: (Producto) -> Unit = {
+            p ->  cards.add(p)
+            isOpen = !isOpen
+    }
+
 
     Surface(color = Colores.color1) {
         Column(
@@ -55,7 +82,7 @@ fun Stock() {
                     )
                 }
                 LazyColumn {
-                    items(100) {
+                    items(cards) {prod ->
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
@@ -65,13 +92,24 @@ fun Stock() {
                                 .height(50.dp)
                                 .background(Colores.color2, shape = RoundedCornerShape(10.dp))
                         ) {
-                            Image(
-                                painter = painterResource("prodImgs/Fanta.png"),
-                                contentDescription = "Logo producto",
-                                modifier = Modifier
-                                    .fillMaxWidth(0.05F)
-                                    .fillMaxHeight(0.8F)
-                            )
+                            if (prod.photo.ruta.startsWith("C:")){
+                                Image(
+                                    bitmap = loadImageBitmap(File(prod.photo.ruta).inputStream()),
+                                    contentDescription = prod.photo.descripcion,
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.05F)
+                                        .fillMaxHeight(0.8F)
+                                )
+                            }
+                            else{
+                                Image(
+                                    painter = painterResource(prod.photo.ruta),
+                                    contentDescription = prod.photo.descripcion,
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.05F)
+                                        .fillMaxHeight(0.8F)
+                                )
+                            }
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
@@ -117,7 +155,7 @@ fun Stock() {
         }
     }
     if (isOpen) {
-        AddProducto(close = changeDialog)
+        AddProducto(close = changeDialog, addCard = addProduct)
     }
 }
 
@@ -126,16 +164,16 @@ fun Stock() {
 
 
 @Composable
-fun AddProducto(close: () -> Unit) {
-    var filePath by remember { mutableStateOf("src/main/resources/prodImgs/Fanta.png") }
-
-    val file = File(filePath)
-    val imageBitmap: ImageBitmap = remember(file) {
-        loadImageBitmap(file.inputStream())
+fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
+    var filePath by remember { mutableStateOf("") }
+    var imageBitmap: ImageBitmap? = null
+    if (filePath != "") {
+        val file = File(filePath)
+        imageBitmap = remember(file) {
+            loadImageBitmap(file.inputStream())
+        }
     }
 
-
-//    var nombreF by remember { mutableStateOf("prodImgs/Fanta.png") }
     var showFilePicker by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = close) {
@@ -158,17 +196,26 @@ fun AddProducto(close: () -> Unit) {
                         .fillMaxWidth(0.3F)
                         .fillMaxHeight()
                 ) {
-                    Image(
-//                        painter = painterResource(nombreF),
-                        painter = BitmapPainter(image = imageBitmap),
-                        contentDescription = "Logo producto",
-                        modifier = Modifier
+
+                    imageBitmap?.let {
+                        Image(
+                            painter = BitmapPainter(image = imageBitmap),
+                            contentDescription = "Logo producto",
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .clickable(onClick = { showFilePicker = true })
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.5F)
+                                .background(Color.White)
+                        )
+                    } ?: run {
+                        Surface (modifier = Modifier
                             .clip(RoundedCornerShape(10.dp))
                             .clickable(onClick = { showFilePicker = true })
                             .fillMaxWidth()
                             .fillMaxHeight(0.5F)
-                            .background(Color.White)
-                    )
+                            .background(Color.White)){  }
+                    }
                     val tipos = remember { listOf("Refrescos", "Cocteles", "Comida") }
                     var text by remember { mutableStateOf("Refrescos") }
                     val cambiarTipo: (String) -> Unit = { text = it }
@@ -233,7 +280,11 @@ fun AddProducto(close: () -> Unit) {
                     .fillMaxHeight()
             ) {
                 Boton("Cancelar", funcionLista = close)
-                Boton("Añadir", funcionLista = close)
+                Boton("Añadir",
+                    funcionLista = {
+                        addCard(Producto("Fanta", 2.2, Photo(filePath, "sfsdf"), "Refrescos"))
+                    }
+                )
             }
         }
     }
@@ -241,10 +292,10 @@ fun AddProducto(close: () -> Unit) {
     val fileType = listOf("jpg", "png")
     FilePicker(show = showFilePicker, fileExtensions = fileType) { platformFile ->
         showFilePicker = false
-        val nomTemp = platformFile?.path?.split("\\")?.last()
-        println(nomTemp)
-        File(platformFile?.path ?: "").copyTo(File("src/main/resources/prodImgs/$nomTemp"), true)
-        filePath = "src/main/resources/prodImgs/$nomTemp"
+//        val nomTemp = platformFile?.path?.split("\\")?.last()
+//        println(nomTemp)
+//        File(platformFile?.path ?: "").copyTo(File("C:/Images/$nomTemp"), true)
 //        nombreF = "prodImgs/$nomTemp"
+        filePath = platformFile?.path ?: ""
     }
 }

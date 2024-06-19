@@ -36,8 +36,7 @@ compose.desktop {
             windows {
                 iconFile.set(project.file("src/main/resources/Logo.ico"))
             }
+            modules("jdk.unsupported")
         }
     }
-
-
 }

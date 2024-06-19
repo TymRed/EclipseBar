@@ -11,6 +11,7 @@ Jetpack-compose POS desktop app.
 ## Components used/modified
 - [DatePicker](https://gist.github.com/shakir915/9b3d0426263efb3a93a676b90ee671c0)
 - [Charts](https://github.com/bytebeats/compose-charts-desktop)
+- [FilePicker](https://github.com/Wavesonics/compose-multiplatform-file-picker)
 
 ## Contributors
 - [Timasostima](https://github.com/Timasostima)

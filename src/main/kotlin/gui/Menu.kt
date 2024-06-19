@@ -16,18 +16,18 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import structure.Colores
-import structure.Photo
-import structure.ProdInPed
-import structure.Producto
+import structure.*
+import java.io.File
 
 @Composable
 fun PanelPrincipal() {
@@ -193,27 +193,9 @@ fun CuadradoGrande(pedidoItems: MutableList<ProdInPed>) {
 
         EligTipo(cambiarTipo, tipoEleg)
 
-        val cards: MutableList<Producto> = remember {
-            mutableStateListOf(
-                Producto("Coca-Cola", 1.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
-                Producto("Fanta", 2.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
-                Producto("Aquarius", 1.9, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
-                Producto("Cerveza", 2.2, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
-                Producto("Vino", 3.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
-                Producto("Café", 3.1, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
-                Producto("Té", 2.0, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
-                Producto("Zumo", 1.3, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
-                Producto("Leche", 1.7, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
-                Producto("Agua", 2.4, Photo("prodImgs/Fanta.png", "sfsdf")),
-                Producto("Sprite", 1.1, Photo("prodImgs/Fanta.png", "sfsdf")),
-                Producto("7up", 2.1, Photo("prodImgs/Fanta.png", "sfsdf")),
-                Producto("Pepsi", 2.7, Photo("prodImgs/Fanta.png", "sfsdf")),
-            )
-        }
-
         val cardsSelected: MutableList<Producto> = mutableListOf()
 
-        for (producto in cards) {
+        for (producto in listaProductos) {
             if (textoTipo == "Todos") {
                 cardsSelected.add(producto)
             } else if (textoTipo == producto.tipo) {
@@ -314,12 +296,29 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
         }
     ) {
         Column(modifier = Modifier.padding(15.dp)) {
-            Image(
-                painter = painterResource(card.photo.ruta),
-                contentDescription = card.photo.descripcion,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth().fillMaxSize(0.7F)
-            )
+
+            if (card.photo.ruta.startsWith("C:")){
+                Image(
+                    bitmap = loadImageBitmap(File(card.photo.ruta).inputStream()),
+                    contentDescription = card.photo.descripcion,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxSize(0.7F)
+                        .clip(RoundedCornerShape(10.dp))
+                )
+            }
+            else{
+                Image(
+                    painter = painterResource(card.photo.ruta),
+                    contentDescription = card.photo.descripcion,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxSize(0.7F)
+                        .clip(RoundedCornerShape(10.dp))
+                )
+            }
 
             Spacer(modifier = Modifier.height(30.dp))
             Text(card.price.toString())

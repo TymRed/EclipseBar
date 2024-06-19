@@ -243,7 +243,8 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
                             .fillMaxWidth()
                             .padding(end = 10.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
-                        centrado = false
+                        centrado = false,
+                        placeholderText = "Nombre"
                     )
                     CustomTextField(
                         text = stock,
@@ -253,7 +254,8 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
                             .fillMaxWidth()
                             .padding(end = 10.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
-                        centrado = false
+                        centrado = false,
+                        placeholderText = "0u"
                     )
                     CustomTextField(
                         text = precio1,

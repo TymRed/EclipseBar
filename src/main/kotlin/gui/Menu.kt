@@ -373,6 +373,7 @@ fun CustomTextField(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = modifier
                     .fillMaxWidth(0.15F)
+//                    .border(0.dp, Colores.color2, RoundedCornerShape(10.dp))
             ) {
                 if (leadingIcon != null) leadingIcon()
                 Box {

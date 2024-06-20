@@ -318,7 +318,7 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
 fun ModifyProducto(close: () -> Unit, addCard: (Producto) -> Unit, productoPasado: Producto) {
     var filePath by remember { mutableStateOf(productoPasado.foto.ruta) }
     var imageBitmap: ImageBitmap? = null
-    if (filePath != "") {
+    if (!filePath.startsWith("prodImgs")) {
         val file = File(filePath)
         imageBitmap = remember(file) {
             loadImageBitmap(file.inputStream())
@@ -359,11 +359,13 @@ fun ModifyProducto(close: () -> Unit, addCard: (Producto) -> Unit, productoPasad
                                 .background(Color.White)
                         )
                     } ?: run {
-                        Surface(
+                        Image(
+                            painter = painterResource(productoPasado.foto.ruta),
+                            contentDescription = "Logo producto",
                             modifier = Modifier.clip(RoundedCornerShape(10.dp))
                                 .clickable(onClick = { showFilePicker = true }).fillMaxWidth().fillMaxHeight(0.5F)
                                 .background(Color.White)
-                        ) { }
+                        )
                     }
 
                     ComboBox(tipo, tipos, cambiarTipo)

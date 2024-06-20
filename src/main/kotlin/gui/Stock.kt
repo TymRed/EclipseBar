@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -34,9 +35,9 @@ fun Stock() {
 
     var isOpen by remember { mutableStateOf(false) }
     val changeDialog = { isOpen = !isOpen }
-    val addProduct: (Producto) -> Unit = {
-            p ->  listaProductos.add(p)
-            isOpen = !isOpen
+    val addProduct: (Producto) -> Unit = { p ->
+        listaProductos.add(p)
+        isOpen = !isOpen
     }
 
 
@@ -54,20 +55,48 @@ fun Stock() {
                     .fillMaxHeight(0.9F)
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(10.dp)
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(0.774F)
+                        .padding(134.dp, 20.dp, 40.dp, 20.dp)
                 ) {
-                    Text(text = "Nombre", color = Colores.color4, fontSize = 17.sp)
-                    Text(text = "Categoría", color = Colores.color4, fontSize = 17.sp)
-                    Text(text = "Stock", color = Colores.color4, fontSize = 17.sp)
-                    Text(text = "Precio", color = Colores.color4, fontSize = 17.sp)
-                    Spacer(
-                        modifier = Modifier.fillMaxWidth(0.2F)
+                    Text(
+                        text = "Nombre",
+                        color = Colores.color4,
+                        fontSize = 17.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1F)
+                    )
+                    Text(
+                        text = "Categoría",
+                        color = Colores.color4,
+                        fontSize = 17.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1F)
+                    )
+                    Text(
+                        text = "Stock",
+                        color = Colores.color4,
+                        fontSize = 17.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1F)
+                    )
+                    Text(
+                        text = "Coste",
+                        color = Colores.color4,
+                        fontSize = 17.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1F)
+                    )
+                    Text(
+                        text = "PVP",
+                        color = Colores.color4,
+                        fontSize = 17.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1F)
                     )
                 }
                 LazyColumn {
-                    items(listaProductos) {prod ->
+                    items(listaProductos) { prod ->
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
@@ -75,9 +104,12 @@ fun Stock() {
                                 .padding(10.dp, 5.dp, 10.dp, 5.dp)
                                 .fillMaxWidth()
                                 .height(50.dp)
-                                .background(Colores.color2, shape = RoundedCornerShape(10.dp))
+                                .background(
+                                    Colores.color2,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
                         ) {
-                            if (prod.foto.ruta.startsWith("C:")){
+                            if (prod.foto.ruta.startsWith("C:")) {
                                 Image(
                                     bitmap = loadImageBitmap(File(prod.foto.ruta).inputStream()),
                                     contentDescription = prod.foto.descripcion,
@@ -85,8 +117,7 @@ fun Stock() {
                                         .fillMaxWidth(0.05F)
                                         .fillMaxHeight(0.8F)
                                 )
-                            }
-                            else{
+                            } else {
                                 Image(
                                     painter = painterResource(prod.foto.ruta),
                                     contentDescription = prod.foto.descripcion,
@@ -99,27 +130,32 @@ fun Stock() {
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-                                    .fillMaxWidth(0.4F)
+                                    .fillMaxWidth(0.7F)
                             ) {
-                                Text(text = "Fanta")
-                                Text(text = "Refrescos")
-                                Text(text = "2u")
-                                Text(text = "2.20€")
+                                Text(text = prod.nombre, textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+                                Text(text = prod.tipo.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+                                Text(text = prod.stock.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+                                Text(text = prod.coste.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+                                Text(text = prod.pvp.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
                             }
                             Spacer(
-                                modifier = Modifier.width(200.dp)
+                                modifier = Modifier.width(80.dp)
                             )
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-                                    .fillMaxWidth(0.25F)
+                                    .fillMaxWidth(0.4F)
                             ) {
-                                Button(onClick = {}) {}
-                                Button(onClick = {}) {}
+                                Button(onClick = {}) {
+                                    Text(text = "M")
+                                }
+                                Button(onClick = {}) {
+                                    Text(text = "X")
+                                }
                             }
                             Spacer(
-                                modifier = Modifier.width(50.dp)
+                                modifier = Modifier.width(0.dp)
                             )
                         }
                     }
@@ -143,9 +179,6 @@ fun Stock() {
         AddProducto(close = changeDialog, addCard = addProduct)
     }
 }
-
-
-
 
 
 @Composable
@@ -205,12 +238,14 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
                                 .background(Color.White)
                         )
                     } ?: run {
-                        Surface (modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .clickable(onClick = { showFilePicker = true })
-                            .fillMaxWidth()
-                            .fillMaxHeight(0.5F)
-                            .background(Color.White)){  }
+                        Surface(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .clickable(onClick = { showFilePicker = true })
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.5F)
+                                .background(Color.White)
+                        ) { }
                     }
 
                     ComboBox(tipo, tipos, cambiarTipo)
@@ -259,7 +294,7 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
                     )
                     CustomTextField(
                         text = precio1,
-                        cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio1 = it},
+                        cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio1 = it },
                         modifier = Modifier
                             .height(50.dp)
                             .fillMaxWidth()
@@ -269,7 +304,7 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
                     )
                     CustomTextField(
                         text = precio2,
-                        cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio2 = it},
+                        cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio2 = it },
                         modifier = Modifier
                             .height(50.dp)
                             .fillMaxWidth()
@@ -288,7 +323,7 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
                 Boton("Cancelar", funcionLista = close)
                 Boton("Añadir",
                     funcionLista = {
-                        addCard(Producto(nombre, precio1.toDouble(), Photo(filePath, "imagen producto"), tipo))
+                        addCard(Producto(nombre, precio1.toDouble(), precio2.toDouble(), stock.toInt(), Photo(filePath, "imagen producto"), tipo))
                     }
                 )
             }

@@ -6,7 +6,9 @@ import java.time.LocalTime
 
 data class Producto(
     var nombre: String,
-    var precio: Double,
+    var coste: Double,
+    var pvp: Double,
+    var stock: Int,
     var foto: Photo,
     var tipo: String? = null
 )
@@ -17,19 +19,19 @@ data class Photo(
 )
 
 val listaProductos: MutableList<Producto> = mutableStateListOf(
-    Producto("Coca-Cola", 1.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
-    Producto("Fanta", 2.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
-    Producto("Aquarius", 1.9, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
-    Producto("Cerveza", 2.2, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
-    Producto("Vino", 3.5, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
-    Producto("Café", 3.1, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
-    Producto("Té", 2.0, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
-    Producto("Zumo", 1.3, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
-    Producto("Leche", 1.7, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
-    Producto("Agua", 2.4, Photo("prodImgs/Fanta.png", "sfsdf")),
-    Producto("Sprite", 1.1, Photo("prodImgs/Fanta.png", "sfsdf")),
-    Producto("7up", 2.1, Photo("prodImgs/Fanta.png", "sfsdf")),
-    Producto("Pepsi", 2.7, Photo("prodImgs/Fanta.png", "sfsdf")),
+    Producto("Coca-Cola", 1.5, 2.2, 5, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
+    Producto("Fanta", 2.5, 3.0, 1, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
+    Producto("Aquarius", 1.9, 2.5, 3, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
+    Producto("Cerveza", 2.2, 2.5, 4, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
+    Producto("Vino", 3.5, 4.0, 6, Photo("prodImgs/Fanta.png", "sfsdf"), "Refrescos"),
+    Producto("Café", 3.1, 3.2, 7, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
+    Producto("Té", 2.0, 3.2, 8, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
+    Producto("Zumo", 1.3, 3.2, 9,  Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
+    Producto("Leche", 1.7, 3.2, 1, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
+    Producto("Agua", 2.4, 3.2, 3, Photo("prodImgs/Fanta.png", "sfsdf")),
+    Producto("Sprite", 1.1, 3.2, 4, Photo("prodImgs/Fanta.png", "sfsdf")),
+    Producto("7up", 2.1, 3.2, 1, Photo("prodImgs/Fanta.png", "sfsdf")),
+    Producto("Pepsi", 2.7, 3.2, 1, Photo("prodImgs/Fanta.png", "sfsdf")),
 )
 
 data class ProdInPed(

@@ -115,7 +115,7 @@ fun Pedidos(pedidoItems: MutableList<ProdInPed>, importe: String, cambiarImporte
                 .padding(10.dp, 0.dp, 10.dp, 0.dp),
         ) {
 
-            val suma = pedidoItems.sumOf { it.producto.precio * it.cantidad }
+            val suma = pedidoItems.sumOf { it.producto.coste * it.cantidad }
             Text(
                 text = String.format("Total: %.2f€", suma),
                 Modifier.weight(1F),
@@ -147,7 +147,7 @@ fun PedidoProduct(pedido: ProdInPed, pedidoItems: MutableList<ProdInPed>) {
         Text(pedido.producto.nombre, modifier = Modifier.fillMaxWidth().weight(3F))
         Text(pedido.cantidad.toString() + "u", modifier = Modifier.fillMaxWidth().weight(1F))
         Text(
-            String.format("%.2f€", pedido.producto.precio * pedido.cantidad),
+            String.format("%.2f€", pedido.producto.coste * pedido.cantidad),
             modifier = Modifier.fillMaxWidth().weight(1F)
         )
 
@@ -321,7 +321,7 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
             }
 
             Spacer(modifier = Modifier.height(30.dp))
-            Text(card.precio.toString())
+            Text(card.coste.toString())
             Text(card.nombre)
         }
     }

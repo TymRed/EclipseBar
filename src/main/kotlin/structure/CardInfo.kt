@@ -10,7 +10,7 @@ data class Producto(
     var pvp: Double,
     var stock: Int,
     var foto: Photo,
-    var tipo: String? = null
+    var tipo: String
 )
 
 data class Photo(
@@ -28,10 +28,10 @@ val listaProductos: MutableList<Producto> = mutableStateListOf(
     Producto("Té", 2.0, 3.2, 8, Photo("prodImgs/Fanta.png", "sfsdf"), "Cocteles"),
     Producto("Zumo", 1.3, 3.2, 9,  Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
     Producto("Leche", 1.7, 3.2, 1, Photo("prodImgs/Fanta.png", "sfsdf"), "Comida"),
-    Producto("Agua", 2.4, 3.2, 3, Photo("prodImgs/Fanta.png", "sfsdf")),
-    Producto("Sprite", 1.1, 3.2, 4, Photo("prodImgs/Fanta.png", "sfsdf")),
-    Producto("7up", 2.1, 3.2, 1, Photo("prodImgs/Fanta.png", "sfsdf")),
-    Producto("Pepsi", 2.7, 3.2, 1, Photo("prodImgs/Fanta.png", "sfsdf")),
+    Producto("Agua", 2.4, 3.2, 3, Photo("prodImgs/Fanta.png", "sfsdf"),"Comida"),
+    Producto("Sprite", 1.1, 3.2, 4, Photo("prodImgs/Fanta.png", "sfsdf"),"Comida"),
+    Producto("7up", 2.1, 3.2, 1, Photo("prodImgs/Fanta.png", "sfsdf"),"Comida"),
+    Producto("Pepsi", 2.7, 3.2, 1, Photo("prodImgs/Fanta.png", "sfsdf"),"Comida"),
 )
 
 data class ProdInPed(

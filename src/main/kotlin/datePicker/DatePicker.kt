@@ -36,10 +36,10 @@ fun DialogDatePicker(gestionCalendar: () -> Unit, cambiarFecha: (String?) -> Uni
                 modifier = Modifier.fillMaxWidth().background(Colores.color1),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                Boton("Cerrar", modifier = Modifier.width(120.dp), funcionLista = gestionCalendar)
+                Boton("Cerrar", modifier = Modifier.width(120.dp), funcion = gestionCalendar)
                 Spacer(modifier = Modifier.width(10.dp))
                 Boton("Confirmar", modifier = Modifier.width(120.dp),
-                    funcionLista = {
+                    funcion = {
                         cambiarFecha(fechaSelected)
 
                         val year = selected[Calendar.YEAR]

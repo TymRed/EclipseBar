@@ -42,6 +42,10 @@ fun Stock() {
         listaProductos.add(p)
         isOpen = !isOpen
     }
+    val changeProduct: (Producto) -> Unit = { p ->
+        listaProductos[listaProductos.indexOf(producto!!)] = p
+        isOpen = !isOpen
+    }
 
 
     Surface(color = Colores.color1) {
@@ -122,9 +126,7 @@ fun Stock() {
                             ) {
                                 Text(text = prod.nombre, textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
                                 Text(
-                                    text = prod.tipo.toString(),
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.weight(1F)
+                                    text = prod.tipo, textAlign = TextAlign.Center, modifier = Modifier.weight(1F)
                                 )
                                 Text(
                                     text = prod.stock.toString(),
@@ -150,8 +152,12 @@ fun Stock() {
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth(0.4F)
                             ) {
-                                Boton("M", funcionLista = { saveObject(prod) })
-                                Boton("X", funcionLista = {})
+                                Boton(
+                                    "M", funcion = { saveObject(prod) }, color = Color.Blue.copy(alpha = 0.9f)
+                                )
+                                Boton(
+                                    "X", funcion = {}, color = Color.Red.copy(alpha = 0.9f)
+                                )
                             }
                             Spacer(
                                 modifier = Modifier.width(0.dp)
@@ -173,7 +179,7 @@ fun Stock() {
     }
     if (isOpen) {
         if (producto != null) {
-            ModifyProducto(close = changeDialog, addCard = addProduct, productoPasado = producto!!)
+            ModifyProducto(close = changeDialog, changeProduct = changeProduct, productoPasado = producto!!)
         } else {
             AddProducto(close = changeDialog, addCard = addProduct)
         }
@@ -286,8 +292,8 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth().fillMaxHeight()
             ) {
-                Boton("Cancelar", funcionLista = close)
-                Boton("Añadir", funcionLista = {
+                Boton("Cancelar", funcion = close)
+                Boton("Añadir", funcion = {
                     addCard(
                         Producto(
                             nombre,
@@ -315,7 +321,7 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
 }
 
 @Composable
-fun ModifyProducto(close: () -> Unit, addCard: (Producto) -> Unit, productoPasado: Producto) {
+fun ModifyProducto(close: () -> Unit, changeProduct: (Producto) -> Unit, productoPasado: Producto) {
     var filePath by remember { mutableStateOf(productoPasado.foto.ruta) }
     var imageBitmap: ImageBitmap? = null
     if (!filePath.startsWith("prodImgs")) {
@@ -421,16 +427,11 @@ fun ModifyProducto(close: () -> Unit, addCard: (Producto) -> Unit, productoPasad
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth().fillMaxHeight()
             ) {
-                Boton("Cancelar", funcionLista = close)
-                Boton("Añadir", funcionLista = {
-                    addCard(
+                Boton("Cancelar", funcion = close)
+                Boton("Añadir", funcion = {
+                    changeProduct(
                         Producto(
-                            nombre,
-                            precio1.toDouble(),
-                            precio2.toDouble(),
-                            stock.toInt(),
-                            Photo(filePath, "imagen producto"),
-                            tipo
+                            nombre, precio1, precio2, stock, Photo(filePath, "imagen producto"), tipo
                         )
                     )
                 })

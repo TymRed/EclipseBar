@@ -215,10 +215,10 @@ fun Filtros(filChange: (Filter) -> Unit) {
         var camarero by remember { mutableStateOf("Todos") }
 
         Surface(color = Color.White, shape = RoundedCornerShape(10.dp)) {
-            val camareros = remember { listOf("Todos", "Toño", "Camarero 2", "Camarero 3")}
+            val camareros = remember { listOf("Todos", "Toño", "Camarero 2", "Camarero 3") }
             val cambiarCamarero: (String) -> Unit = { camarero = it }
             val text = "Camarero: $camarero"
-            ComboBox(text, camareros,cambiarCamarero)
+            ComboBox(text, camareros, cambiarCamarero)
         }
 
         var importeMin = 0f
@@ -253,7 +253,7 @@ fun Filtros(filChange: (Filter) -> Unit) {
         Fechas("Inicio", cambiarFechaIn)
         Fechas("Final", cambiarFechaFin)
 
-        Boton("AplicarFiltros", funcionLista = {
+        Boton("AplicarFiltros", funcion = {
             filChange(
                 Filter(
                     numPedidos = numPedidoMin..numPedidoMax,
@@ -304,7 +304,7 @@ fun Fechas(tipo: String, cambiarFechaDate: (LocalDate) -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ComboBox(text: String, lista: List<String>, cambiarCamarero: (String) -> Unit){
+fun ComboBox(text: String, lista: List<String>, cambiarCamarero: (String) -> Unit) {
     var visible by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(expanded = false, onExpandedChange = {}) {

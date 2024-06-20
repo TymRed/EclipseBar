@@ -45,23 +45,18 @@ fun PanelPrincipal() {
     Surface(color = Colores.color1) {
         Row(modifier = Modifier.fillMaxSize().padding(20.dp), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(
-                modifier = Modifier.fillMaxHeight().fillMaxWidth(0.3F),
-                verticalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxHeight().fillMaxWidth(0.3F), verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Pedidos(pedidoItems, importe, cambiarImporte)
                 Row(
                     modifier = Modifier.fillMaxHeight(0.9F).fillMaxWidth(),
                 ) {
                     Boton(
-                        "Borrar",
-                        modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
-                        funcionLista = borrarItems
+                        "Borrar", modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F), funcion = borrarItems
                     )
                     Spacer(modifier = Modifier.fillMaxWidth().weight(0.5F))
                     Boton(
-                        "Cobrar",
-                        modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
-                        funcionLista = borrarItems
+                        "Cobrar", modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F), funcion = borrarItems
                     )
                 }
             }
@@ -101,25 +96,16 @@ fun Pedidos(pedidoItems: MutableList<ProdInPed>, importe: String, cambiarImporte
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier
-                .align(alignment = Alignment.BottomCenter)
-                .fillMaxWidth()
-                .height(50.dp)
-                .background(
-                    color = Colores.color5,
-                    shape = RoundedCornerShape(
-                        bottomStart = 20.dp,
-                        bottomEnd = 20.dp
+            modifier = Modifier.align(alignment = Alignment.BottomCenter).fillMaxWidth().height(50.dp).background(
+                    color = Colores.color5, shape = RoundedCornerShape(
+                        bottomStart = 20.dp, bottomEnd = 20.dp
                     )
-                )
-                .padding(10.dp, 0.dp, 10.dp, 0.dp),
+                ).padding(10.dp, 0.dp, 10.dp, 0.dp),
         ) {
 
             val suma = pedidoItems.sumOf { it.producto.coste * it.cantidad }
             Text(
-                text = String.format("Total: %.2f€", suma),
-                Modifier.weight(1F),
-                color = Colores.color1
+                text = String.format("Total: %.2f€", suma), Modifier.weight(1F), color = Colores.color1
             )
             CustomTextField(
                 importe,
@@ -129,7 +115,8 @@ fun Pedidos(pedidoItems: MutableList<ProdInPed>, importe: String, cambiarImporte
             )
             Text(
                 text = String.format("Cambio: %.2f€", importeDouble - suma),
-                textAlign = TextAlign.Right, modifier = Modifier.weight(1F),
+                textAlign = TextAlign.Right,
+                modifier = Modifier.weight(1F),
                 color = Colores.color1
             )
         }
@@ -161,8 +148,7 @@ fun PedidoProduct(pedido: ProdInPed, pedidoItems: MutableList<ProdInPed>) {
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.height(IntrinsicSize.Max).weight(0.8F)
-        )
-        {
+        ) {
             Icon(
                 Icons.Filled.Close,
                 contentDescription = "Abrir calendario",
@@ -204,20 +190,16 @@ fun CuadradoGrande(pedidoItems: MutableList<ProdInPed>) {
         }
 
         LazyVerticalGrid(columns = GridCells.Fixed(4), contentPadding = PaddingValues(5.dp)) {
-            items(
-                count = cardsSelected.size,
-                key = { index ->
-                    index
-                },
-                itemContent = { index ->
-                    val cartItemData = cardsSelected[index]
-                    if (textoTipo == "Todos") {
-                        MenuItem(cartItemData, pedidoItems)
-                    } else if (cartItemData.tipo == textoTipo) {
-                        MenuItem(cartItemData, pedidoItems)
-                    }
+            items(count = cardsSelected.size, key = { index ->
+                index
+            }, itemContent = { index ->
+                val cartItemData = cardsSelected[index]
+                if (textoTipo == "Todos") {
+                    MenuItem(cartItemData, pedidoItems)
+                } else if (cartItemData.tipo == textoTipo) {
+                    MenuItem(cartItemData, pedidoItems)
                 }
-            )
+            })
         }
     }
 }
@@ -230,26 +212,16 @@ fun EligTipo(cambiarTipo: (Int) -> Unit, tipoEleg: Int) {
         modifier = Modifier.fillMaxHeight(0.12F).fillMaxWidth().padding(5.dp, 15.dp, 5.dp, 10.dp)
     ) {
         BotonFiltro(
-            "TODOS",
-            RoundedCornerShape(topStart = 20.dp),
-            Modifier.weight(1F),
-            tipoEleg == 1
+            "TODOS", RoundedCornerShape(topStart = 20.dp), Modifier.weight(1F), tipoEleg == 1
         ) { cambiarTipo(1) }
         BotonFiltro(
-            "REFRESCOS",
-            modifier = Modifier.weight(1F),
-            active = tipoEleg == 2
+            "REFRESCOS", modifier = Modifier.weight(1F), active = tipoEleg == 2
         ) { cambiarTipo(2) }
         BotonFiltro(
-            "CÓCTELES",
-            modifier = Modifier.weight(1F),
-            active = tipoEleg == 3
+            "CÓCTELES", modifier = Modifier.weight(1F), active = tipoEleg == 3
         ) { cambiarTipo(3) }
         BotonFiltro(
-            "COMIDA",
-            RoundedCornerShape(topEnd = 20.dp),
-            Modifier.weight(1F),
-            tipoEleg == 4
+            "COMIDA", RoundedCornerShape(topEnd = 20.dp), Modifier.weight(1F), tipoEleg == 4
         ) { cambiarTipo(4) }
     }
 }
@@ -269,10 +241,7 @@ fun BotonFiltro(
         onClick = activeChange,
         colors = ButtonDefaults.buttonColors(backgroundColor = colorFondo, contentColor = colorTexto),
         shape = shape,
-        modifier = modifier
-            .fillMaxWidth(0.1F)
-            .fillMaxHeight()
-            .padding(horizontal = 10.dp)
+        modifier = modifier.fillMaxWidth(0.1F).fillMaxHeight().padding(horizontal = 10.dp)
     ) {
         Text(texto)
     }
@@ -281,8 +250,7 @@ fun BotonFiltro(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
-    Card(
-        backgroundColor = Colores.color1,
+    Card(backgroundColor = Colores.color1,
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.padding(10.dp).fillMaxWidth(0.23F).height(250.dp),
         onClick = {
@@ -293,30 +261,22 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
                 val index = pedidoItems.indexOf(hay)
                 pedidoItems[index] = hay.copy(cantidad = hay.cantidad + 1)
             }
-        }
-    ) {
+        }) {
         Column(modifier = Modifier.padding(15.dp)) {
 
-            if (card.foto.ruta.startsWith("C:")){
+            if (card.foto.ruta.startsWith("C:")) {
                 Image(
                     bitmap = loadImageBitmap(File(card.foto.ruta).inputStream()),
                     contentDescription = card.foto.descripcion,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxSize(0.7F)
-                        .clip(RoundedCornerShape(10.dp))
+                    modifier = Modifier.fillMaxWidth().fillMaxSize(0.7F).clip(RoundedCornerShape(10.dp))
                 )
-            }
-            else{
+            } else {
                 Image(
                     painter = painterResource(card.foto.ruta),
                     contentDescription = card.foto.descripcion,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxSize(0.7F)
-                        .clip(RoundedCornerShape(10.dp))
+                    modifier = Modifier.fillMaxWidth().fillMaxSize(0.7F).clip(RoundedCornerShape(10.dp))
                 )
             }
 
@@ -333,11 +293,12 @@ fun Boton(
     texto: String,
     shape: Shape = RoundedCornerShape(10.dp),
     modifier: Modifier = Modifier,
-    funcionLista: () -> Unit
+    funcion: () -> Unit,
+    color: Color = Colores.color4
 ) {
     Button(
-        onClick = funcionLista,
-        colors = ButtonDefaults.buttonColors(backgroundColor = Colores.color4, contentColor = Colores.color1),
+        onClick = funcion,
+        colors = ButtonDefaults.buttonColors(backgroundColor = color, contentColor = Colores.color1),
         shape = shape,
         modifier = modifier
     ) {
@@ -358,40 +319,31 @@ fun CustomTextField(
     val fontSize = 16.sp
     val align = if (centrado) TextAlign.Center else TextAlign.Start
 
-    BasicTextField(
-        value = text,
+    BasicTextField(value = text,
         onValueChange = cambio,
         singleLine = true,
         cursorBrush = SolidColor(MaterialTheme.colors.primary),
         textStyle = LocalTextStyle.current.copy(
-            color = MaterialTheme.colors.onSurface,
-            fontSize = fontSize,
-            textAlign = align
+            color = MaterialTheme.colors.onSurface, fontSize = fontSize, textAlign = align
         ),
         decorationBox = { innerTextField ->
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier
-                    .fillMaxWidth(0.15F)
+                verticalAlignment = Alignment.CenterVertically, modifier = modifier.fillMaxWidth(0.15F)
 //                    .border(0.dp, Colores.color2, RoundedCornerShape(10.dp))
             ) {
                 if (leadingIcon != null) leadingIcon()
                 Box {
-                    if (text.isEmpty())
-                        Text(
-                            placeholderText,
-                            style = LocalTextStyle.current.copy(
+                    if (text.isEmpty()) Text(
+                        placeholderText, style = LocalTextStyle.current.copy(
 //                            color = structure.Colores.color2.copy(alpha = 0.3f),
-                                color = Colores.color2,
-                                fontSize = fontSize,
-                                textAlign = align,
-                                ),
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                            color = Colores.color2,
+                            fontSize = fontSize,
+                            textAlign = align,
+                        ), modifier = Modifier.fillMaxWidth()
+                    )
                     innerTextField()
                 }
                 if (trailingIcon != null) trailingIcon()
             }
-        }
-    )
+        })
 }

@@ -213,7 +213,7 @@ fun main() = application {
         state = state,
         title = "Eclipse",
         icon = painterResource("Logo.svg"),
-        ) {
+    ) {
         Aplicacion()
     }
 }

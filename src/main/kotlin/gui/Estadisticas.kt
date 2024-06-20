@@ -35,17 +35,12 @@ fun PieChartView() {
         pieChartData = PieChartData(
             slices = listOf(
                 PieChartData.Slice(
-                    randomLength(),
-                    randomColor()
-                ),
-                PieChartData.Slice(randomLength(), randomColor()),
-                PieChartData.Slice(randomLength(), randomColor())
+                    randomLength(), randomColor()
+                ), PieChartData.Slice(randomLength(), randomColor()), PieChartData.Slice(randomLength(), randomColor())
             )
         ),
         // Optional properties.
-        modifier = Modifier.fillMaxSize(),
-        animation = simpleChartAnimation(),
-        sliceDrawer = SimpleSliceDrawer()
+        modifier = Modifier.fillMaxSize(), animation = simpleChartAnimation(), sliceDrawer = SimpleSliceDrawer()
     )
 }
 

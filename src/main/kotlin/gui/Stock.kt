@@ -200,7 +200,6 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
     var showFilePicker by remember { mutableStateOf(false) }
 
 
-
     Dialog(onDismissRequest = close) {
         val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
         var nombre by remember { mutableStateOf("") }
@@ -213,7 +212,12 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
         val cambiarTipo: (String) -> Unit = { tipo = it }
 
         Column(
-            modifier = Modifier.width(600.dp).height(350.dp).background(Colores.color1).padding(15.dp)
+            modifier = Modifier
+                .clip(RoundedCornerShape(20.dp))
+                .width(600.dp)
+                .height(350.dp)
+                .background(Colores.color1, shape = RoundedCornerShape(15.dp))
+                .padding(10.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth().fillMaxHeight(0.85F)
@@ -333,20 +337,24 @@ fun ModifyProducto(close: () -> Unit, changeProduct: (Producto) -> Unit, product
     var showFilePicker by remember { mutableStateOf(false) }
 
 
-
     Dialog(onDismissRequest = close) {
         val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
         var nombre by remember { mutableStateOf(productoPasado.nombre) }
-        var stock by remember { mutableStateOf(productoPasado.stock) }
-        var precio1 by remember { mutableStateOf(productoPasado.coste) }
-        var precio2 by remember { mutableStateOf(productoPasado.pvp) }
+        var stock by remember { mutableStateOf(productoPasado.stock.toString()) }
+        var precio1 by remember { mutableStateOf(productoPasado.coste.toString()) }
+        var precio2 by remember { mutableStateOf(productoPasado.pvp.toString()) }
         var tipo by remember { mutableStateOf(productoPasado.tipo) }
 
         val tipos = remember { listOf("Refrescos", "Cocteles", "Comida") }
         val cambiarTipo: (String) -> Unit = { tipo = it }
 
         Column(
-            modifier = Modifier.width(600.dp).height(350.dp).background(Colores.color1).padding(15.dp)
+            modifier = Modifier
+                .clip(RoundedCornerShape(20.dp))
+                .width(600.dp)
+                .height(350.dp)
+                .background(Colores.color1, shape = RoundedCornerShape(15.dp))
+                .padding(10.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth().fillMaxHeight(0.85F)
@@ -402,7 +410,7 @@ fun ModifyProducto(close: () -> Unit, changeProduct: (Producto) -> Unit, product
                     )
                     CustomTextField(
                         text = stock.toString(),
-                        cambio = { stock = it.toInt() },
+                        cambio = { stock = it },
                         modifier = Modifier.height(50.dp).fillMaxWidth().padding(end = 10.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
                         centrado = false,
@@ -410,14 +418,14 @@ fun ModifyProducto(close: () -> Unit, changeProduct: (Producto) -> Unit, product
                     )
                     CustomTextField(
                         text = precio1.toString(),
-                        cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio1 = it.toDouble() },
+                        cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio1 = it },
                         modifier = Modifier.height(50.dp).fillMaxWidth().padding(end = 10.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
                         centrado = false
                     )
                     CustomTextField(
                         text = precio2.toString(),
-                        cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio2 = it.toDouble() },
+                        cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio2 = it },
                         modifier = Modifier.height(50.dp).fillMaxWidth().padding(end = 10.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
                         centrado = false
@@ -431,7 +439,7 @@ fun ModifyProducto(close: () -> Unit, changeProduct: (Producto) -> Unit, product
                 Boton("Añadir", funcion = {
                     changeProduct(
                         Producto(
-                            nombre, precio1, precio2, stock, Photo(filePath, "imagen producto"), tipo
+                            nombre, precio1.toDouble(), precio2.toDouble(), stock.toInt(), Photo(filePath, "imagen producto"), tipo
                         )
                     )
                 })

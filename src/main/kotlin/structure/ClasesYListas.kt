@@ -37,10 +37,7 @@ val listaProductos: MutableList<Producto> = mutableStateListOf(
 data class ProdInPed(
     var producto: Producto,
     var cantidad: Int
-) {
-
-//    constructor(pedido: ProdInPed) : this(pedido.producto, pedido.cantidad){}
-}
+)
 
 data class Pedido(
     val numero: Int,

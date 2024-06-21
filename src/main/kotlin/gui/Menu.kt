@@ -201,24 +201,35 @@ fun CuadradoGrande(pedidoItems: MutableList<ProdInPed>) {
                     MenuItem(cartItemData, pedidoItems, changeStock)
                 }
                 if (maxStock){
-                    Dialog(onDismissRequest = changeStock) {
-                        Row (
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .width(300.dp)
-                                .height(150.dp)
-                                .background(Colores.color1, RoundedCornerShape(16.dp))
-                                .background(Color.Red.copy(alpha = 0.1f))
-                                .padding(horizontal = 30.dp)
-                        ){
-                            Icon(Icons.Filled.Close, contentDescription = "Cerrar", tint = Color.Red)
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text("No hay más stock", color = Color.Red, fontSize = 20.sp)
-                        }
-                    }
+                    TextDialog("No hay más stock", changeStock)
                 }
             })
+        }
+    }
+}
+
+@Composable
+fun TextDialog(
+    text: String,
+    changeStock: () -> Unit
+){
+    Dialog(
+        onDismissRequest = changeStock
+    ) {
+        Row (
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .width(300.dp)
+                .height(150.dp)
+                .background(Colores.color1, RoundedCornerShape(16.dp))
+                .background(Color.Red.copy(alpha = 0.1f))
+                .clickable(onClick = changeStock)
+                .padding(horizontal = 30.dp)
+        ){
+            Icon(Icons.Filled.Close, contentDescription = "Cerrar", tint = Color.Red)
+            Text(text, color = Color.Red, fontSize = 20.sp)
         }
     }
 }
@@ -287,7 +298,7 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>, changeStock: (
         }) {
         Column(modifier = Modifier.padding(15.dp)) {
 
-            if (card.foto.ruta.startsWith("C:")) {
+            if (card.foto.ruta.contains(":")) {
                 Image(
                     bitmap = loadImageBitmap(File(card.foto.ruta).inputStream()),
                     contentDescription = card.foto.descripcion,

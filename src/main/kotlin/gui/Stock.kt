@@ -32,7 +32,6 @@ import java.io.File
 @Composable
 fun Stock() {
     var isOpen by remember { mutableStateOf(false) }
-    val changeDialog = { isOpen = !isOpen }
     var producto: Producto? by remember { mutableStateOf(null) }
     val saveObject: (Producto) -> Unit = { productoPasado ->
         producto = productoPasado
@@ -44,7 +43,13 @@ fun Stock() {
     }
     val changeProduct: (Producto) -> Unit = { p ->
         listaProductos[listaProductos.indexOf(producto!!)] = p
+        producto = null
         isOpen = !isOpen
+    }
+
+    val changeDialog = {
+        isOpen = !isOpen
+        producto = null
     }
 
 
@@ -212,12 +217,8 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
         val cambiarTipo: (String) -> Unit = { tipo = it }
 
         Column(
-            modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
-                .width(600.dp)
-                .height(350.dp)
-                .background(Colores.color1, shape = RoundedCornerShape(15.dp))
-                .padding(10.dp)
+            modifier = Modifier.clip(RoundedCornerShape(20.dp)).width(600.dp).height(350.dp)
+                .background(Colores.color1, shape = RoundedCornerShape(15.dp)).padding(10.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth().fillMaxHeight(0.85F)
@@ -298,16 +299,18 @@ fun AddProducto(close: () -> Unit, addCard: (Producto) -> Unit) {
             ) {
                 Boton("Cancelar", funcion = close)
                 Boton("Añadir", funcion = {
-                    addCard(
-                        Producto(
-                            nombre,
-                            precio1.toDouble(),
-                            precio2.toDouble(),
-                            stock.toInt(),
-                            Photo(filePath, "imagen producto"),
-                            tipo
+                    if (!(nombre.isEmpty() || precio1.isEmpty() || precio2.isEmpty() || stock.isEmpty() || filePath.isEmpty())) {
+                        addCard(
+                            Producto(
+                                nombre,
+                                precio1.toDouble(),
+                                precio2.toDouble(),
+                                stock.toInt(),
+                                Photo(filePath, "imagen producto"),
+                                tipo
+                            )
                         )
-                    )
+                    }
                 })
             }
         }
@@ -349,12 +352,8 @@ fun ModifyProducto(close: () -> Unit, changeProduct: (Producto) -> Unit, product
         val cambiarTipo: (String) -> Unit = { tipo = it }
 
         Column(
-            modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
-                .width(600.dp)
-                .height(350.dp)
-                .background(Colores.color1, shape = RoundedCornerShape(15.dp))
-                .padding(10.dp)
+            modifier = Modifier.clip(RoundedCornerShape(20.dp)).width(600.dp).height(350.dp)
+                .background(Colores.color1, shape = RoundedCornerShape(15.dp)).padding(10.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth().fillMaxHeight(0.85F)
@@ -409,7 +408,7 @@ fun ModifyProducto(close: () -> Unit, changeProduct: (Producto) -> Unit, product
                         placeholderText = "Nombre"
                     )
                     CustomTextField(
-                        text = stock.toString(),
+                        text = stock,
                         cambio = { stock = it },
                         modifier = Modifier.height(50.dp).fillMaxWidth().padding(end = 10.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
@@ -417,14 +416,14 @@ fun ModifyProducto(close: () -> Unit, changeProduct: (Producto) -> Unit, product
                         placeholderText = "0u"
                     )
                     CustomTextField(
-                        text = precio1.toString(),
+                        text = precio1,
                         cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio1 = it },
                         modifier = Modifier.height(50.dp).fillMaxWidth().padding(end = 10.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
                         centrado = false
                     )
                     CustomTextField(
-                        text = precio2.toString(),
+                        text = precio2,
                         cambio = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) precio2 = it },
                         modifier = Modifier.height(50.dp).fillMaxWidth().padding(end = 10.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
@@ -437,11 +436,18 @@ fun ModifyProducto(close: () -> Unit, changeProduct: (Producto) -> Unit, product
             ) {
                 Boton("Cancelar", funcion = close)
                 Boton("Añadir", funcion = {
-                    changeProduct(
-                        Producto(
-                            nombre, precio1.toDouble(), precio2.toDouble(), stock.toInt(), Photo(filePath, "imagen producto"), tipo
+                    if (!(nombre.isEmpty() || precio1.isEmpty() || precio2.isEmpty() || stock.isEmpty() || filePath.isEmpty())) {
+                        changeProduct(
+                            Producto(
+                                nombre,
+                                precio1.toDouble(),
+                                precio2.toDouble(),
+                                stock.toInt(),
+                                Photo(filePath, "imagen producto"),
+                                tipo
+                            )
                         )
-                    )
+                    }
                 })
             }
         }

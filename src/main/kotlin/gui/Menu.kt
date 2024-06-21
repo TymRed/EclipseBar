@@ -98,10 +98,10 @@ fun Pedidos(pedidoItems: MutableList<ProdInPed>, importe: String, cambiarImporte
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.align(alignment = Alignment.BottomCenter).fillMaxWidth().height(50.dp).background(
-                    color = Colores.color5, shape = RoundedCornerShape(
-                        bottomStart = 20.dp, bottomEnd = 20.dp
-                    )
-                ).padding(10.dp, 0.dp, 10.dp, 0.dp),
+                color = Colores.color5, shape = RoundedCornerShape(
+                    bottomStart = 20.dp, bottomEnd = 20.dp
+                )
+            ).padding(10.dp, 0.dp, 10.dp, 0.dp),
         ) {
 
             val suma = pedidoItems.sumOf { it.producto.coste * it.cantidad }
@@ -200,7 +200,7 @@ fun CuadradoGrande(pedidoItems: MutableList<ProdInPed>) {
                 if (textoTipo == "Todos" || cartItemData.tipo == textoTipo) {
                     MenuItem(cartItemData, pedidoItems, changeStock)
                 }
-                if (maxStock){
+                if (maxStock) {
                     TextDialog("No hay más stock", changeStock)
                 }
             })
@@ -210,24 +210,18 @@ fun CuadradoGrande(pedidoItems: MutableList<ProdInPed>) {
 
 @Composable
 fun TextDialog(
-    text: String,
-    changeStock: () -> Unit
-){
+    text: String, changeStock: () -> Unit
+) {
     Dialog(
         onDismissRequest = changeStock
     ) {
-        Row (
+        Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .width(300.dp)
-                .height(150.dp)
-                .background(Colores.color1, RoundedCornerShape(16.dp))
-                .background(Color.Red.copy(alpha = 0.1f))
-                .clickable(onClick = changeStock)
-                .padding(horizontal = 30.dp)
-        ){
+            modifier = Modifier.clip(RoundedCornerShape(16.dp)).width(300.dp).height(150.dp)
+                .background(Colores.color1, RoundedCornerShape(16.dp)).background(Color.Red.copy(alpha = 0.1f))
+                .clickable(onClick = changeStock).padding(horizontal = 30.dp)
+        ) {
             Icon(Icons.Filled.Close, contentDescription = "Cerrar", tint = Color.Red)
             Text(text, color = Color.Red, fontSize = 20.sp)
         }
@@ -287,11 +281,9 @@ fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>, changeStock: (
             val prodPed = pedidoItems.find { it.producto.nombre == card.nombre }
             if (prodPed == null) {
                 pedidoItems.add(ProdInPed(card, 1))
-            }
-            else if (prodPed.cantidad == card.stock) {
+            } else if (prodPed.cantidad == card.stock) {
                 changeStock()
-            }
-            else {
+            } else {
                 val index = pedidoItems.indexOf(prodPed)
                 pedidoItems[index] = prodPed.copy(cantidad = prodPed.cantidad + 1)
             }
@@ -363,13 +355,11 @@ fun CustomTextField(
         decorationBox = { innerTextField ->
             Row(
                 verticalAlignment = Alignment.CenterVertically, modifier = modifier.fillMaxWidth(0.15F)
-//                    .border(0.dp, Colores.color2, RoundedCornerShape(10.dp))
             ) {
                 if (leadingIcon != null) leadingIcon()
                 Box {
                     if (text.isEmpty()) Text(
                         placeholderText, style = LocalTextStyle.current.copy(
-//                            color = structure.Colores.color2.copy(alpha = 0.3f),
                             color = Colores.color2,
                             fontSize = fontSize,
                             textAlign = align,

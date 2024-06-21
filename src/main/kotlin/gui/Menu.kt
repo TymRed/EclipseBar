@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import structure.*
 import java.io.File
 
@@ -194,10 +195,28 @@ fun CuadradoGrande(pedidoItems: MutableList<ProdInPed>) {
                 index
             }, itemContent = { index ->
                 val cartItemData = cardsSelected[index]
-                if (textoTipo == "Todos") {
-                    MenuItem(cartItemData, pedidoItems)
-                } else if (cartItemData.tipo == textoTipo) {
-                    MenuItem(cartItemData, pedidoItems)
+                var maxStock by remember { mutableStateOf(false) }
+                val changeStock = { maxStock = !maxStock }
+                if (textoTipo == "Todos" || cartItemData.tipo == textoTipo) {
+                    MenuItem(cartItemData, pedidoItems, changeStock)
+                }
+                if (maxStock){
+                    Dialog(onDismissRequest = changeStock) {
+                        Row (
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .width(300.dp)
+                                .height(150.dp)
+                                .background(Colores.color1, RoundedCornerShape(16.dp))
+                                .background(Color.Red.copy(alpha = 0.1f))
+                                .padding(horizontal = 30.dp)
+                        ){
+                            Icon(Icons.Filled.Close, contentDescription = "Cerrar", tint = Color.Red)
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text("No hay más stock", color = Color.Red, fontSize = 20.sp)
+                        }
+                    }
                 }
             })
         }
@@ -249,17 +268,21 @@ fun BotonFiltro(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>) {
+fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>, changeStock: () -> Unit) {
     Card(backgroundColor = Colores.color1,
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.padding(10.dp).fillMaxWidth(0.23F).height(250.dp),
         onClick = {
-            val hay = pedidoItems.find { it.producto.nombre == card.nombre }
-            if (hay == null) {
+            val prodPed = pedidoItems.find { it.producto.nombre == card.nombre }
+            if (prodPed == null) {
                 pedidoItems.add(ProdInPed(card, 1))
-            } else {
-                val index = pedidoItems.indexOf(hay)
-                pedidoItems[index] = hay.copy(cantidad = hay.cantidad + 1)
+            }
+            else if (prodPed.cantidad == card.stock) {
+                changeStock()
+            }
+            else {
+                val index = pedidoItems.indexOf(prodPed)
+                pedidoItems[index] = prodPed.copy(cantidad = prodPed.cantidad + 1)
             }
         }) {
         Column(modifier = Modifier.padding(15.dp)) {

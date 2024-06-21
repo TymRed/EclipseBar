@@ -190,20 +190,24 @@ fun CuadradoGrande(pedidoItems: MutableList<ProdInPed>) {
             }
         }
 
-        LazyVerticalGrid(columns = GridCells.Fixed(4), contentPadding = PaddingValues(5.dp)) {
-            items(count = cardsSelected.size, key = { index ->
-                index
-            }, itemContent = { index ->
-                val cartItemData = cardsSelected[index]
-                var maxStock by remember { mutableStateOf(false) }
-                val changeStock = { maxStock = !maxStock }
-                if (textoTipo == "Todos" || cartItemData.tipo == textoTipo) {
-                    MenuItem(cartItemData, pedidoItems, changeStock)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4), contentPadding = PaddingValues(5.dp)
+        ) {
+            items(
+                count = cardsSelected.size,
+                key = { index -> index },
+                itemContent = { index ->
+                    val cartItemData = cardsSelected[index]
+                    var maxStock by remember { mutableStateOf(false) }
+                    val changeStock = { maxStock = !maxStock }
+                    if (textoTipo == "Todos" || cartItemData.tipo == textoTipo) {
+                        MenuItem(cartItemData, pedidoItems, changeStock)
+                    }
+                    if (maxStock) {
+                        TextDialog("No hay más stock", changeStock)
+                    }
                 }
-                if (maxStock) {
-                    TextDialog("No hay más stock", changeStock)
-                }
-            })
+            )
         }
     }
 }
@@ -273,21 +277,32 @@ fun BotonFiltro(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MenuItem(card: Producto, pedidoItems: MutableList<ProdInPed>, changeStock: () -> Unit) {
+fun MenuItem(
+    card: Producto,
+    pedidoItems: MutableList<ProdInPed>,
+    changeStock: () -> Unit
+) {
     Card(backgroundColor = Colores.color1,
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.padding(10.dp).fillMaxWidth(0.23F).height(250.dp),
         onClick = {
             val prodPed = pedidoItems.find { it.producto.nombre == card.nombre }
             if (prodPed == null) {
-                pedidoItems.add(ProdInPed(card, 1))
+                if (card.stock == 0) {
+                    changeStock()
+                }
+                else{
+                    pedidoItems.add(ProdInPed(card, 1))
+                }
             } else if (prodPed.cantidad == card.stock) {
                 changeStock()
             } else {
                 val index = pedidoItems.indexOf(prodPed)
                 pedidoItems[index] = prodPed.copy(cantidad = prodPed.cantidad + 1)
             }
-        }) {
+
+        }
+    ) {
         Column(modifier = Modifier.padding(15.dp)) {
 
             if (card.foto.ruta.contains(":")) {

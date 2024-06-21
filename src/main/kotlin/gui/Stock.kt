@@ -46,7 +46,6 @@ fun Stock() {
         producto = null
         isOpen = !isOpen
     }
-
     val changeDialog = {
         isOpen = !isOpen
         producto = null
@@ -158,10 +157,16 @@ fun Stock() {
                                 modifier = Modifier.fillMaxWidth(0.4F)
                             ) {
                                 Boton(
-                                    "M", funcion = { saveObject(prod) }, color = Color.Blue.copy(alpha = 0.9f)
+                                    texto="M",
+                                    funcion = { saveObject(prod) },
+                                    color = Color.Blue.copy(alpha = 0.9f)
                                 )
                                 Boton(
-                                    "X", funcion = {}, color = Color.Red.copy(alpha = 0.9f)
+                                    texto = "X",
+                                    funcion = {
+                                        listaProductos.remove(prod)
+                                    },
+                                    color = Color.Red.copy(alpha = 0.9f)
                                 )
                             }
                             Spacer(

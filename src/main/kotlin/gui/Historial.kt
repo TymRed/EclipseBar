@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,9 +21,9 @@ import androidx.compose.ui.unit.sp
 import structure.Colores
 import structure.Filter
 import structure.Order
+import structure.orders
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
@@ -52,22 +51,6 @@ fun Historial() {
 
 @Composable
 fun OrderList(fil: Filter) {
-    val time = LocalTime.now()
-    val orders: SnapshotStateList<Order> = remember {
-        mutableStateListOf(
-            Order(1, date(), time, amount(), "Toño"),
-            Order(367, date(), time, amount(), "Camarero 1"),
-            Order(23, date(), time, amount(), "Toño"),
-            Order(500, date(), time, amount(), "Camarero 2"),
-            Order(85, date(), time, amount(), "Toño"),
-            Order(75, date(), time, amount(), "Toño"),
-            Order(457, date(), time, amount(), "Camarero 3"),
-            Order(125, date(), time, amount(), "Camarero 2"),
-            Order(824, date(), time, amount(), "Camarero 2"),
-            Order(1002, date(), time, amount(), "Camarero 3"),
-            Order(253, date(), time, amount(), "Camarero 1"),
-        )
-    }
 
     val passOrderNumber: (Order) -> Boolean = { pedido ->
         pedido.number in fil.orderNumber
@@ -145,20 +128,6 @@ private fun List<Order>.mySort(type: Int, asc: Boolean): List<Order> {
     }
 }
 
-
-//For Debug
-fun amount(): Double {
-    return (1..200).random().toDouble()
-}
-
-//For Debug
-fun date(): LocalDate {
-    val year = 2024
-    val month = (1..6).random()
-    val day = (1..28).random()
-    return LocalDate.of(year, month, day)
-}
-
 @Composable
 fun OrderRow(order: Order) {
     Row(
@@ -196,25 +165,26 @@ fun Filters(filChange: (Filter) -> Unit) {
             modifier = Modifier.fillMaxWidth()
         )
 
+        val max by remember { mutableStateOf(orders.maxBy { it.number }.number) }
         var minOrderNumber = 0
-        var maxOrderNumber = 1000
+        var maxOrderNumber = max
 
         Column(
             modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))
         ) {
-            var sliderPosition by remember { mutableStateOf(0f..1000f) }
+            var sliderPosition by remember { mutableStateOf(0f..max.toFloat()) }
             val changeRange: (ClosedFloatingPointRange<Float>) -> Unit = { range ->
-                sliderPosition = range.start.toInt().toFloat()..range.endInclusive.toInt().toFloat()
+                sliderPosition = range.start..range.endInclusive
             }
 
-            minOrderNumber = sliderPosition.start.toInt()
-            maxOrderNumber = sliderPosition.endInclusive.toInt()
+            minOrderNumber = sliderPosition.start.roundToInt()
+            maxOrderNumber = sliderPosition.endInclusive.roundToInt()
 
             Text(
                 text = "Numero pedido: $minOrderNumber - $maxOrderNumber",
                 modifier = Modifier.offset(y = 7.dp, x = 6.dp)
             )
-            RangeSliderFloat(sliderPosition, changeRange, 1000f)
+            RangeSliderFloat(sliderPosition, changeRange, max.toFloat())
         }
 
         var waiter by remember { mutableStateOf("Todos") }
@@ -366,8 +336,11 @@ fun RangeSliderFloat(
                 activeTickColor = Colores.color1,
                 inactiveTrackColor = Colores.color3.copy(alpha = 0.3f)
             ),
-//            onValueChangeFinished = {
-//            },
+            onValueChangeFinished = {
+                changeRange(
+                    sliderPosition.start.roundToInt().toFloat()..sliderPosition.endInclusive.roundToInt().toFloat()
+                )
+            },
         )
     }
 }

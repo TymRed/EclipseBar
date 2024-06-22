@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import structure.*
 import java.io.File
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 fun Menu() {
@@ -38,7 +40,12 @@ fun Menu() {
         if (it.isEmpty() || it.matches(pattern) && it.length <= 6) amount = it
     }
     val orderProducts: SnapshotStateList<ProdInOrder> = remember { mutableStateListOf() }
-    val eraseItems: () -> Unit = {
+    val eraseOrder: () -> Unit = {
+        orderProducts.removeAll(orderProducts)
+        amount = ""
+    }
+    val addOrder: (Order) -> Unit = {
+        orders.add(it)
         orderProducts.removeAll(orderProducts)
         amount = ""
     }
@@ -48,24 +55,48 @@ fun Menu() {
             Column(
                 modifier = Modifier.fillMaxHeight().fillMaxWidth(0.3F), verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Orders(orderProducts, amount, changeAmount)
+                val sum = orderProducts.sumOf { it.product.price * it.quantity }
+                val amountDouble: Double = if (amount.isEmpty()) 0.0 else amount.toDouble()
+
+                var errorText by remember { mutableStateOf("") }
+
+                Orders(orderProducts, amount, sum, amountDouble, changeAmount)
                 Row(
                     modifier = Modifier.fillMaxHeight(0.9F).fillMaxWidth(),
                 ) {
                     Boton(
                         "Borrar",
                         modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
-                        function = eraseItems
+                        function = eraseOrder
                     )
                     Spacer(modifier = Modifier.fillMaxWidth().weight(0.5F))
                     Boton(
                         "Cobrar",
                         modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
-                        function = eraseItems
+                        function = {
+                            if (amount.isEmpty()) {
+                                errorText = "Introduce el importe"
+                            } else if (amountDouble < sum) {
+                                errorText = "Falta dinero"
+                            } else {
+                                addOrder(
+                                    Order(
+                                        number = orders.maxBy { it.number }.number + 1,
+                                        date = LocalDate.now(),
+                                        time = LocalTime.now(),
+                                        amount = amountDouble - sum,
+                                        waiter = "Toño"
+                                    )
+                                )
+                            }
+                        }
                     )
                 }
+                if (errorText.isNotEmpty()) {
+                    TextDialog(errorText) { errorText = "" }
+                }
             }
-            CuadradoGrande(orderProducts)
+            ProductsArea(orderProducts)
         }
     }
 }
@@ -74,14 +105,13 @@ fun Menu() {
 fun Orders(
     orderProducts: MutableList<ProdInOrder>,
     amount: String,
+    sum: Double,
+    amountDouble: Double,
     changeAmount: (String) -> Unit
 ) {
-    val amountDouble: Double = if (amount.isEmpty()) 0.0 else amount.toDouble()
-
     Box(
         modifier = Modifier.fillMaxWidth().fillMaxHeight(0.9F)
             .background(color = Color.White, shape = RoundedCornerShape(20.dp))
-
     ) {
         val state = rememberLazyListState()
 
@@ -89,7 +119,7 @@ fun Orders(
             modifier = Modifier.fillMaxHeight(0.92F).padding(10.dp), state = state
         ) {
             items(orderProducts) { x ->
-                PedidoProduct(x, orderProducts)
+                OrderRow(x, orderProducts)
                 Spacer(modifier = Modifier.height(5.dp))
             }
         }
@@ -110,7 +140,6 @@ fun Orders(
             ).padding(10.dp, 0.dp, 10.dp, 0.dp),
         ) {
 
-            val sum = orderProducts.sumOf { it.product.price * it.quantity }
             Text(
                 text = String.format("Total: %.2f€", sum), Modifier.weight(1F), color = Colores.color1
             )
@@ -131,18 +160,27 @@ fun Orders(
 }
 
 @Composable
-fun PedidoProduct(
+fun OrderRow(
     order: ProdInOrder,
     orderItems: MutableList<ProdInOrder>
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().background(Colores.color2, shape = RoundedCornerShape(10.dp)).padding(7.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Colores.color2, shape = RoundedCornerShape(10.dp))
+            .padding(7.dp)
     ) {
 
-        Text(order.product.name, modifier = Modifier.fillMaxWidth().weight(3F))
-        Text(order.quantity.toString() + "u", modifier = Modifier.fillMaxWidth().weight(1F))
+        Text(
+            order.product.name,
+            modifier = Modifier.fillMaxWidth().weight(3F)
+        )
+        Text(
+            order.quantity.toString() + "u",
+            modifier = Modifier.fillMaxWidth().weight(1F)
+        )
         Text(
             String.format("%.2f€", order.product.price * order.quantity),
             modifier = Modifier.fillMaxWidth().weight(1F)
@@ -160,7 +198,7 @@ fun PedidoProduct(
         ) {
             Icon(
                 Icons.Filled.Close,
-                contentDescription = "Abrir calendario",
+                contentDescription = "-1 unidad",
                 tint = Color.White,
                 modifier = Modifier.size(27.dp)
             )
@@ -169,7 +207,7 @@ fun PedidoProduct(
 }
 
 @Composable
-fun CuadradoGrande(pedidoItems: MutableList<ProdInOrder>) {
+fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -212,7 +250,7 @@ fun CuadradoGrande(pedidoItems: MutableList<ProdInOrder>) {
                     var maxStock by remember { mutableStateOf(false) }
                     val changeStock = { maxStock = !maxStock }
                     if (typeText == "Todos" || cartItemData.type == typeText) {
-                        MenuItem(cartItemData, pedidoItems, changeStock)
+                        MenuItem(cartItemData, orderItems, changeStock)
                     }
                     if (maxStock) {
                         TextDialog("No hay más stock", changeStock)
@@ -234,8 +272,12 @@ fun TextDialog(
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clip(RoundedCornerShape(16.dp)).width(300.dp).height(150.dp)
-                .background(Colores.color1, RoundedCornerShape(16.dp)).background(Color.Red.copy(alpha = 0.1f))
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .width(300.dp)
+                .height(150.dp)
+                .background(Colores.color1, RoundedCornerShape(16.dp))
+                .background(Color.Red.copy(alpha = 0.1f))
                 .clickable(onClick = changeStock).padding(horizontal = 30.dp)
         ) {
             Icon(Icons.Filled.Close, contentDescription = "Cerrar", tint = Color.Red)
@@ -294,25 +336,25 @@ fun BotonFiltro(
 @Composable
 fun MenuItem(
     card: Product,
-    pedidoItems: MutableList<ProdInOrder>,
+    orderItems: MutableList<ProdInOrder>,
     changeStock: () -> Unit
 ) {
     Card(backgroundColor = Colores.color1,
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.padding(10.dp).fillMaxWidth(0.23F).height(250.dp),
         onClick = {
-            val prodPed = pedidoItems.find { it.product.name == card.name }
-            if (prodPed == null) {
+            val orderProduct = orderItems.find { it.product.name == card.name }
+            if (orderProduct == null) {
                 if (card.stock == 0) {
                     changeStock()
                 } else {
-                    pedidoItems.add(ProdInOrder(card, 1))
+                    orderItems.add(ProdInOrder(card, 1))
                 }
-            } else if (prodPed.quantity == card.stock) {
+            } else if (orderProduct.quantity == card.stock) {
                 changeStock()
             } else {
-                val index = pedidoItems.indexOf(prodPed)
-                pedidoItems[index] = prodPed.copy(quantity = prodPed.quantity + 1)
+                val index = orderItems.indexOf(orderProduct)
+                orderItems[index] = orderProduct.copy(quantity = orderProduct.quantity + 1)
             }
 
         }
@@ -398,5 +440,6 @@ fun CustomTextField(
                 }
                 if (trailingIcon != null) trailingIcon()
             }
-        })
+        }
+    )
 }

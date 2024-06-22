@@ -241,15 +241,21 @@ fun AddProduct(
                             painter = BitmapPainter(image = imageBitmap),
                             contentDescription = "Logo producto",
                             modifier = Modifier.clip(RoundedCornerShape(10.dp))
-                                .clickable(onClick = { showFilePicker = true }).fillMaxWidth().fillMaxHeight(0.5F)
+                                .clickable(onClick = { showFilePicker = true })
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.5F)
                                 .background(Color.White)
                         )
                     } ?: run {
-                        Surface(
+                        Image(
+                            painter = painterResource("prodImgs/noImage.png"),
+                            contentDescription = "Logo producto",
+                            alpha = 0.5F,
                             modifier = Modifier.clip(RoundedCornerShape(10.dp))
-                                .clickable(onClick = { showFilePicker = true }).fillMaxWidth().fillMaxHeight(0.5F)
+                                .clickable(onClick = { showFilePicker = true })
+                                .fillMaxWidth().fillMaxHeight(0.5F)
                                 .background(Color.White)
-                        ) { }
+                        )
                     }
 
                     ComboBox(type, typeList, changeType)

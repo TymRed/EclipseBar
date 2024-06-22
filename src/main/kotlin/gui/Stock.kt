@@ -335,13 +335,12 @@ fun AddProduct(
     }
 
     val fileType = listOf("jpg", "png")
-    FilePicker(show = showFilePicker, fileExtensions = fileType) { platformFile ->
+    FilePicker(
+        show = showFilePicker,
+        fileExtensions = fileType
+    ) { platformFile ->
         showFilePicker = false
-//        val nomTemp = platformFile?.path?.split("\\")?.last()
-//        println(nomTemp)
-//        File(platformFile?.path ?: "").copyTo(File("C:/Images/$nomTemp"), true)
-//        nombreF = "prodImgs/$nomTemp"
-        filePath = platformFile?.path ?: ""
+        filePath = platformFile?.path ?: filePath
     }
 }
 
@@ -476,12 +475,11 @@ fun ModifyProducto(
     }
 
     val fileType = listOf("jpg", "png")
-    FilePicker(show = showFilePicker, fileExtensions = fileType) { platformFile ->
+    FilePicker(
+        show = showFilePicker,
+        fileExtensions = fileType
+    ) { platformFile ->
         showFilePicker = false
-//        val nomTemp = platformFile?.path?.split("\\")?.last()
-//        println(nomTemp)
-//        File(platformFile?.path ?: "").copyTo(File("C:/Images/$nomTemp"), true)
-//        nombreF = "prodImgs/$nomTemp"
-        filePath = platformFile?.path ?: ""
+        filePath = platformFile?.path ?: filePath
     }
 }

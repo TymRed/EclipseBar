@@ -2,7 +2,6 @@ package gui
 
 import androidx.compose.runtime.Composable
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.ui.Modifier
@@ -16,9 +15,7 @@ import structure.Colores
 import kotlin.random.Random
 
 @Composable
-fun Estadisticas() {
-
-
+fun Charts() {
     Surface(color = Colores.color1) {
         Column(
             modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(20.dp)
@@ -26,7 +23,6 @@ fun Estadisticas() {
             PieChartView()
         }
     }
-
 }
 
 @Composable
@@ -39,7 +35,6 @@ fun PieChartView() {
                 ), PieChartData.Slice(randomLength(), randomColor()), PieChartData.Slice(randomLength(), randomColor())
             )
         ),
-        // Optional properties.
         modifier = Modifier.fillMaxSize(), animation = simpleChartAnimation(), sliceDrawer = SimpleSliceDrawer()
     )
 }

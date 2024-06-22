@@ -26,11 +26,12 @@ import androidx.compose.ui.window.rememberWindowState
 import structure.Colores
 
 @Composable
-fun Aplicacion() {
+fun Application() {
     var wind by remember { mutableStateOf(1) }
     val windChange: () -> Unit = {
-        wind = if (wind == 1) 2
-        else 1
+        wind =
+            if (wind == 1) 2
+            else 1
     }
 
     when (wind) {
@@ -41,11 +42,11 @@ fun Aplicacion() {
 
 @Composable
 fun LogIn(windChange: () -> Unit) {
-    var nombre by remember { mutableStateOf("") }
-    var contrasena by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
-    val comprobarNombre = comprobarNombre(nombre)
-    val comprobarCont = comprobarContrasena(contrasena)
+    val checkName = comprobarNombre(name)
+    val checkPassword = comprobarContrasena(password)
 
     Surface(color = Colores.color1) {
         Box(
@@ -72,8 +73,8 @@ fun LogIn(windChange: () -> Unit) {
                     Text("Aplicacion TPV")
 
 
-                    MyTextField(nombre, "Nombre", comprobarNombre) { nombre = it }
-                    MyTextField(contrasena, "Contraseña", comprobarCont) { contrasena = it }
+                    MyTextField(name, "Nombre", checkName) { name = it }
+                    MyTextField(password, "Contraseña", checkPassword) { password = it }
 
 
                     Button(
@@ -112,24 +113,32 @@ fun LogIn(windChange: () -> Unit) {
 fun App(windChange: () -> Unit) {
     var active by remember { mutableStateOf(1) }
 
-    val activeChange: (Int) -> Unit = { index ->
+    val changeActive: (Int) -> Unit = { index ->
         active = index
     }
 
     Column {
-        MenuBar(active, activeChange, modifier = Modifier.background(Colores.color5), windChange)
+        MenuBar(
+            active,
+            changeActive,
+            windChange,
+            modifier = Modifier.background(Colores.color5),
+        )
         when (active) {
-            1 -> PanelPrincipal()
+            1 -> Menu()
             2 -> Stock()
             3 -> Historial()
-            4 -> Estadisticas()
+            4 -> Charts()
         }
     }
 }
 
 @Composable
 fun MenuBar(
-    active: Int, activeChange: (Int) -> Unit, modifier: Modifier = Modifier, windChange: () -> Unit
+    active: Int,
+    activeChange: (Int) -> Unit,
+    windChange: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
@@ -149,20 +158,29 @@ fun MenuBar(
 }
 
 @Composable
-fun MenuBarText(text: String, active: Boolean, prueba: () -> Unit) {
+fun MenuBarText(
+    text: String,
+    active: Boolean,
+    changePanel: () -> Unit
+) {
     Text(
         text,
         color = if (active) Colores.color3 else Colores.color1,
-        modifier = Modifier.clickable(onClick = prueba).padding(10.dp)
+        modifier = Modifier.clickable(onClick = changePanel).padding(10.dp)
     )
 }
 
 
 @Composable
-fun MyTextField(nombre: String, placeholder: String, verif: Boolean, change: (String) -> Unit) {
+fun MyTextField(
+    name: String,
+    placeholder: String,
+    verif: Boolean,
+    change: (String) -> Unit
+) {
     val fontSize = if (placeholder == "Contraseña") 20.sp else 16.sp
     TextField(
-        value = nombre,
+        value = name,
         textStyle = TextStyle(color = Colores.color3, fontSize = fontSize),
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color.White, focusedIndicatorColor = Colores.color3, cursorColor = Colores.color3
@@ -177,35 +195,34 @@ fun MyTextField(nombre: String, placeholder: String, verif: Boolean, change: (St
     )
 }
 
-fun comprobarNombre(nombreUsuario: String): Boolean {
-    val longitudAdecuada = nombreUsuario.length in 4..16
+fun comprobarNombre(userName: String): Boolean {
+    val okLength = userName.length in 4..16
 
-    if (nombreUsuario.isEmpty() || !longitudAdecuada) {
+    if (userName.isEmpty() || !okLength) {
         return false
     }
 
-    val may1 = nombreUsuario[0] in 'A'..'Z'
-    val adecuado = nombreUsuario.substring(1).matches("[a-z]*".toRegex())
+    val firstUpper = userName[0] in 'A'..'Z'
+    val ok = userName.substring(1).matches("[a-z]*".toRegex())
 
-    return may1 && adecuado
+    return firstUpper && ok
 }
 
-fun comprobarContrasena(contrasena: String): Boolean {
-    val longitudAdecuada = contrasena.length in 4..16
+fun comprobarContrasena(password: String): Boolean {
+    val okLength = password.length in 4..16
 
-    if (contrasena.isEmpty() || !longitudAdecuada) {
+    if (password.isEmpty() || !okLength) {
         return false
     }
 
-    val hayMin = contrasena.matches(".*[a-z].*".toRegex())
-    val hayMay = contrasena.matches(".*[A-Z].*".toRegex())
-    val hayNum = contrasena.matches(".*[1-9].*".toRegex())
+    val hasLowerCase = password.matches(".*[a-z].*".toRegex())
+    val hasUpperCase = password.matches(".*[A-Z].*".toRegex())
+    val hasNumber = password.matches(".*[1-9].*".toRegex())
 
-    return hayMin && hayMay && hayNum
+    return hasLowerCase && hasUpperCase && hasNumber
 }
 
 fun main() = application {
-
     val state = rememberWindowState(placement = WindowPlacement.Maximized)
 
     Window(
@@ -214,6 +231,6 @@ fun main() = application {
         title = "Eclipse",
         icon = painterResource("Logo.svg"),
     ) {
-        Aplicacion()
+        Application()
     }
 }

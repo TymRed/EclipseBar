@@ -25,8 +25,12 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @Composable
-fun DialogDatePicker(gestionCalendar: () -> Unit, cambiarFecha: (String?) -> Unit, cambiarFecha2: (LocalDate) -> Unit) {
-    Dialog(onDismissRequest = gestionCalendar) {
+fun DialogDatePicker(
+    changeCalendarState: () -> Unit,
+    changeDate1: (String?) -> Unit,
+    changeDate2: (LocalDate) -> Unit
+) {
+    Dialog(onDismissRequest = changeCalendarState) {
         Column(modifier = Modifier.width(IntrinsicSize.Min).background(Color.White)) {
             val pair = DatePicker()
             val fechaSelected = pair.first
@@ -36,11 +40,14 @@ fun DialogDatePicker(gestionCalendar: () -> Unit, cambiarFecha: (String?) -> Uni
                 modifier = Modifier.fillMaxWidth().background(Colores.color1),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                Boton("Cerrar", modifier = Modifier.width(120.dp), funcion = gestionCalendar)
+                Boton(
+                    "Cerrar",
+                    modifier = Modifier.width(120.dp),
+                    function = changeCalendarState)
                 Spacer(modifier = Modifier.width(10.dp))
                 Boton("Confirmar", modifier = Modifier.width(120.dp),
-                    funcion = {
-                        cambiarFecha(fechaSelected)
+                    function = {
+                        changeDate1(fechaSelected)
 
                         val year = selected[Calendar.YEAR]
                         val month = if (selected.get(Calendar.MONTH) + 1 < 10) {
@@ -50,7 +57,7 @@ fun DialogDatePicker(gestionCalendar: () -> Unit, cambiarFecha: (String?) -> Uni
                             "0" + selected.get(Calendar.DATE)
                         } else selected.get(Calendar.DATE)
 
-                        cambiarFecha2(LocalDate.parse("$year-$month-$date"))
+                        changeDate2(LocalDate.parse("$year-$month-$date"))
                     }
                 )
             }

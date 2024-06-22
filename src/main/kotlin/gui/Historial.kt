@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import structure.Colores
 import structure.Filter
-import structure.Pedido
+import structure.Order
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalTime
@@ -39,48 +39,47 @@ fun Historial() {
             modifier = Modifier.fillMaxSize().padding(20.dp)
                 .background(color = Color.White, shape = RoundedCornerShape(20.dp)),
         ) {
-            var fil by remember { mutableStateOf(Filter()) }
-            val filChange: (Filter) -> Unit = {
-                fil = it
+            var filter by remember { mutableStateOf(Filter()) }
+            val changeFilter: (Filter) -> Unit = {
+                filter = it
             }
 
-            Filtros(filChange)
-
-            HistorialPedidos(fil)
+            Filters(changeFilter)
+            OrderList(filter)
         }
     }
 }
 
 @Composable
-fun HistorialPedidos(fil: Filter) {
-    val hora = LocalTime.now()
-    val pedidos: SnapshotStateList<Pedido> = remember {
+fun OrderList(fil: Filter) {
+    val time = LocalTime.now()
+    val orders: SnapshotStateList<Order> = remember {
         mutableStateListOf(
-            Pedido(1, fecha(), hora, importe(), "Toño"),
-            Pedido(367, fecha(), hora, importe(), "Camarero 1"),
-            Pedido(23, fecha(), hora, importe(), "Toño"),
-            Pedido(500, fecha(), hora, importe(), "Camarero 2"),
-            Pedido(85, fecha(), hora, importe(), "Toño"),
-            Pedido(75, fecha(), hora, importe(), "Toño"),
-            Pedido(457, fecha(), hora, importe(), "Camarero 3"),
-            Pedido(125, fecha(), hora, importe(), "Camarero 2"),
-            Pedido(824, fecha(), hora, importe(), "Camarero 2"),
-            Pedido(1002, fecha(), hora, importe(), "Camarero 3"),
-            Pedido(253, fecha(), hora, importe(), "Camarero 1"),
+            Order(1, date(), time, amount(), "Toño"),
+            Order(367, date(), time, amount(), "Camarero 1"),
+            Order(23, date(), time, amount(), "Toño"),
+            Order(500, date(), time, amount(), "Camarero 2"),
+            Order(85, date(), time, amount(), "Toño"),
+            Order(75, date(), time, amount(), "Toño"),
+            Order(457, date(), time, amount(), "Camarero 3"),
+            Order(125, date(), time, amount(), "Camarero 2"),
+            Order(824, date(), time, amount(), "Camarero 2"),
+            Order(1002, date(), time, amount(), "Camarero 3"),
+            Order(253, date(), time, amount(), "Camarero 1"),
         )
     }
 
-    val passNumPedido: (Pedido) -> Boolean = { pedido ->
-        pedido.numero in fil.numPedidos
+    val passOrderNumber: (Order) -> Boolean = { pedido ->
+        pedido.number in fil.orderNumber
     }
-    val passImporte: (Pedido) -> Boolean = { pedido ->
-        pedido.importe in fil.importeRange || (fil.importeRange.endInclusive == 100f && pedido.importe >= 100f)
+    val passAmount: (Order) -> Boolean = { pedido ->
+        pedido.amount in fil.amountRange || (fil.amountRange.endInclusive == 100f && pedido.amount >= 100f)
     }
-    val passCamarero: (Pedido) -> Boolean = { pedido ->
-        pedido.camarero == fil.camarero || fil.camarero == "Todos"
+    val passWaiter: (Order) -> Boolean = { pedido ->
+        pedido.waiter == fil.waiter || fil.waiter == "Todos"
     }
-    val passFecha: (Pedido) -> Boolean = { pedido ->
-        pedido.fecha in fil.fechas
+    val passDate: (Order) -> Boolean = { pedido ->
+        pedido.date in fil.dateRange
     }
 
     var typeSort by remember { mutableStateOf(1) }
@@ -92,8 +91,8 @@ fun HistorialPedidos(fil: Filter) {
         } else asc = !asc
     }
 
-    val filterList = pedidos.filter { pedido ->
-        passNumPedido(pedido) && passCamarero(pedido) && passImporte(pedido) && passFecha(pedido)
+    val filterList = orders.filter { pedido ->
+        passOrderNumber(pedido) && passWaiter(pedido) && passAmount(pedido) && passDate(pedido)
     }.mySort(typeSort, asc)
 
     Column(
@@ -103,7 +102,6 @@ fun HistorialPedidos(fil: Filter) {
             modifier = Modifier.padding(10.dp).fillMaxWidth().fillMaxHeight(0.05F)
                 .background(Color.Transparent, RoundedCornerShape(10.dp))
         ) {
-            //TextSort("Numero", { changeSort(1) }, typeSort==1, asc, Modifier.weight(1F))
             TextSort("Numero", { changeSort(1) }, Modifier.weight(1F))
             TextSort("Fecha", { changeSort(2) }, Modifier.weight(1F))
             TextSort("Hora", { changeSort(3) }, Modifier.weight(1F))
@@ -114,7 +112,7 @@ fun HistorialPedidos(fil: Filter) {
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
         ) {
             items(filterList.size) { index ->
-                PedidoRow(filterList[index])
+                OrderRow(filterList[index])
                 Spacer(modifier = Modifier.height(10.dp))
             }
         }
@@ -124,7 +122,9 @@ fun HistorialPedidos(fil: Filter) {
 // " \uD83E\uDC61 \uD83E\uDC6B"
 @Composable
 fun TextSort(
-    text: String, changeSort: () -> Unit, modifier: Modifier = Modifier
+    text: String,
+    changeSort: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
@@ -134,25 +134,25 @@ fun TextSort(
     )
 }
 
-private fun List<Pedido>.mySort(type: Int, asc: Boolean): List<Pedido> {
+private fun List<Order>.mySort(type: Int, asc: Boolean): List<Order> {
     return when (type) {
-        1 -> if (asc) this.sortedBy { it.numero } else this.sortedByDescending { it.numero }
-        2 -> if (asc) this.sortedBy { it.fecha } else this.sortedByDescending { it.fecha }
-        3 -> if (asc) this.sortedBy { it.hora } else this.sortedByDescending { it.hora }
-        4 -> if (asc) this.sortedBy { it.importe } else this.sortedByDescending { it.importe }
-        5 -> if (asc) this.sortedBy { it.camarero } else this.sortedByDescending { it.camarero }
+        1 -> if (asc) this.sortedBy { it.number } else this.sortedByDescending { it.number }
+        2 -> if (asc) this.sortedBy { it.date } else this.sortedByDescending { it.date }
+        3 -> if (asc) this.sortedBy { it.time } else this.sortedByDescending { it.time }
+        4 -> if (asc) this.sortedBy { it.amount } else this.sortedByDescending { it.amount }
+        5 -> if (asc) this.sortedBy { it.waiter } else this.sortedByDescending { it.waiter }
         else -> this
     }
 }
 
 
 //For Debug
-fun importe(): Double {
+fun amount(): Double {
     return (1..200).random().toDouble()
 }
 
 //For Debug
-fun fecha(): LocalDate {
+fun date(): LocalDate {
     val year = 2024
     val month = (1..6).random()
     val day = (1..28).random()
@@ -160,29 +160,33 @@ fun fecha(): LocalDate {
 }
 
 @Composable
-fun PedidoRow(pedido: Pedido) {
+fun OrderRow(order: Order) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth().background(Colores.color2, RoundedCornerShape(10.dp)).padding(10.dp)
     ) {
-        Text(pedido.numero.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
-        Text(pedido.fecha.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+        Text(order.number.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+        Text(order.date.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
         Text(
-            pedido.hora.format(DateTimeFormatter.ofPattern("HH:mm")),
+            order.time.format(DateTimeFormatter.ofPattern("HH:mm")),
             textAlign = TextAlign.Center,
             modifier = Modifier.weight(1F)
         )
-        Text(pedido.importe.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
-        Text(pedido.camarero, textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+        Text(order.amount.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+        Text(order.waiter, textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
     }
 }
 
 @Composable
-fun Filtros(filChange: (Filter) -> Unit) {
+fun Filters(filChange: (Filter) -> Unit) {
     Column(
         verticalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier.padding(10.dp).fillMaxHeight().fillMaxWidth(0.25F)
-            .background(color = Colores.color2, shape = RoundedCornerShape(20.dp)).padding(horizontal = 10.dp)
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxHeight()
+            .fillMaxWidth(0.25F)
+            .background(color = Colores.color2, shape = RoundedCornerShape(20.dp))
+            .padding(horizontal = 10.dp)
     ) {
         Text(
             text = "FILTROS:",
@@ -192,74 +196,75 @@ fun Filtros(filChange: (Filter) -> Unit) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        var numPedidoMin = 0
-        var numPedidoMax = 1000
+        var minOrderNumber = 0
+        var maxOrderNumber = 1000
 
         Column(
             modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))
         ) {
             var sliderPosition by remember { mutableStateOf(0f..1000f) }
-            val ajustarRango: (ClosedFloatingPointRange<Float>) -> Unit = { range ->
+            val changeRange: (ClosedFloatingPointRange<Float>) -> Unit = { range ->
                 sliderPosition = range.start.toInt().toFloat()..range.endInclusive.toInt().toFloat()
             }
 
-            numPedidoMin = sliderPosition.start.toInt()
-            numPedidoMax = sliderPosition.endInclusive.toInt()
+            minOrderNumber = sliderPosition.start.toInt()
+            maxOrderNumber = sliderPosition.endInclusive.toInt()
 
             Text(
-                text = "Numero pedido: $numPedidoMin - $numPedidoMax", modifier = Modifier.offset(y = 7.dp, x = 6.dp)
+                text = "Numero pedido: $minOrderNumber - $maxOrderNumber",
+                modifier = Modifier.offset(y = 7.dp, x = 6.dp)
             )
-            RangeSliderFloat(sliderPosition, ajustarRango, 1000f)
+            RangeSliderFloat(sliderPosition, changeRange, 1000f)
         }
 
-        var camarero by remember { mutableStateOf("Todos") }
+        var waiter by remember { mutableStateOf("Todos") }
 
         Surface(color = Color.White, shape = RoundedCornerShape(10.dp)) {
-            val camareros = remember { listOf("Todos", "Toño", "Camarero 2", "Camarero 3") }
-            val cambiarCamarero: (String) -> Unit = { camarero = it }
-            val text = "Camarero: $camarero"
-            ComboBox(text, camareros, cambiarCamarero)
+            val waiters = remember { listOf("Todos", "Toño", "Camarero 2", "Camarero 3") }
+            val changeWaiter: (String) -> Unit = { waiter = it }
+            val text = "Camarero: $waiter"
+            ComboBox(text, waiters, changeWaiter)
         }
 
-        var importeMin = 0f
-        var importeMax = 100f
+        var minAmount = 0f
+        var maxAmount = 100f
 
         Column(
             modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))
         ) {
             val rangeMax = 100f
             var sliderPosition by remember { mutableStateOf(0f..rangeMax) }
-            val ajustarRango: (ClosedFloatingPointRange<Float>) -> Unit = { range ->
+            val changeRange: (ClosedFloatingPointRange<Float>) -> Unit = { range ->
                 if (range.start <= range.endInclusive) {
                     sliderPosition = range
                 }
             }
             val steps = (rangeMax / 5).toInt() - 1
 
-            importeMin = ((sliderPosition.start * 100.0).roundToInt() / 100.0).toFloat()
-            importeMax = ((sliderPosition.endInclusive * 100.0).roundToInt() / 100.0).toFloat()
+            minAmount = ((sliderPosition.start * 100.0).roundToInt() / 100.0).toFloat()
+            maxAmount = ((sliderPosition.endInclusive * 100.0).roundToInt() / 100.0).toFloat()
             Text(
-                text = "Importe: Minimo: $importeMin  Maximo: $importeMax",
+                text = "Importe: Minimo: $minAmount  Maximo: $maxAmount",
                 modifier = Modifier.offset(y = 7.dp, x = 6.dp)
             )
-            RangeSliderFloat(sliderPosition, ajustarRango, rangeMax, steps)
+            RangeSliderFloat(sliderPosition, changeRange, rangeMax, steps)
         }
 
 
-        var fechaInicio by remember { mutableStateOf(LocalDate.of(2024, 1, 1)) }
-        var fechaFinal by remember { mutableStateOf(LocalDate.now()) }
-        val cambiarFechaIn: (LocalDate) -> Unit = { fechaInicio = it }
-        val cambiarFechaFin: (LocalDate) -> Unit = { fechaFinal = it }
-        Fechas("Inicio", cambiarFechaIn)
-        Fechas("Final", cambiarFechaFin)
+        var firstDate by remember { mutableStateOf(LocalDate.of(2024, 1, 1)) }
+        var secondDate by remember { mutableStateOf(LocalDate.now()) }
+        val changeFirstDate: (LocalDate) -> Unit = { firstDate = it }
+        val changeSecondDate: (LocalDate) -> Unit = { secondDate = it }
+        Dates("Inicio", changeFirstDate)
+        Dates("Final", changeSecondDate)
 
-        Boton("AplicarFiltros", funcion = {
+        Boton("AplicarFiltros", function = {
             filChange(
                 Filter(
-                    numPedidos = numPedidoMin..numPedidoMax,
-                    fechas = (fechaInicio..fechaFinal),
-                    camarero = camarero,
-                    importeRange = importeMin..importeMax
+                    orderNumber = minOrderNumber..maxOrderNumber,
+                    dateRange = (firstDate..secondDate),
+                    waiter = waiter,
+                    amountRange = minAmount..maxAmount
                 ),
             )
         })
@@ -268,43 +273,49 @@ fun Filtros(filChange: (Filter) -> Unit) {
 
 
 @Composable
-fun Fechas(tipo: String, cambiarFechaDate: (LocalDate) -> Unit) {
-    var abierto by remember { mutableStateOf(false) }
-    val cerrarCalendario = { abierto = false }
+fun Dates(
+    tipo: String,
+    changeDateLoc: (LocalDate) -> Unit
+) {
+    var isOpen by remember { mutableStateOf(false) }
+    val closeCalendar = { isOpen = false }
 
-    val date: Date = if (tipo == "Inicio") {
+    val dateType: Date = if (tipo == "Inicio") {
         SimpleDateFormat("dd/mm/yyyy").parse("01/01/2024")
     } else Date()
 
     val loc = Locale.Builder().setRegion("ES").setLanguage("es").build()
 
-    var fecha by remember {
+    var date by remember {
         mutableStateOf(
-            SimpleDateFormat("EEE, d MMM (YYYY)", loc).format(date)
+            SimpleDateFormat("EEE, d MMM (YYYY)", loc).format(dateType)
         )
     }
-
-    val cambiarFecha: (String?) -> Unit = { abierto = false; fecha = if (it.isNullOrEmpty()) "" else it }
+    val changeDate: (String?) -> Unit = { isOpen = false; date = if (it.isNullOrEmpty()) "" else it }
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(10.dp))
     ) {
-        Text("Fecha $tipo : $fecha")
-        IconButton(onClick = { abierto = true }) {
+        Text("Fecha $tipo : $date")
+        IconButton(onClick = { isOpen = true }) {
             Icon(Icons.Default.MoreVert, contentDescription = "Abrir calendario")
         }
     }
 
-    if (abierto) {
-        DialogDatePicker(cerrarCalendario, cambiarFecha, cambiarFechaDate)
+    if (isOpen) {
+        DialogDatePicker(closeCalendar, changeDate, changeDateLoc)
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ComboBox(text: String, lista: List<String>, cambiarCamarero: (String) -> Unit) {
+fun ComboBox(
+    text: String,
+    list: List<String>,
+    change: (String) -> Unit
+) {
     var visible by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(expanded = false, onExpandedChange = {}) {
@@ -319,10 +330,12 @@ fun ComboBox(text: String, lista: List<String>, cambiarCamarero: (String) -> Uni
             }
         }
         ExposedDropdownMenu(
-            expanded = visible, onDismissRequest = { visible = false }, modifier = Modifier.width(IntrinsicSize.Min)
+            expanded = visible,
+            onDismissRequest = { visible = false },
+            modifier = Modifier.width(IntrinsicSize.Min)
         ) {
-            for (item in lista) {
-                DropdownMenuItem(onClick = { visible = false; cambiarCamarero(item) }) {
+            for (item in list) {
+                DropdownMenuItem(onClick = { visible = false; change(item) }) {
                     Text(item)
                 }
                 Divider()
@@ -336,7 +349,7 @@ fun ComboBox(text: String, lista: List<String>, cambiarCamarero: (String) -> Uni
 @Composable
 fun RangeSliderFloat(
     sliderPosition: ClosedFloatingPointRange<Float>,
-    ajustarRango: (ClosedFloatingPointRange<Float>) -> Unit,
+    changeRange: (ClosedFloatingPointRange<Float>) -> Unit,
     rangeMax: Float,
     steps: Int = 0
 ) {
@@ -345,7 +358,7 @@ fun RangeSliderFloat(
         RangeSlider(
             value = sliderPosition,
             steps = steps,
-            onValueChange = ajustarRango,
+            onValueChange = changeRange,
             valueRange = 0f..rangeMax,
             colors = SliderDefaults.colors(
                 thumbColor = Colores.color3,

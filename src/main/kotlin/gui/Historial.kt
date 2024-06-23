@@ -211,8 +211,8 @@ fun Filters(filChange: (Filter) -> Unit) {
             }
             val steps = (rangeMax / 5).toInt() - 1
 
-            minAmount = ((sliderPosition.start * 100.0).roundToInt() / 100.0).toFloat()
-            maxAmount = ((sliderPosition.endInclusive * 100.0).roundToInt() / 100.0).toFloat()
+            minAmount = ((sliderPosition.start * 100.0).toInt() / 100.0).toFloat()
+            maxAmount = ((sliderPosition.endInclusive * 100.0).toInt() / 100.0).toFloat()
             Text(
                 text = "Importe: Minimo: $minAmount  Maximo: $maxAmount",
                 modifier = Modifier.offset(y = 7.dp, x = 6.dp)
@@ -337,9 +337,11 @@ fun RangeSliderFloat(
                 inactiveTrackColor = Colores.color3.copy(alpha = 0.3f)
             ),
             onValueChangeFinished = {
-                changeRange(
-                    sliderPosition.start.roundToInt().toFloat()..sliderPosition.endInclusive.roundToInt().toFloat()
-                )
+                if (steps == 0){
+                    changeRange(
+                        sliderPosition.start.roundToInt().toFloat()..sliderPosition.endInclusive.roundToInt().toFloat()
+                    )
+                }
             },
         )
     }

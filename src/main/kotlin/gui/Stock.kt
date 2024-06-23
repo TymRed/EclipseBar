@@ -289,7 +289,7 @@ fun AddProduct(
                     )
                     CustomTextField(
                         text = stock,
-                        valueChange = { stock = it },
+                        valueChange = { if (it.matches(Regex("^[0-9]{0,6}?"))) stock = it },
                         modifier = Modifier.height(50.dp)
                             .fillMaxWidth()
                             .padding(end = 10.dp)
@@ -436,7 +436,7 @@ fun ModifyProducto(
                     )
                     CustomTextField(
                         text = stock,
-                        valueChange = { stock = it },
+                        valueChange = { if (it.matches(Regex("^[0-9]{0,6}?"))) stock = it },
                         modifier = Modifier.height(50.dp).fillMaxWidth().padding(end = 10.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
                         centered = false,

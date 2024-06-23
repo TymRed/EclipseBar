@@ -386,7 +386,7 @@ fun MenuItem(
 
 @Composable
 fun Boton(
-    texto: String,
+    text: String,
     shape: Shape = RoundedCornerShape(10.dp),
     modifier: Modifier = Modifier,
     function: () -> Unit,
@@ -398,7 +398,7 @@ fun Boton(
         shape = shape,
         modifier = modifier
     ) {
-        Text(texto)
+        Text(text)
     }
 }
 

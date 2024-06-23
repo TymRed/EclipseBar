@@ -102,7 +102,7 @@ fun LogIn(windChange: () -> Unit) {
             ) {
                 Text("Sofware desarrollado por Tymur Kulivar y Javier Redondo", color = Colores.color6)
                 Spacer(modifier = Modifier.fillMaxWidth(0.9F))
-                Text("Ver. 1.0", color = Colores.color6)
+                Text("Ver. 1.4", color = Colores.color6)
             }
         }
     }
@@ -112,7 +112,6 @@ fun LogIn(windChange: () -> Unit) {
 @Composable
 fun App(windChange: () -> Unit) {
     var active by remember { mutableStateOf(1) }
-
     val changeActive: (Int) -> Unit = { index ->
         active = index
     }

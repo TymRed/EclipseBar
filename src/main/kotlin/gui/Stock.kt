@@ -125,7 +125,7 @@ fun Stock() {
                                 .background(color = Colores.color1, shape = RoundedCornerShape(10.dp))
                                 .padding(horizontal = 10.dp),
                             centered = false,
-                            placeholderText = "Buscar"
+                            placeholderText = "Buscar ⌕"
                         )
                     }
                     Spacer(modifier = Modifier.width(0.dp))
@@ -185,14 +185,14 @@ fun Stock() {
                                 modifier = Modifier.fillMaxWidth(0.6F)
                             ) {
                                 Boton(
-                                    texto = "M",
+                                    text = "M",
                                     function = { saveObject(prod) },
                                     color = Color.Blue.copy(alpha = 0.9f),
                                     modifier = Modifier.weight(1F)
                                 )
                                 Spacer(modifier = Modifier.width(20.dp))
                                 Boton(
-                                    texto = "X",
+                                    text = "X",
                                     function = { productList.remove(prod) },
                                     color = Color.Red.copy(alpha = 0.9f),
                                     modifier = Modifier.weight(1F)

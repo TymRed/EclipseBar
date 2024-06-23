@@ -82,7 +82,7 @@ fun OrderList(fil: Filter) {
         modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(10.dp)
     ) {
         Row(
-            modifier = Modifier.padding(10.dp, 0.dp,10.dp,10.dp,).fillMaxWidth().fillMaxHeight(0.05F)
+            modifier = Modifier.padding(10.dp, 0.dp, 10.dp, 10.dp).fillMaxWidth().fillMaxHeight(0.05F)
                 .background(Color.Transparent, RoundedCornerShape(10.dp))
         ) {
             TextSort(
@@ -142,10 +142,10 @@ fun TextSort(
     asc: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val arrow = if (active){
+    val arrow = if (active) {
         if (asc) " \uD83E\uDC61"
         else " \uD83E\uDC6B"
-    }else ""
+    } else ""
 
     Text(
         text = text + arrow,
@@ -207,27 +207,30 @@ fun Filters(filChange: (Filter) -> Unit) {
         var minOrderNumber = 0
         var maxOrderNumber = max
 
+        var slider1Position by remember { mutableStateOf(0f..max.toFloat()) }
         Column(
-            modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))
+            modifier = Modifier
+                .background(Color.White, RoundedCornerShape(10.dp))
+                .padding(horizontal = 5.dp)
         ) {
-            var sliderPosition by remember { mutableStateOf(0f..max.toFloat()) }
             val changeRange: (ClosedFloatingPointRange<Float>) -> Unit = { range ->
-                sliderPosition = range.start..range.endInclusive
+                slider1Position = range.start..range.endInclusive
             }
-
-            minOrderNumber = sliderPosition.start.roundToInt()
-            maxOrderNumber = sliderPosition.endInclusive.roundToInt()
+            minOrderNumber = slider1Position.start.roundToInt()
+            maxOrderNumber = slider1Position.endInclusive.roundToInt()
 
             Text(
                 text = "Numero pedido: $minOrderNumber - $maxOrderNumber",
                 modifier = Modifier.offset(y = 7.dp, x = 6.dp)
             )
-            RangeSliderFloat(sliderPosition, changeRange, max.toFloat())
+            RangeSliderFloat(slider1Position, changeRange, max.toFloat())
         }
 
         var waiter by remember { mutableStateOf("Todos") }
-
-        Surface(color = Color.White, shape = RoundedCornerShape(10.dp)) {
+        Surface(
+            color = Color.White,
+            shape = RoundedCornerShape(10.dp),
+        ) {
             val waiters = remember { listOf("Todos", "Toño", "Camarero 2", "Camarero 3") }
             val changeWaiter: (String) -> Unit = { waiter = it }
             val text = "Camarero: $waiter"
@@ -237,25 +240,27 @@ fun Filters(filChange: (Filter) -> Unit) {
         var minAmount = 0f
         var maxAmount = 100f
 
+        val rangeMax = 100f
+        var slider2Position by remember { mutableStateOf(0f..rangeMax) }
         Column(
-            modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))
+            modifier = Modifier
+                .background(Color.White, RoundedCornerShape(10.dp))
+                .padding(horizontal = 5.dp)
         ) {
-            val rangeMax = 100f
-            var sliderPosition by remember { mutableStateOf(0f..rangeMax) }
             val changeRange: (ClosedFloatingPointRange<Float>) -> Unit = { range ->
                 if (range.start <= range.endInclusive) {
-                    sliderPosition = range
+                    slider2Position = range
                 }
             }
             val steps = (rangeMax / 5).toInt() - 1
 
-            minAmount = ((sliderPosition.start * 100.0).toInt() / 100.0).toFloat()
-            maxAmount = ((sliderPosition.endInclusive * 100.0).toInt() / 100.0).toFloat()
+            minAmount = ((slider2Position.start * 100.0).toInt() / 100.0).toFloat()
+            maxAmount = ((slider2Position.endInclusive * 100.0).toInt() / 100.0).toFloat()
             Text(
                 text = "Importe: Minimo: $minAmount  Maximo: $maxAmount",
                 modifier = Modifier.offset(y = 7.dp, x = 6.dp)
             )
-            RangeSliderFloat(sliderPosition, changeRange, rangeMax, steps)
+            RangeSliderFloat(slider2Position, changeRange, rangeMax, steps)
         }
 
 
@@ -266,16 +271,38 @@ fun Filters(filChange: (Filter) -> Unit) {
         Dates("Inicio", changeFirstDate)
         Dates("Final", changeSecondDate)
 
-        Boton("AplicarFiltros", function = {
-            filChange(
-                Filter(
-                    orderNumber = minOrderNumber..maxOrderNumber,
-                    dateRange = (firstDate..secondDate),
-                    waiter = waiter,
-                    amountRange = minAmount..maxAmount
-                ),
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Boton(
+                text = "Aplicar",
+                modifier = Modifier.weight(1F),
+                function = {
+                    filChange(
+                        Filter(
+                            orderNumber = minOrderNumber..maxOrderNumber,
+                            dateRange = (firstDate..secondDate),
+                            waiter = waiter,
+                            amountRange = minAmount..maxAmount
+                        )
+                    )
+                }
             )
-        })
+            Spacer(modifier = Modifier.width(15.dp))
+            Boton(
+                text = "Resetear",
+                modifier = Modifier.weight(1F),
+                function = {
+                    slider1Position = 0f..max.toFloat()
+                    waiter = "Todos"
+                    slider2Position = 0f..rangeMax
+                    firstDate = LocalDate.of(2024, 1, 1)
+                    secondDate = LocalDate.now()
+                    filChange(Filter())
+                }
+            )
+        }
     }
 }
 
@@ -304,7 +331,10 @@ fun Dates(
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(10.dp))
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(10.dp))
+            .padding(start = 5.dp)
     ) {
         Text("Fecha $tipo : $date")
         IconButton(onClick = { isOpen = true }) {
@@ -330,7 +360,10 @@ fun ComboBox(
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(10.dp))
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White, RoundedCornerShape(10.dp))
+                .padding(start = 5.dp)
         ) {
             Text(text)
             IconButton(onClick = { visible = true }) {
@@ -375,7 +408,7 @@ fun RangeSliderFloat(
                 inactiveTrackColor = Colores.color3.copy(alpha = 0.3f)
             ),
             onValueChangeFinished = {
-                if (steps == 0){
+                if (steps == 0) {
                     changeRange(
                         sliderPosition.start.roundToInt().toFloat()..sliderPosition.endInclusive.roundToInt().toFloat()
                     )

@@ -65,7 +65,7 @@ val orders: SnapshotStateList<Order> =
     )
 
 data class Filter(
-    val orderNumber: IntRange = (0..1000),
+    val orderNumber: IntRange = (0..orders.maxBy { it.number }.number),
     val dateRange: ClosedRange<LocalDate> = LocalDate.of(2022, 8, 10)..LocalDate.now(),
     val waiter: String = "Todos",
     val amountRange: ClosedFloatingPointRange<Float> = (0.0f..1000.00f)

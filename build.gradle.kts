@@ -30,7 +30,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Eclipse"
-            packageVersion = "1.3.0"
+            packageVersion = "1.4.0"
             description = "TPV(Point of Sale) for Eclipse Bar"
             vendor = "Timasostima&RedondoDEV"
             windows {

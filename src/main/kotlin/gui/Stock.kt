@@ -51,6 +51,7 @@ fun Stock() {
         product = null
     }
 
+    var filterText by remember { mutableStateOf("") }
 
     Surface(color = Colores.color1) {
         Column(
@@ -62,46 +63,75 @@ fun Stock() {
             ) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(0.774F).padding(134.dp, 20.dp, 40.dp, 20.dp)
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 5.dp).fillMaxWidth().height(50.dp)
+
                 ) {
-                    Text(
-                        text = "Nombre",
-                        color = Colores.color4,
-                        fontSize = 17.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1F)
-                    )
-                    Text(
-                        text = "Categoría",
-                        color = Colores.color4,
-                        fontSize = 17.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1F)
-                    )
-                    Text(
-                        text = "Stock",
-                        color = Colores.color4,
-                        fontSize = 17.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1F)
-                    )
-                    Text(
-                        text = "Coste",
-                        color = Colores.color4,
-                        fontSize = 17.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1F)
-                    )
-                    Text(
-                        text = "PVP",
-                        color = Colores.color4,
-                        fontSize = 17.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1F)
-                    )
+                    Spacer(modifier = Modifier.fillMaxWidth(0.05F))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(0.7F)
+                    ) {
+                        Text(
+                            text = "Nombre",
+                            color = Colores.color4,
+                            fontSize = 17.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1F)
+                        )
+                        Text(
+                            text = "Categoría",
+                            color = Colores.color4,
+                            fontSize = 17.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1F)
+                        )
+                        Text(
+                            text = "Stock",
+                            color = Colores.color4,
+                            fontSize = 17.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1F)
+                        )
+                        Text(
+                            text = "Coste",
+                            color = Colores.color4,
+                            fontSize = 17.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1F)
+                        )
+                        Text(
+                            text = "PVP",
+                            color = Colores.color4,
+                            fontSize = 17.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1F)
+                        )
+                    }
+
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(0.6F)
+                    ){
+
+                        CustomTextField(
+                            text = filterText,
+                            valueChange = {filterText = it},
+                            modifier = Modifier
+                                .height(40.dp)
+                                .fillMaxWidth()
+                                .background(color = Colores.color1, shape = RoundedCornerShape(10.dp))
+                                .padding(horizontal = 10.dp),
+                            centered = false,
+                            placeholderText = "Buscar"
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(0.dp))
                 }
                 LazyColumn {
-                    items(productList) { prod ->
+                    items(productList.filter { it.name.lowercase().contains(filterText.lowercase()) }) { prod ->
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
@@ -148,25 +178,24 @@ fun Stock() {
                                     modifier = Modifier.weight(1F)
                                 )
                             }
-                            Spacer(
-                                modifier = Modifier.width(80.dp)
-                            )
+
                             Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
+                                horizontalArrangement = Arrangement.SpaceAround,
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth(0.4F)
+                                modifier = Modifier.fillMaxWidth(0.6F)
                             ) {
                                 Boton(
                                     texto = "M",
                                     function = { saveObject(prod) },
-                                    color = Color.Blue.copy(alpha = 0.9f)
+                                    color = Color.Blue.copy(alpha = 0.9f),
+                                    modifier = Modifier.weight(1F)
                                 )
+                                Spacer(modifier = Modifier.width(20.dp))
                                 Boton(
                                     texto = "X",
-                                    function = {
-                                        productList.remove(prod)
-                                    },
-                                    color = Color.Red.copy(alpha = 0.9f)
+                                    function = { productList.remove(prod) },
+                                    color = Color.Red.copy(alpha = 0.9f),
+                                    modifier = Modifier.weight(1F)
                                 )
                             }
                             Spacer(

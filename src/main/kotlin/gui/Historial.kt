@@ -82,15 +82,46 @@ fun OrderList(fil: Filter) {
         modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(10.dp)
     ) {
         Row(
-            modifier = Modifier.padding(10.dp).fillMaxWidth().fillMaxHeight(0.05F)
+            modifier = Modifier.padding(10.dp, 0.dp,10.dp,10.dp,).fillMaxWidth().fillMaxHeight(0.05F)
                 .background(Color.Transparent, RoundedCornerShape(10.dp))
         ) {
-            TextSort("Numero", { changeSort(1) }, Modifier.weight(1F))
-            TextSort("Fecha", { changeSort(2) }, Modifier.weight(1F))
-            TextSort("Hora", { changeSort(3) }, Modifier.weight(1F))
-            TextSort("Importe", { changeSort(4) }, Modifier.weight(1F))
-            TextSort("Camarero", { changeSort(5) }, Modifier.weight(1F))
+            TextSort(
+                text = "Numero",
+                { changeSort(1) },
+                active = typeSort == 1,
+                asc = asc,
+                Modifier.weight(1F)
+            )
+            TextSort(
+                text = "Fecha",
+                { changeSort(2) },
+                active = typeSort == 2,
+                asc = asc,
+                Modifier.weight(1F)
+            )
+            TextSort(
+                text = "Hora",
+                { changeSort(3) },
+                active = typeSort == 3,
+                asc = asc,
+                Modifier.weight(1F)
+            )
+            TextSort(
+                text = "Importe",
+                { changeSort(4) },
+                active = typeSort == 4,
+                asc = asc,
+                Modifier.weight(1F)
+            )
+            TextSort(
+                text = "Camarero",
+                { changeSort(5) },
+                active = typeSort == 5,
+                asc = asc,
+                Modifier.weight(1F)
+            )
         }
+
         LazyColumn(
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
         ) {
@@ -107,13 +138,20 @@ fun OrderList(fil: Filter) {
 fun TextSort(
     text: String,
     changeSort: () -> Unit,
+    active: Boolean,
+    asc: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val arrow = if (active){
+        if (asc) " \uD83E\uDC61"
+        else " \uD83E\uDC6B"
+    }else ""
+
     Text(
-        text = text,
+        text = text + arrow,
         textAlign = TextAlign.Center,
         color = Colores.color4,
-        modifier = modifier.clickable(onClick = changeSort)
+        modifier = modifier.clickable(onClick = changeSort).fillMaxHeight().wrapContentHeight()
     )
 }
 

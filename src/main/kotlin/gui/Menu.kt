@@ -84,7 +84,7 @@ fun Menu() {
                                         number = orders.maxBy { it.number }.number + 1,
                                         date = LocalDate.now(),
                                         time = LocalTime.now(),
-                                        amount = amountDouble - sum,
+                                        amount = "%.2f".format(amountDouble - sum).replace(",", ".").toDouble(),
                                         waiter = "Toño"
                                     )
                                 )
@@ -141,7 +141,7 @@ fun Orders(
         ) {
 
             Text(
-                text = String.format("Total: %.2f€", sum), Modifier.weight(1F), color = Colores.color1
+                text = "Total: %.2f€".format(sum), Modifier.weight(1F), color = Colores.color1
             )
             CustomTextField(
                 amount,
@@ -150,7 +150,7 @@ fun Orders(
                     .background(color = Colores.color1, shape = RoundedCornerShape(10.dp))
             )
             Text(
-                text = String.format("Cambio: %.2f€", amountDouble - sum),
+                text = "Cambio: %.2f€".format(amountDouble - sum),
                 textAlign = TextAlign.Right,
                 modifier = Modifier.weight(1F),
                 color = Colores.color1
@@ -182,7 +182,7 @@ fun OrderRow(
             modifier = Modifier.fillMaxWidth().weight(1F)
         )
         Text(
-            String.format("%.2f€", order.product.price * order.quantity),
+            "%.2f€".format(order.product.price * order.quantity),
             modifier = Modifier.fillMaxWidth().weight(1F)
         )
         Button(
@@ -360,7 +360,6 @@ fun MenuItem(
         }
     ) {
         Column(modifier = Modifier.padding(15.dp)) {
-
             if (card.photo.ruta.contains(":")) {
                 Image(
                     bitmap = loadImageBitmap(File(card.photo.ruta).inputStream()),
@@ -378,7 +377,7 @@ fun MenuItem(
             }
 
             Spacer(modifier = Modifier.height(30.dp))
-            Text(card.price.toString())
+            Text("${card.price}€")
             Text(card.name)
         }
     }

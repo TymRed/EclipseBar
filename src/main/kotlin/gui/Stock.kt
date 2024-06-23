@@ -138,12 +138,12 @@ fun Stock() {
                                     modifier = Modifier.weight(1F)
                                 )
                                 Text(
-                                    text = prod.price.toString(),
+                                    text = "${prod.price}€",
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.weight(1F)
                                 )
                                 Text(
-                                    text = prod.pvp.toString(),
+                                    text = "${prod.pvp}€",
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.weight(1F)
                                 )

@@ -79,12 +79,13 @@ fun Menu() {
                             } else if (amountDouble < sum) {
                                 errorText = "Falta dinero"
                             } else {
+                                subtractStock(orderProducts)
                                 addOrder(
                                     Order(
                                         number = orders.maxBy { it.number }.number + 1,
                                         date = LocalDate.now(),
                                         time = LocalTime.now(),
-                                        amount = "%.2f".format(amountDouble - sum).replace(",", ".").toDouble(),
+                                        amount = "%.2f".format(sum).replace(",", ".").toDouble(),
                                         waiter = "Toño"
                                     )
                                 )
@@ -98,6 +99,13 @@ fun Menu() {
             }
             ProductsArea(orderProducts)
         }
+    }
+}
+
+fun subtractStock(orderProducts: SnapshotStateList<ProdInOrder>) {
+    for (prodOrd in orderProducts) {
+        val prod = productList.find { it.name == prodOrd.product.name }
+        prod!!.stock -= prodOrd.quantity
     }
 }
 

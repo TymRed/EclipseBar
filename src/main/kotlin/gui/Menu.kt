@@ -1,6 +1,8 @@
 package gui
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -421,28 +423,42 @@ fun CustomTextField(
     centered: Boolean = true
 ) {
     val fontSize = 16.sp
-    val align = if (centered) TextAlign.Center else TextAlign.Start
 
-    BasicTextField(value = text,
+    val align = if (centered) TextAlign.Center else TextAlign.Start
+    val source = remember { MutableInteractionSource() }
+    val isFocused = source.collectIsFocusedAsState()
+    val borderWidth = if (isFocused.value) 2.dp else 0.dp
+    val borderColor = if (isFocused.value) Colores.color3 else Color.Transparent
+    BasicTextField(
+        value = text,
         onValueChange = valueChange,
         singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colors.primary),
+        cursorBrush = SolidColor(Colores.color3),
         textStyle = LocalTextStyle.current.copy(
             color = MaterialTheme.colors.onSurface, fontSize = fontSize, textAlign = align
         ),
+        interactionSource = source,
         decorationBox = { innerTextField ->
             Row(
-                verticalAlignment = Alignment.CenterVertically, modifier = modifier.fillMaxWidth(0.15F)
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = modifier
+                    .fillMaxWidth(0.15F)
+                    .border(borderWidth, borderColor, RoundedCornerShape(10.dp))
+                    .padding(horizontal = 5.dp)
             ) {
                 if (leadingIcon != null) leadingIcon()
                 Box {
-                    if (text.isEmpty()) Text(
-                        placeholderText, style = LocalTextStyle.current.copy(
-                            color = Colores.color2,
-                            fontSize = fontSize,
-                            textAlign = align,
-                        ), modifier = Modifier.fillMaxWidth()
-                    )
+                    if (text.isEmpty()){
+                        Text(
+                            placeholderText,
+                            style = LocalTextStyle.current.copy(
+                                color = Colores.color2,
+                                fontSize = fontSize,
+                                textAlign = align),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+                    }
                     innerTextField()
                 }
                 if (trailingIcon != null) trailingIcon()

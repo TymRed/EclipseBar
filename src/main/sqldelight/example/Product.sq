@@ -1,0 +1,19 @@
+CREATE TABLE Product (
+    name TEXT PRIMARY KEY NOT NULL,
+    stock INTEGER NOT NULL,
+    price integer NOT NULL,
+    pvp integer NOT NULL,
+    photo TEXT DEFAULT NULL,
+    type TEXT NOT NULL
+);
+
+INSERT INTO Product (name, price, pvp, stock, photo, type)
+VALUES ('Coca-cola', 1, 2, 5, 'lala', 'lalaT');
+
+selectAll:
+SELECT *
+FROM Product;
+
+insert:
+INSERT INTO Product (name, price, pvp, stock, photo, type)
+VALUES (?, ?, ?, ?, ?, ?);

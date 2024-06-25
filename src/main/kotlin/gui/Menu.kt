@@ -370,17 +370,17 @@ fun MenuItem(
         }
     ) {
         Column(modifier = Modifier.padding(15.dp)) {
-            if (card.photo.ruta.contains(":")) {
+            if (card.imgPath.contains(":")) {
                 Image(
-                    bitmap = loadImageBitmap(File(card.photo.ruta).inputStream()),
-                    contentDescription = card.photo.desctiption,
+                    bitmap = loadImageBitmap(File(card.imgPath).inputStream()),
+                    contentDescription = "product image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxWidth().fillMaxSize(0.7F).clip(RoundedCornerShape(10.dp))
                 )
             } else {
                 Image(
-                    painter = painterResource(card.photo.ruta),
-                    contentDescription = card.photo.desctiption,
+                    painter = painterResource(card.imgPath),
+                    contentDescription = "product image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxWidth().fillMaxSize(0.7F).clip(RoundedCornerShape(10.dp))
                 )

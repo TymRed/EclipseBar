@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import structure.Colores
-import structure.Photo
 import structure.Product
 import structure.productList
 import java.io.File
@@ -140,16 +139,16 @@ fun Stock() {
                                     Colores.color2, shape = RoundedCornerShape(10.dp)
                                 )
                         ) {
-                            if (prod.photo.ruta.startsWith("C:")) {
+                            if (prod.imgPath.startsWith("C:")) {
                                 Image(
-                                    bitmap = loadImageBitmap(File(prod.photo.ruta).inputStream()),
-                                    contentDescription = prod.photo.desctiption,
+                                    bitmap = loadImageBitmap(File(prod.imgPath).inputStream()),
+                                    contentDescription = "product image",
                                     modifier = Modifier.fillMaxWidth(0.05F).fillMaxHeight(0.8F)
                                 )
                             } else {
                                 Image(
-                                    painter = painterResource(prod.photo.ruta),
-                                    contentDescription = prod.photo.desctiption,
+                                    painter = painterResource(prod.imgPath),
+                                    contentDescription = "product image",
                                     modifier = Modifier.fillMaxWidth(0.05F).fillMaxHeight(0.8F)
                                 )
                             }
@@ -359,7 +358,7 @@ fun AddProduct(
                                 price.toDouble(),
                                 pvp.toDouble(),
                                 stock.toInt(),
-                                Photo(filePath, "imagen producto"),
+                                filePath,
                                 type
                             )
                         )
@@ -385,7 +384,7 @@ fun ModifyProducto(
     changeProduct: (Product) -> Unit,
     product: Product
 ) {
-    var filePath by remember { mutableStateOf(product.photo.ruta) }
+    var filePath by remember { mutableStateOf(product.imgPath) }
     var imageBitmap: ImageBitmap? = null
     if (!filePath.startsWith("prodImgs")) {
         val file = File(filePath)
@@ -429,7 +428,7 @@ fun ModifyProducto(
                         )
                     } ?: run {
                         Image(
-                            painter = painterResource(product.photo.ruta),
+                            painter = painterResource(product.imgPath),
                             contentDescription = "Logo producto",
                             modifier = Modifier.clip(RoundedCornerShape(10.dp))
                                 .clickable(onClick = { showFilePicker = true }).fillMaxWidth().fillMaxHeight(0.5F)
@@ -499,7 +498,7 @@ fun ModifyProducto(
                                 price.toDouble(),
                                 pvp.toDouble(),
                                 stock.toInt(),
-                                Photo(filePath, "imagen producto"),
+                                filePath,
                                 type
                             )
                         )

@@ -22,14 +22,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
+import example.Product
 import structure.Colores
-import structure.Product
-import structure.productList
 import java.io.File
 
 
 @Composable
-fun Stock() {
+fun Stock(
+) {
+    val productList = database.productQueries.selectAll().executeAsList()
     var isOpen by remember { mutableStateOf(false) }
     var product: Product? by remember { mutableStateOf(null) }
     val saveObject: (Product) -> Unit = { productoPasado ->
@@ -37,11 +38,11 @@ fun Stock() {
         isOpen = !isOpen
     }
     val addProduct: (Product) -> Unit = { p ->
-        productList.add(p)
+        database.productQueries.insert(p.name, p.price, p.pvp, p.stock, p.imgPath, p.type)
         isOpen = !isOpen
     }
     val changeProduct: (Product) -> Unit = { p ->
-        productList[productList.indexOf(product!!)] = p
+        database.productQueries.update(p.price, p.pvp, p.stock, p.imgPath, p.type, p.name)
         product = null
         isOpen = !isOpen
     }
@@ -192,7 +193,7 @@ fun Stock() {
                                 Spacer(modifier = Modifier.width(20.dp))
                                 Boton(
                                     text = "X",
-                                    function = { productList.remove(prod) },
+                                    function = { database.productQueries.delete(prod.id)},
                                     color = Color.Red.copy(alpha = 0.9f),
                                     modifier = Modifier.weight(1F)
                                 )
@@ -352,16 +353,8 @@ fun AddProduct(
                 Boton("Cancelar", function = close)
                 Boton("Añadir", function = {
                     if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty())) {
-                        addCard(
-                            Product(
-                                name,
-                                price.toDouble(),
-                                pvp.toDouble(),
-                                stock.toInt(),
-                                filePath,
-                                type
-                            )
-                        )
+                        database.productQueries.insert(name, price.toDouble(), pvp.toDouble(), stock.toLong(), filePath, type)
+                        close()
                     }
                 })
             }
@@ -492,16 +485,8 @@ fun ModifyProducto(
                 Boton("Cancelar", function = close)
                 Boton("Guardar", function = {
                     if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty())) {
-                        changeProduct(
-                            Product(
-                                name,
-                                price.toDouble(),
-                                pvp.toDouble(),
-                                stock.toInt(),
-                                filePath,
-                                type
-                            )
-                        )
+                        database.productQueries.update(price.toDouble(), pvp.toDouble(), stock.toLong(), filePath, type, product.name)
+                        close()
                     }
                 })
             }

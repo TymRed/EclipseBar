@@ -1,19 +1,33 @@
 CREATE TABLE Product (
-    name TEXT PRIMARY KEY NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
     stock INTEGER NOT NULL,
-    price integer NOT NULL,
-    pvp integer NOT NULL,
-    photo TEXT DEFAULT NULL,
+    price REAL NOT NULL,
+    pvp REAL NOT NULL,
+    imgPath TEXT NOT NULL,
     type TEXT NOT NULL
 );
-
-INSERT INTO Product (name, price, pvp, stock, photo, type)
-VALUES ('Coca-cola', 1, 2, 5, 'lala', 'lalaT');
 
 selectAll:
 SELECT *
 FROM Product;
 
 insert:
-INSERT INTO Product (name, price, pvp, stock, photo, type)
+INSERT OR IGNORE INTO Product (name, price, pvp, stock, imgPath, type)
 VALUES (?, ?, ?, ?, ?, ?);
+
+update:
+UPDATE Product SET price = ?, pvp = ?, stock = ?, imgPath = ?, type = ?
+WHERE name = ?;
+
+delete:
+DELETE FROM Product
+WHERE id = ?;
+
+subtractStock:
+UPDATE Product SET stock = ?
+WHERE id = ?;
+
+findById:
+SELECT * FROM Product
+WHERE id = ?;

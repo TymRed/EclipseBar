@@ -23,7 +23,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import app.cash.sqldelight.db.SqlDriver
 import example.EclipseDb
 import structure.Colores
 import structure.DbSetup
@@ -236,17 +235,24 @@ fun main() = application {
         Application()
     }
     DbSetup().setUp()
-    val driver = DbSetup().driver
-    doDatabaseThings(driver)
+    doDatabaseThings()
 }
+val driver = DbSetup().driver
+val database = EclipseDb(driver)
 
-fun doDatabaseThings(driver: SqlDriver) {
-    val database = EclipseDb(driver)
+fun doDatabaseThings() {
 
     val productQueries = database.productQueries
     for (i in 1..10) {
-        val jaja = (1..10000000).random()
-        productQueries.insert("$jaja", 5, 3, 5, "prodImgs/Fanta.png", "Refrescos")
+//        val jaja = (1..10000000).random()
+        productQueries.insert("Fanta", 5.0, 3.0, 5, "prodImgs/Fanta.png", "Refrescos")
+        val producto = productQueries.findById(i.toLong()).executeAsOneOrNull()
+        println(producto.toString())
+        productQueries.subtractStock(2,i.toLong())
+        val lista = productQueries.selectAll().executeAsList()
+        for (prod in lista) {
+            println(prod.toString())
+        }
     }
     println(productQueries.selectAll().executeAsList())
 }

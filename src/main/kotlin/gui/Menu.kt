@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import example.Product
 import structure.*
 import java.io.File
 import java.time.LocalDate
@@ -106,8 +107,7 @@ fun Menu() {
 
 fun subtractStock(orderProducts: SnapshotStateList<ProdInOrder>) {
     for (prodOrd in orderProducts) {
-        val prod = productList.find { it.name == prodOrd.product.name }
-        prod!!.stock -= prodOrd.quantity
+        database.productQueries.subtractStock((prodOrd.product.stock - prodOrd.quantity).toLong(), prodOrd.product.id)
     }
 }
 
@@ -120,8 +120,9 @@ fun Orders(
     changeAmount: (String) -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.9F)
-            .background(color = Color.White, shape = RoundedCornerShape(20.dp))
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.9F)
     ) {
         val state = rememberLazyListState()
 
@@ -238,8 +239,8 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
 
         ChooseType(changeType, activeType)
 
-        val cardsSelected: MutableList<Product> = mutableListOf()
-
+        val cardsSelected: MutableList<example.Product> = mutableListOf()
+        val productList = database.productQueries.selectAll().executeAsList()
         for (product in productList) {
             if (typeText == "Todos") {
                 cardsSelected.add(product)
@@ -355,12 +356,12 @@ fun MenuItem(
         onClick = {
             val orderProduct = orderItems.find { it.product.name == card.name }
             if (orderProduct == null) {
-                if (card.stock == 0) {
+                if (card.stock == 0L) {
                     changeStock()
                 } else {
                     orderItems.add(ProdInOrder(card, 1))
                 }
-            } else if (orderProduct.quantity == card.stock) {
+            } else if (orderProduct.quantity.toLong() == card.stock) {
                 changeStock()
             } else {
                 val index = orderItems.indexOf(orderProduct)

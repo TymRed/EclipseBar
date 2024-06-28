@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,10 +21,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPlacement
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.window.*
 import structure.Colores
 import structure.DbSetup
 import structure.productQueries
@@ -234,6 +233,33 @@ fun comprobarContrasena(password: String): Boolean {
 
     return hasLowerCase && hasUpperCase && hasNumber
 }
+
+@Composable
+fun TextDialog(
+    text: String,
+    eraseText: () -> Unit
+) {
+    val dialogWidth = (text.length * 13 + 40).dp
+    Dialog(
+        onDismissRequest = eraseText
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .width(dialogWidth)
+                .height(150.dp)
+                .background(Colores.color1, RoundedCornerShape(16.dp))
+                .background(Color.Red.copy(alpha = 0.1f))
+                .clickable(onClick = eraseText).padding(horizontal = 30.dp)
+        ) {
+            Icon(Icons.Filled.Close, contentDescription = "Cerrar", tint = Color.Red)
+            Text(text, color = Color.Red, fontSize = 20.sp)
+        }
+    }
+}
+
 
 fun main() = application {
     val state = rememberWindowState(placement = WindowPlacement.Maximized)

@@ -28,7 +28,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import db.Product
 import structure.*
 import java.io.File
@@ -77,7 +76,10 @@ fun Menu() {
                         "Cobrar",
                         modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
                         function = {
-                            if (amount.isEmpty()) {
+                            if(sum == 0.0){
+                                errorText = "No hay productos"
+                            }
+                            else if (amount.isEmpty()) {
                                 errorText = "Introduce el importe"
                             } else if (amountDouble < sum) {
                                 errorText = "Falta dinero"
@@ -274,31 +276,7 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
     }
 }
 
-@Composable
-fun TextDialog(
-    text: String,
-    eraseText: () -> Unit
-) {
-    val dialogWidth = (text.length * 13 + 40).dp
-    Dialog(
-        onDismissRequest = eraseText
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .width(dialogWidth)
-                .height(150.dp)
-                .background(Colores.color1, RoundedCornerShape(16.dp))
-                .background(Color.Red.copy(alpha = 0.1f))
-                .clickable(onClick = eraseText).padding(horizontal = 30.dp)
-        ) {
-            Icon(Icons.Filled.Close, contentDescription = "Cerrar", tint = Color.Red)
-            Text(text, color = Color.Red, fontSize = 20.sp)
-        }
-    }
-}
+
 
 @Composable
 fun ChooseType(

@@ -26,15 +26,14 @@ import kotlin.collections.ArrayList
 
 @Composable
 fun DialogDatePicker(
-    changeCalendarState: () -> Unit,
-    changeDate1: (String?) -> Unit,
+    closeDialog: () -> Unit,
+//    changeDate1: (String?) -> Unit,
     changeDate2: (LocalDate) -> Unit
 ) {
-    Dialog(onDismissRequest = changeCalendarState) {
+    Dialog(onDismissRequest = closeDialog) {
         Column(modifier = Modifier.width(IntrinsicSize.Min).background(Color.White)) {
-            val pair = DatePicker()
-            val fechaSelected = pair.first
-            val selected = pair.second
+            val selected = DatePicker()
+
             Divider(thickness = 2.dp)
             Row(
                 modifier = Modifier.fillMaxWidth().background(Colores.color1),
@@ -43,12 +42,10 @@ fun DialogDatePicker(
                 Boton(
                     "Cerrar",
                     modifier = Modifier.width(120.dp),
-                    function = changeCalendarState)
+                    function = closeDialog)
                 Spacer(modifier = Modifier.width(10.dp))
                 Boton("Confirmar", modifier = Modifier.width(120.dp),
                     function = {
-                        changeDate1(fechaSelected)
-
                         val year = selected[Calendar.YEAR]
                         val month = if (selected.get(Calendar.MONTH) + 1 < 10) {
                             "0" + (selected[Calendar.MONTH] + 1)
@@ -58,6 +55,7 @@ fun DialogDatePicker(
                         } else selected.get(Calendar.DATE)
 
                         changeDate2(LocalDate.parse("$year-$month-$date"))
+                        closeDialog()
                     }
                 )
             }
@@ -72,7 +70,7 @@ val weeks = arrayOf("L", "M", "M", "J", "V", "S", "D")
 val cellSize = 45.dp
 
 @Composable
-fun DatePicker(): Pair<String, Calendar> {
+fun DatePicker(): Calendar {
     var showingMonth by remember { mutableStateOf(Calendar.getInstance()) }
     var selected by remember { mutableStateOf(Calendar.getInstance().apply { time = showingMonth.time }) }
     var list by remember { mutableStateOf(getDatesList(showingMonth)) }
@@ -158,7 +156,7 @@ fun DatePicker(): Pair<String, Calendar> {
             }
         }
     }
-    return Pair(SimpleDateFormat("EEE, d MMM (YYYY)", loc).format(selected.time), selected)
+    return selected
 }
 
 private fun getDatesList(calIncoming: Calendar): ArrayList<Pair<Long, Boolean>?> {

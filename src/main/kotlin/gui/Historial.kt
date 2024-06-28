@@ -268,8 +268,8 @@ fun Filters(filChange: (Filter) -> Unit) {
         var secondDate by remember { mutableStateOf(LocalDate.now()) }
         val changeFirstDate: (LocalDate) -> Unit = { firstDate = it }
         val changeSecondDate: (LocalDate) -> Unit = { secondDate = it }
-        Dates("Inicio", changeFirstDate)
-        Dates("Final", changeSecondDate)
+        Dates("Inicio", firstDate, changeFirstDate)
+        Dates("Final", secondDate, changeSecondDate)
 
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -310,23 +310,14 @@ fun Filters(filChange: (Filter) -> Unit) {
 @Composable
 fun Dates(
     tipo: String,
+    locDate: LocalDate,
     changeDateLoc: (LocalDate) -> Unit
 ) {
     var isOpen by remember { mutableStateOf(false) }
     val closeCalendar = { isOpen = false }
 
-    val dateType: Date = if (tipo == "Inicio") {
-        SimpleDateFormat("dd/mm/yyyy").parse("01/01/2024")
-    } else Date()
-
     val loc = Locale.Builder().setRegion("ES").setLanguage("es").build()
-
-    var date by remember {
-        mutableStateOf(
-            SimpleDateFormat("EEE, d MMM (YYYY)", loc).format(dateType)
-        )
-    }
-    val changeDate: (String?) -> Unit = { isOpen = false; date = if (it.isNullOrEmpty()) "" else it }
+    val formatterDate = locDate.format(DateTimeFormatter.ofPattern("EEE, d MMM (YYYY)", loc))
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -336,14 +327,14 @@ fun Dates(
             .background(Color.White, RoundedCornerShape(10.dp))
             .padding(start = 5.dp)
     ) {
-        Text("Fecha $tipo : $date")
+        Text("Fecha $tipo : $formatterDate")
         IconButton(onClick = { isOpen = true }) {
             Icon(Icons.Default.MoreVert, contentDescription = "Abrir calendario")
         }
     }
 
     if (isOpen) {
-        DialogDatePicker(closeCalendar, changeDate, changeDateLoc)
+        DialogDatePicker(closeCalendar, changeDateLoc)
     }
 }
 

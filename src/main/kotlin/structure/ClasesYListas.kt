@@ -12,31 +12,6 @@ val database = EclipseDb(driver)
 val productQueries = database.productQueries
 val userQueries = database.userQueries
 
-//data class Product(
-//    var name: String,
-//    var price: Double,
-//    var pvp: Double,
-//    var stock: Int,
-//    var imgPath: String,
-//    var type: String
-//)
-
-//val productList: MutableList<Product> = mutableStateListOf(
-//    Product("Coca-Cola", 1.5, 2.2, 5, "prodImgs/Fanta.png", "Refrescos"),
-//    Product("Fanta", 2.5, 3.0, 1, "prodImgs/Fanta.png" , "Cocteles"),
-//    Product("Aquarius", 1.9, 2.5, 3, "prodImgs/Fanta.png", "Comida"),
-//    Product("Cerveza", 2.2, 2.5, 4, "prodImgs/Fanta.png", "Refrescos"),
-//    Product("Vino", 3.5, 4.0, 6, "prodImgs/Fanta.png", "Refrescos"),
-//    Product("Café", 3.1, 3.2, 7, "prodImgs/Fanta.png", "Cocteles"),
-//    Product("Té", 2.0, 3.2, 8, "prodImgs/Fanta.png", "Cocteles"),
-//    Product("Zumo", 1.3, 3.2, 9, "prodImgs/Fanta.png", "Comida"),
-//    Product("Leche", 1.7, 3.2, 1, "prodImgs/Fanta.png", "Comida"),
-//    Product("Agua", 2.4, 3.2, 3, "prodImgs/Fanta.png", "Comida"),
-//    Product("Sprite", 1.1, 3.2, 4, "prodImgs/Fanta.png", "Comida"),
-//    Product("7up", 2.1, 3.2, 1, "prodImgs/Fanta.png", "Comida"),
-//    Product("Pepsi", 2.7, 3.2, 1, "prodImgs/Fanta.png", "Comida"),
-//)
-
 data class ProdInOrder(
     var product: Product,
     var quantity: Int
@@ -50,7 +25,7 @@ data class Order(
     val waiter: String
 )
 
-val time = LocalTime.now()
+val time: LocalTime = LocalTime.now()
 val orders: SnapshotStateList<Order> =
     mutableStateListOf(
         Order(1, date(), time, amount(), "Toño"),

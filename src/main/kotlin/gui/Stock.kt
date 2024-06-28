@@ -107,11 +107,11 @@ fun Stock(
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth(0.6F)
-                    ){
+                    ) {
 
                         CustomTextField(
                             text = filterText,
-                            valueChange = {filterText = it},
+                            valueChange = { filterText = it },
                             modifier = Modifier
                                 .height(40.dp)
                                 .fillMaxWidth()
@@ -186,7 +186,7 @@ fun Stock(
                                 Spacer(modifier = Modifier.width(20.dp))
                                 Boton(
                                     text = "X",
-                                    function = { database.productQueries.delete(prod.name)},
+                                    function = { database.productQueries.delete(prod.name) },
                                     color = Color.Red.copy(alpha = 0.9f),
                                     modifier = Modifier.weight(1F)
                                 )
@@ -345,7 +345,14 @@ fun AddProduct(
                 Boton("Cancelar", function = close)
                 Boton("Añadir", function = {
                     if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty())) {
-                        database.productQueries.insert(name, price.toDouble(), pvp.toDouble(), stock.toLong(), filePath, type)
+                        database.productQueries.insert(
+                            name,
+                            price.toDouble(),
+                            pvp.toDouble(),
+                            stock.toLong(),
+                            filePath,
+                            type
+                        )
                         close()
                     }
                 })
@@ -476,7 +483,15 @@ fun ModifyProducto(
                 Boton("Cancelar", function = close)
                 Boton("Guardar", function = {
                     if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty())) {
-                        database.productQueries.update(product.name, price.toDouble(), pvp.toDouble(), stock.toLong(), filePath, type, product.name)
+                        database.productQueries.update(
+                            product.name,
+                            price.toDouble(),
+                            pvp.toDouble(),
+                            stock.toLong(),
+                            filePath,
+                            type,
+                            product.name
+                        )
                         close()
                     }
                 })

@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,7 +21,6 @@ import structure.Colores
 import structure.Filter
 import structure.Order
 import structure.orders
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -306,7 +304,6 @@ fun Filters(filChange: (Filter) -> Unit) {
     }
 }
 
-
 @Composable
 fun Dates(
     tipo: String,
@@ -337,45 +334,6 @@ fun Dates(
         DialogDatePicker(closeCalendar, changeDateLoc)
     }
 }
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun ComboBox(
-    text: String,
-    list: List<String>,
-    change: (String) -> Unit
-) {
-    var visible by remember { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(expanded = false, onExpandedChange = {}) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White, RoundedCornerShape(10.dp))
-                .padding(start = 5.dp)
-        ) {
-            Text(text)
-            IconButton(onClick = { visible = true }) {
-                Icon(Icons.Default.ArrowDropDown, contentDescription = "Abrir lista")
-            }
-        }
-        ExposedDropdownMenu(
-            expanded = visible,
-            onDismissRequest = { visible = false },
-            modifier = Modifier.width(IntrinsicSize.Min)
-        ) {
-            for (item in list) {
-                DropdownMenuItem(onClick = { visible = false; change(item) }) {
-                    Text(item)
-                }
-                Divider()
-            }
-        }
-    }
-}
-
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

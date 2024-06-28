@@ -1,8 +1,6 @@
 package gui
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -10,7 +8,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -21,13 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import db.Product
 import structure.*
 import java.io.File
@@ -76,10 +71,9 @@ fun Menu(username: String) {
                         "Cobrar",
                         modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
                         function = {
-                            if(sum == 0.0){
+                            if (sum == 0.0) {
                                 errorText = "No hay productos"
-                            }
-                            else if (amount.isEmpty()) {
+                            } else if (amount.isEmpty()) {
                                 errorText = "Introduce el importe"
                             } else if (amountDouble < sum) {
                                 errorText = "Falta dinero"
@@ -259,7 +253,7 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
         ) {
             items(
                 count = cardsSelected.size,
-                key = { index -> cardsSelected[index].name},
+                key = { index -> cardsSelected[index].name },
                 itemContent = { index ->
                     val cartItemData = cardsSelected[index]
                     var maxStock by remember { mutableStateOf(false) }
@@ -275,7 +269,6 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
         }
     }
 }
-
 
 
 @Composable
@@ -373,78 +366,4 @@ fun MenuItem(
             Text(card.name)
         }
     }
-}
-
-
-@Composable
-fun Boton(
-    text: String,
-    shape: Shape = RoundedCornerShape(10.dp),
-    modifier: Modifier = Modifier,
-    function: () -> Unit,
-    color: Color = Colores.color4
-) {
-    Button(
-        onClick = function,
-        colors = ButtonDefaults.buttonColors(backgroundColor = color, contentColor = Colores.color1),
-        shape = shape,
-        modifier = modifier
-    ) {
-        Text(text)
-    }
-}
-
-@Composable
-fun CustomTextField(
-    text: String,
-    valueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
-    placeholderText: String = "0.0€",
-    centered: Boolean = true
-) {
-    val fontSize = 16.sp
-
-    val align = if (centered) TextAlign.Center else TextAlign.Start
-    val source = remember { MutableInteractionSource() }
-    val isFocused = source.collectIsFocusedAsState()
-    val borderWidth = if (isFocused.value) 2.dp else 0.dp
-    val borderColor = if (isFocused.value) Colores.color3 else Color.Transparent
-    BasicTextField(
-        value = text,
-        onValueChange = valueChange,
-        singleLine = true,
-        cursorBrush = SolidColor(Colores.color3),
-        textStyle = LocalTextStyle.current.copy(
-            color = MaterialTheme.colors.onSurface, fontSize = fontSize, textAlign = align
-        ),
-        interactionSource = source,
-        decorationBox = { innerTextField ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier
-                    .fillMaxWidth(0.15F)
-                    .border(borderWidth, borderColor, RoundedCornerShape(10.dp))
-                    .padding(horizontal = 5.dp)
-            ) {
-                if (leadingIcon != null) leadingIcon()
-                Box {
-                    if (text.isEmpty()){
-                        Text(
-                            placeholderText,
-                            style = LocalTextStyle.current.copy(
-                                color = Colores.color2,
-                                fontSize = fontSize,
-                                textAlign = align),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                    innerTextField()
-                }
-                if (trailingIcon != null) trailingIcon()
-            }
-        }
-    )
 }

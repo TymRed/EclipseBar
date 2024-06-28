@@ -2,12 +2,17 @@ package gui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,10 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
@@ -48,8 +56,6 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
     var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-//    val checkName = comprobarNombre(name)
-//    val checkPassword = comprobarContrasena(password)
     var errorText by remember { mutableStateOf("") }
 
     Surface(color = Colores.color1) {
@@ -189,54 +195,133 @@ fun MenuBarText(
 fun MyTextField(
     name: String,
     placeholder: String,
-//    verif: Boolean,
     change: (String) -> Unit
 ) {
     val fontSize = if (placeholder == "Contraseña") 20.sp else 16.sp
     TextField(
         value = name,
         textStyle = TextStyle(color = Colores.color3, fontSize = fontSize),
-//        colors = TextFieldDefaults.textFieldColors(
-//            backgroundColor = Color.White, focusedIndicatorColor = Colores.color3, cursorColor = Colores.color3
-//        ),
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color.White, focusedIndicatorColor = Colores.color2, cursorColor = Colores.color3
         ),
         onValueChange = change,
         shape = RoundedCornerShape(20.dp, 20.dp),
         placeholder = { Text(placeholder, color = Colores.color2) },
-//        isError = !verif,
         singleLine = true,
         visualTransformation = if (placeholder == "Contraseña") PasswordVisualTransformation() else VisualTransformation.None,
         modifier = Modifier.fillMaxWidth(0.4F)
     )
 }
 
-fun comprobarNombre(userName: String): Boolean {
-    val okLength = userName.length in 4..16
-
-    if (userName.isEmpty() || !okLength) {
-        return false
+@Composable
+fun Boton(
+    text: String,
+    shape: Shape = RoundedCornerShape(10.dp),
+    modifier: Modifier = Modifier,
+    function: () -> Unit,
+    color: Color = Colores.color4
+) {
+    Button(
+        onClick = function,
+        colors = ButtonDefaults.buttonColors(backgroundColor = color, contentColor = Colores.color1),
+        shape = shape,
+        modifier = modifier
+    ) {
+        Text(text)
     }
-
-    val firstUpper = userName[0] in 'A'..'Z'
-    val ok = userName.substring(1).matches("[a-z]*".toRegex())
-
-    return firstUpper && ok
 }
 
-fun comprobarContrasena(password: String): Boolean {
-    val okLength = password.length in 4..16
+@Composable
+fun CustomTextField(
+    text: String,
+    valueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
+    placeholderText: String = "0.0€",
+    centered: Boolean = true
+) {
+    val fontSize = 16.sp
 
-    if (password.isEmpty() || !okLength) {
-        return false
+    val align = if (centered) TextAlign.Center else TextAlign.Start
+    val source = remember { MutableInteractionSource() }
+    val isFocused = source.collectIsFocusedAsState()
+    val borderWidth = if (isFocused.value) 2.dp else 0.dp
+    val borderColor = if (isFocused.value) Colores.color3 else Color.Transparent
+    BasicTextField(
+        value = text,
+        onValueChange = valueChange,
+        singleLine = true,
+        cursorBrush = SolidColor(Colores.color3),
+        textStyle = LocalTextStyle.current.copy(
+            color = MaterialTheme.colors.onSurface, fontSize = fontSize, textAlign = align
+        ),
+        interactionSource = source,
+        decorationBox = { innerTextField ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = modifier
+                    .fillMaxWidth(0.15F)
+                    .border(borderWidth, borderColor, RoundedCornerShape(10.dp))
+                    .padding(horizontal = 5.dp)
+            ) {
+                if (leadingIcon != null) leadingIcon()
+                Box {
+                    if (text.isEmpty()){
+                        Text(
+                            placeholderText,
+                            style = LocalTextStyle.current.copy(
+                                color = Colores.color2,
+                                fontSize = fontSize,
+                                textAlign = align),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+                    }
+                    innerTextField()
+                }
+                if (trailingIcon != null) trailingIcon()
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ComboBox(
+    text: String,
+    list: List<String>,
+    change: (String) -> Unit
+) {
+    var visible by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(expanded = false, onExpandedChange = {}) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White, RoundedCornerShape(10.dp))
+                .padding(start = 5.dp)
+        ) {
+            Text(text)
+            IconButton(onClick = { visible = true }) {
+                Icon(Icons.Default.ArrowDropDown, contentDescription = "Abrir lista")
+            }
+        }
+        ExposedDropdownMenu(
+            expanded = visible,
+            onDismissRequest = { visible = false },
+            modifier = Modifier.width(IntrinsicSize.Min)
+        ) {
+            for (item in list) {
+                DropdownMenuItem(onClick = { visible = false; change(item) }) {
+                    Text(item)
+                }
+                Divider()
+            }
+        }
     }
-
-    val hasLowerCase = password.matches(".*[a-z].*".toRegex())
-    val hasUpperCase = password.matches(".*[A-Z].*".toRegex())
-    val hasNumber = password.matches(".*[1-9].*".toRegex())
-
-    return hasLowerCase && hasUpperCase && hasNumber
 }
 
 @Composable

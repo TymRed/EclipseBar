@@ -22,8 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
-import example.Product
+import db.Product
 import structure.Colores
+import structure.database
 import java.io.File
 
 
@@ -37,15 +38,7 @@ fun Stock(
         product = productoPasado
         isOpen = !isOpen
     }
-    val addProduct: (Product) -> Unit = { p ->
-        database.productQueries.insert(p.name, p.price, p.pvp, p.stock, p.imgPath, p.type)
-        isOpen = !isOpen
-    }
-    val changeProduct: (Product) -> Unit = { p ->
-        database.productQueries.update(p.price, p.pvp, p.stock, p.imgPath, p.type, p.name)
-        product = null
-        isOpen = !isOpen
-    }
+
     val changeDialog = {
         isOpen = !isOpen
         product = null
@@ -193,7 +186,7 @@ fun Stock(
                                 Spacer(modifier = Modifier.width(20.dp))
                                 Boton(
                                     text = "X",
-                                    function = { database.productQueries.delete(prod.id)},
+                                    function = { database.productQueries.delete(prod.name)},
                                     color = Color.Red.copy(alpha = 0.9f),
                                     modifier = Modifier.weight(1F)
                                 )
@@ -218,9 +211,9 @@ fun Stock(
     }
     if (isOpen) {
         if (product != null) {
-            ModifyProducto(close = changeDialog, changeProduct = changeProduct, product = product!!)
+            ModifyProducto(close = changeDialog, product = product!!)
         } else {
-            AddProduct(close = changeDialog, addCard = addProduct)
+            AddProduct(close = changeDialog)
         }
     }
 }
@@ -228,8 +221,7 @@ fun Stock(
 
 @Composable
 fun AddProduct(
-    close: () -> Unit,
-    addCard: (Product) -> Unit
+    close: () -> Unit
 ) {
     var filePath by remember { mutableStateOf("") }
     var imageBitmap: ImageBitmap? = null
@@ -374,7 +366,6 @@ fun AddProduct(
 @Composable
 fun ModifyProducto(
     close: () -> Unit,
-    changeProduct: (Product) -> Unit,
     product: Product
 ) {
     var filePath by remember { mutableStateOf(product.imgPath) }
@@ -485,7 +476,7 @@ fun ModifyProducto(
                 Boton("Cancelar", function = close)
                 Boton("Guardar", function = {
                     if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty())) {
-                        database.productQueries.update(price.toDouble(), pvp.toDouble(), stock.toLong(), filePath, type, product.name)
+                        database.productQueries.update(product.name, price.toDouble(), pvp.toDouble(), stock.toLong(), filePath, type, product.name)
                         close()
                     }
                 })

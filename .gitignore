@@ -1,11 +1,10 @@
-### to ignore generated db
-.bd
+eclipse.db
 
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
-!**/src/test/**/build/
+!**/src/test/**/build/git sta
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

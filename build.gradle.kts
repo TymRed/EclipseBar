@@ -46,6 +46,7 @@ compose.desktop {
             includeAllModules = true
             windows {
                 iconFile.set(project.file("src/main/resources/Logo.ico"))
+                includeAllModules = true
             }
         }
     }

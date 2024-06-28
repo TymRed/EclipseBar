@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import example.Product
+import db.Product
 import structure.*
 import java.io.File
 import java.time.LocalDate
@@ -107,7 +107,7 @@ fun Menu() {
 
 fun subtractStock(orderProducts: SnapshotStateList<ProdInOrder>) {
     for (prodOrd in orderProducts) {
-        database.productQueries.subtractStock((prodOrd.product.stock - prodOrd.quantity).toLong(), prodOrd.product.id)
+        database.productQueries.subtractStock(prodOrd.product.stock - prodOrd.quantity, prodOrd.product.name)
     }
 }
 
@@ -239,9 +239,11 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
 
         ChooseType(changeType, activeType)
 
-        val cardsSelected: MutableList<example.Product> = mutableListOf()
         val productList = database.productQueries.selectAll().executeAsList()
+        val cardsSelected: MutableList<Product> = mutableListOf()
+
         for (product in productList) {
+            println(product)
             if (typeText == "Todos") {
                 cardsSelected.add(product)
             } else if (typeText == product.type) {
@@ -255,7 +257,7 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
         ) {
             items(
                 count = cardsSelected.size,
-                key = { index -> index },
+                key = { index -> cardsSelected[index].name},
                 itemContent = { index ->
                     val cartItemData = cardsSelected[index]
                     var maxStock by remember { mutableStateOf(false) }

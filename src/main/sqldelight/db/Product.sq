@@ -1,6 +1,5 @@
 CREATE TABLE Product (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    name TEXT PRIMARY KEY,
     stock INTEGER NOT NULL,
     price REAL NOT NULL,
     pvp REAL NOT NULL,
@@ -17,17 +16,17 @@ INSERT OR IGNORE INTO Product (name, price, pvp, stock, imgPath, type)
 VALUES (?, ?, ?, ?, ?, ?);
 
 update:
-UPDATE Product SET price = ?, pvp = ?, stock = ?, imgPath = ?, type = ?
+UPDATE Product SET name = ?, price = ?, pvp = ?, stock = ?, imgPath = ?, type = ?
 WHERE name = ?;
 
 delete:
 DELETE FROM Product
-WHERE id = ?;
+WHERE name = ?;
 
 subtractStock:
 UPDATE Product SET stock = ?
-WHERE id = ?;
+WHERE name = ?;
 
-findById:
+findByName:
 SELECT * FROM Product
-WHERE id = ?;
+WHERE name = ?;

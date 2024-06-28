@@ -23,22 +23,21 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import example.EclipseDb
 import structure.Colores
 import structure.DbSetup
+import structure.productQueries
+import structure.userQueries
 
 @Composable
 fun Application() {
     var wind by remember { mutableStateOf(1) }
-    val windChange: () -> Unit = {
-        wind =
-            if (wind == 1) 2
-            else 1
+    val windChange: (Int) -> Unit = { index ->
+        wind = index
     }
 
     when (wind) {
-        1 -> LogIn(windChange)
-        2 -> App(windChange)
+        1 -> LogIn {windChange(2)}
+        2 -> App {windChange(1)}
     }
 }
 
@@ -47,8 +46,9 @@ fun LogIn(windChange: () -> Unit) {
     var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    val checkName = comprobarNombre(name)
-    val checkPassword = comprobarContrasena(password)
+//    val checkName = comprobarNombre(name)
+//    val checkPassword = comprobarContrasena(password)
+
 
     Surface(color = Colores.color1) {
         Box(
@@ -75,12 +75,16 @@ fun LogIn(windChange: () -> Unit) {
                     Text("Aplicacion TPV")
 
 
-                    MyTextField(name, "Nombre", checkName) { name = it }
-                    MyTextField(password, "Contraseña", checkPassword) { password = it }
+                    MyTextField(name, "Nombre") { name = it }
+                    MyTextField(password, "Contraseña") { password = it }
 
 
                     Button(
-                        onClick = windChange,
+                        onClick = {
+                            if (userQueries.findByUsername(name).executeAsOneOrNull()?.password == password) {
+                                windChange()
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(backgroundColor = Colores.color4),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.shadow(elevation = 10.dp, shape = RoundedCornerShape(8.dp)).height(50.dp)
@@ -176,20 +180,23 @@ fun MenuBarText(
 fun MyTextField(
     name: String,
     placeholder: String,
-    verif: Boolean,
+//    verif: Boolean,
     change: (String) -> Unit
 ) {
     val fontSize = if (placeholder == "Contraseña") 20.sp else 16.sp
     TextField(
         value = name,
         textStyle = TextStyle(color = Colores.color3, fontSize = fontSize),
+//        colors = TextFieldDefaults.textFieldColors(
+//            backgroundColor = Color.White, focusedIndicatorColor = Colores.color3, cursorColor = Colores.color3
+//        ),
         colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.White, focusedIndicatorColor = Colores.color3, cursorColor = Colores.color3
+            backgroundColor = Color.White, focusedIndicatorColor = Colores.color2, cursorColor = Colores.color3
         ),
         onValueChange = change,
         shape = RoundedCornerShape(20.dp, 20.dp),
         placeholder = { Text(placeholder, color = Colores.color2) },
-        isError = !verif,
+//        isError = !verif,
         singleLine = true,
         visualTransformation = if (placeholder == "Contraseña") PasswordVisualTransformation() else VisualTransformation.None,
         modifier = Modifier.fillMaxWidth(0.4F)
@@ -237,22 +244,20 @@ fun main() = application {
     DbSetup().setUp()
     doDatabaseThings()
 }
-val driver = DbSetup().driver
-val database = EclipseDb(driver)
 
 fun doDatabaseThings() {
-
-    val productQueries = database.productQueries
-    for (i in 1..10) {
-//        val jaja = (1..10000000).random()
-        productQueries.insert("Fanta", 5.0, 3.0, 5, "prodImgs/Fanta.png", "Refrescos")
-        val producto = productQueries.findById(i.toLong()).executeAsOneOrNull()
-        println(producto.toString())
-        productQueries.subtractStock(2,i.toLong())
-        val lista = productQueries.selectAll().executeAsList()
-        for (prod in lista) {
-            println(prod.toString())
-        }
-    }
+    productQueries.insert("Fanta", 2.2, 3.0, 5, "prodImgs/Fanta.png", "Refrescos")
+    productQueries.insert("Coca-Cola", 1.5, 2.2, 7, "prodImgs/coca-cola.png", "Refrescos")
+    productQueries.insert("Nestea", 1.9, 2.5, 3, "prodImgs/Nestea.png", "Refrescos")
+    productQueries.insert("Aquarius", 1.9, 2.5, 14, "prodImgs/Aquarius.png", "Refrescos")
+    productQueries.insert("Pepsi", 2.7, 3.2, 10, "prodImgs/pepsi.png", "Refrescos")
+    productQueries.insert("Sprite", 2.1, 3.2, 6, "prodImgs/Sprite.png", "Refrescos")
+    productQueries.insert("Mojito", 5.0, 7.0, 4, "prodImgs/Mojito.jpg", "Cocteles")
+    productQueries.insert("Cuba Libre", 5.0, 7.0, 2, "prodImgs/CubaLibre.jpg", "Cocteles")
+    productQueries.insert("Gin Tonic", 6.2, 7.7, 32, "prodImgs/GinTonic.jpg", "Cocteles")
+    productQueries.insert("Margarita", 5.6, 7.3, 63, "prodImgs/Margarita.jpg", "Cocteles")
+    productQueries.insert("Tortilla", 3.5, 4.0, 12, "prodImgs/Tortilla.jpg", "Comida")
+    productQueries.insert("Patatas Bravas", 3.5, 4.0, 24, "prodImgs/PatatasBravas.jpg", "Comida")
+    productQueries.insert("Croquetas", 3.5, 4.0, 8, "prodImgs/Croquetas.jpeg", "Comida")
     println(productQueries.selectAll().executeAsList())
 }

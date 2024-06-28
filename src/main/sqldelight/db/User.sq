@@ -1,0 +1,18 @@
+CREATE TABLE User(
+    username TEXT PRIMARY KEY,
+    password TEXT NOT NULL,
+    name TEXT NOT NULL
+);
+
+INSERT OR IGNORE INTO User(username, password, name) VALUES('Toño', '1234', 'Toño');
+INSERT OR IGNORE INTO User(username, password, name) VALUES('Camarero1', '1234', 'Camarero 1');
+
+selectAll:
+SELECT * FROM User;
+
+findByUsername:
+SELECT * FROM User
+WHERE username = ?;
+
+quantity:
+SELECT count(*) FROM User;

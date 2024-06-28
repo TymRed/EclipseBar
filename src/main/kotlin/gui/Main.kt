@@ -48,7 +48,7 @@ fun LogIn(windChange: () -> Unit) {
 
 //    val checkName = comprobarNombre(name)
 //    val checkPassword = comprobarContrasena(password)
-
+    var errorText by remember { mutableStateOf("") }
 
     Surface(color = Colores.color1) {
         Box(
@@ -84,6 +84,9 @@ fun LogIn(windChange: () -> Unit) {
                             if (userQueries.findByUsername(name).executeAsOneOrNull()?.password == password) {
                                 windChange()
                             }
+                            else{
+                                errorText = "Usuario o contraseña incorrectos"
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(backgroundColor = Colores.color4),
                         shape = RoundedCornerShape(8.dp),
@@ -112,7 +115,9 @@ fun LogIn(windChange: () -> Unit) {
             }
         }
     }
-
+    if (errorText != "") {
+        TextDialog(errorText) { errorText = "" }
+    }
 }
 
 @Composable

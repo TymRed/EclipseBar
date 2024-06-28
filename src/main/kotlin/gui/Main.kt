@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
+import db.User
 import structure.Colores
 import structure.DbSetup
 import structure.productQueries
@@ -33,15 +34,17 @@ fun Application() {
     val windChange: (Int) -> Unit = { index ->
         wind = index
     }
+    var username: String by remember { mutableStateOf("") }
+    val logInto: (User) -> Unit = { username = it.username }
 
     when (wind) {
-        1 -> LogIn {windChange(2)}
-        2 -> App {windChange(1)}
+        1 -> LogIn (logInto) {windChange(2)}
+        2 -> App (username) {windChange(1)}
     }
 }
 
 @Composable
-fun LogIn(windChange: () -> Unit) {
+fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
     var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -80,7 +83,9 @@ fun LogIn(windChange: () -> Unit) {
 
                     Button(
                         onClick = {
-                            if (userQueries.findByUsername(name).executeAsOneOrNull()?.password == password) {
+                            val usr = userQueries.findByUsername(name).executeAsOneOrNull()
+                            if (usr?.password == password) {
+                                logInto(usr)
                                 windChange()
                             }
                             else{
@@ -120,7 +125,7 @@ fun LogIn(windChange: () -> Unit) {
 }
 
 @Composable
-fun App(windChange: () -> Unit) {
+fun App(username: String, windChange: () -> Unit) {
     var active by remember { mutableStateOf(1) }
     val changeActive: (Int) -> Unit = { index ->
         active = index
@@ -134,7 +139,7 @@ fun App(windChange: () -> Unit) {
             modifier = Modifier.background(Colores.color5),
         )
         when (active) {
-            1 -> Menu()
+            1 -> Menu(username)
             2 -> Stock()
             3 -> Historial()
             4 -> Charts()

@@ -35,7 +35,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 @Composable
-fun Menu() {
+fun Menu(username: String) {
     var amount: String by remember { mutableStateOf("") }
     val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
     val changeAmount: (String) -> Unit = {
@@ -91,7 +91,7 @@ fun Menu() {
                                         date = LocalDate.now(),
                                         time = LocalTime.now(),
                                         amount = "%.2f".format(sum).replace(",", ".").toDouble(),
-                                        waiter = "Toño"
+                                        waiter = username
                                     )
                                 )
                             }

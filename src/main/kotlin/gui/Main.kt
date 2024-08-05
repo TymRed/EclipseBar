@@ -42,11 +42,11 @@ fun Application() {
     val windChange: (Int) -> Unit = { index ->
         wind = index
     }
-    var admin = false;
+    var admin = false
     var username: String by remember { mutableStateOf("") }
     val logInto: (User) -> Unit = {
         username = it.username
-        admin = it.username == "Toño";
+        admin = it.username == "Toño"
     }
     when (wind) {
         1 -> LogIn (logInto) {windChange(2)}
@@ -151,7 +151,7 @@ fun App(username: String, windChange: () -> Unit) {
             1 -> Menu(username)
             2 -> Stock()
             3 -> Historial()
-            4 -> Charts()
+//            4 -> Charts()
         }
     }
 }
@@ -171,7 +171,7 @@ fun MenuBar(
         MenuBarText("Panel Principal", active == 1) { activeChange(1) }
         MenuBarText("Stock", active == 2) { activeChange(2) }
         MenuBarText("Historial", active == 3) { activeChange(3) }
-        MenuBarText("Estadísticas", active == 4) { activeChange(4) }
+//        MenuBarText("Estadísticas", active == 4) { activeChange(4) }
         Image(
             painterResource("Logo.svg"),
             "Logo atrás",
@@ -189,7 +189,8 @@ fun MenuBarText(
     Text(
         text,
         color = if (active) Colores.color3 else Colores.color1,
-        modifier = Modifier.clickable(onClick = changePanel).padding(10.dp)
+        fontSize = 16.sp,
+        modifier = Modifier.clickable(onClick = changePanel).padding(13.dp)
     )
 }
 

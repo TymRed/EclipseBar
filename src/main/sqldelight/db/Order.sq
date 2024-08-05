@@ -1,0 +1,19 @@
+CREATE TABLE Orders (
+    id INTEGER PRIMARY KEY,
+    date TEXT NOT NULL,
+    time TEXT NOT NULL,
+    amount REAL NOT NULL,
+    waiter TEXT NOT NULL
+);
+
+selectAll:
+SELECT *
+FROM Orders;
+
+insert:
+INSERT OR IGNORE INTO Orders (id, date, time, amount, waiter)
+VALUES (?, ?, ?, ?, ?);
+
+delete:
+DELETE FROM Orders
+WHERE id = ?;

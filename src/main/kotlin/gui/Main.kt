@@ -42,7 +42,7 @@ fun Application() {
     val windChange: (Int) -> Unit = { index ->
         wind = index
     }
-    var admin = false
+    var admin by remember { mutableStateOf(false) }
     var username: String by remember { mutableStateOf("") }
     val logInto: (User) -> Unit = {
         username = it.username
@@ -50,7 +50,7 @@ fun Application() {
     }
     when (wind) {
         1 -> LogIn (logInto) {windChange(2)}
-        2 -> App (username) {windChange(1)}
+        2 -> App (username, admin) {windChange(1)}
     }
 }
 
@@ -107,9 +107,7 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
                     ) {
                         Text("iniciar sesión".uppercase(), color = Color.White)
                     }
-
                     Spacer(modifier = Modifier.height(100.dp))
-
                 }
                 Image(
                     painter = painterResource("Planeta 1.png"),
@@ -134,7 +132,11 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
 }
 
 @Composable
-fun App(username: String, windChange: () -> Unit) {
+fun App(
+    username: String,
+    admin: Boolean,
+    windChange: () -> Unit
+) {
     var active by remember { mutableStateOf(1) }
     val changeActive: (Int) -> Unit = { index ->
         active = index
@@ -142,6 +144,7 @@ fun App(username: String, windChange: () -> Unit) {
 
     Column {
         MenuBar(
+            admin,
             active,
             changeActive,
             windChange,
@@ -151,13 +154,13 @@ fun App(username: String, windChange: () -> Unit) {
             1 -> Menu(username)
             2 -> Stock()
             3 -> Historial()
-//            4 -> Charts()
         }
     }
 }
 
 @Composable
 fun MenuBar(
+    admin: Boolean,
     active: Int,
     activeChange: (Int) -> Unit,
     windChange: () -> Unit,
@@ -168,10 +171,10 @@ fun MenuBar(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth().fillMaxHeight(0.1F)
     ) {
+        if (!admin) println("Pleb")
         MenuBarText("Panel Principal", active == 1) { activeChange(1) }
-        MenuBarText("Stock", active == 2) { activeChange(2) }
-        MenuBarText("Historial", active == 3) { activeChange(3) }
-//        MenuBarText("Estadísticas", active == 4) { activeChange(4) }
+        MenuBarText("Stock",  active == 2, usable = admin) { activeChange(2) }
+        MenuBarText("Historial", active == 3, usable = admin) { activeChange(3) }
         Image(
             painterResource("Logo.svg"),
             "Logo atrás",
@@ -184,13 +187,18 @@ fun MenuBar(
 fun MenuBarText(
     text: String,
     active: Boolean,
+    usable: Boolean = true,
     changePanel: () -> Unit
 ) {
+    val color = if (!usable) Color.Gray
+        else if (active) Colores.color3
+        else Colores.color1
+
     Text(
         text,
-        color = if (active) Colores.color3 else Colores.color1,
+        color = color,
         fontSize = 16.sp,
-        modifier = Modifier.clickable(onClick = changePanel).padding(13.dp)
+        modifier = Modifier.clickable(enabled = usable, onClick = changePanel).padding(13.dp)
     )
 }
 

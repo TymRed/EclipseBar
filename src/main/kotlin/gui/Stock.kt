@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -127,22 +128,26 @@ fun Stock(
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 5.dp).fillMaxWidth().height(50.dp)
-                                .background(
-                                    Colores.color2, shape = RoundedCornerShape(10.dp)
-                                )
+                            modifier = Modifier
+                                .padding(10.dp, 5.dp, 10.dp, 5.dp)
+                                .fillMaxWidth()
+                                .height(50.dp)
+                                .background(Colores.color2, shape = RoundedCornerShape(10.dp))
+                                .padding(start = 10.dp)
                         ) {
-                            if (prod.imgPath.startsWith("C:")) { /////////////////////////////////////////////////
+                            if (prod.imgPath.contains(":")) {
                                 Image(
                                     bitmap = loadImageBitmap(File(prod.imgPath).inputStream()),
                                     contentDescription = "product image",
-                                    modifier = Modifier.fillMaxWidth(0.05F).fillMaxHeight(0.8F)
+                                    modifier = Modifier.fillMaxWidth(0.04F).fillMaxHeight(0.8F),
+                                    contentScale = ContentScale.Crop
                                 )
                             } else {
                                 Image(
                                     painter = painterResource(prod.imgPath),
                                     contentDescription = "product image",
-                                    modifier = Modifier.fillMaxWidth(0.05F).fillMaxHeight(0.8F)
+                                    modifier = Modifier.fillMaxWidth(0.04F).fillMaxHeight(0.8F),
+                                    contentScale = ContentScale.Crop
                                 )
                             }
                             Row(
@@ -259,7 +264,7 @@ fun AddProduct(
                     imageBitmap?.let {
                         Image(
                             painter = BitmapPainter(image = imageBitmap),
-                            contentDescription = "Logo producto",
+                            contentDescription = "Logo product",
                             modifier = Modifier.clip(RoundedCornerShape(10.dp))
                                 .clickable(onClick = { showFilePicker = true })
                                 .fillMaxWidth()
@@ -383,7 +388,6 @@ fun ModifyProducto(
         }
     }
     var showFilePicker by remember { mutableStateOf(false) }
-
 
     Dialog(onDismissRequest = close) {
         val pattern = remember { Regex("^\\d*\\.?\\d*\$") }

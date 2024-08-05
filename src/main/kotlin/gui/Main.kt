@@ -42,9 +42,12 @@ fun Application() {
     val windChange: (Int) -> Unit = { index ->
         wind = index
     }
+    var admin = false;
     var username: String by remember { mutableStateOf("") }
-    val logInto: (User) -> Unit = { username = it.username }
-
+    val logInto: (User) -> Unit = {
+        username = it.username
+        admin = it.username == "Toño";
+    }
     when (wind) {
         1 -> LogIn (logInto) {windChange(2)}
         2 -> App (username) {windChange(1)}

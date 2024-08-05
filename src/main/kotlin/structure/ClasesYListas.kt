@@ -3,14 +3,8 @@ package structure
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import db.Product
-import example.EclipseDb
 import java.time.LocalDate
 import java.time.LocalTime
-
-val driver = DbSetup().driver
-val database = EclipseDb(driver)
-val productQueries = database.productQueries
-val userQueries = database.userQueries
 
 data class ProdInOrder(
     var product: Product,

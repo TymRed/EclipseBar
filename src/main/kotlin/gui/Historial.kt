@@ -131,7 +131,6 @@ fun OrderList(fil: Filter) {
     }
 }
 
-// " \uD83E\uDC61 \uD83E\uDC6B"
 @Composable
 fun TextSort(
     text: String,

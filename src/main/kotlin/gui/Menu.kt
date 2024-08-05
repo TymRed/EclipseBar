@@ -119,15 +119,19 @@ fun Orders(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.9F)
+            .background(Color.White, shape = RoundedCornerShape(20.dp))
     ) {
         val state = rememberLazyListState()
 
         LazyColumn(
-            modifier = Modifier.fillMaxHeight(0.92F).padding(10.dp), state = state
+            modifier = Modifier
+                .fillMaxHeight(0.92F)
+                .padding(10.dp),
+            state = state
         ) {
             items(orderProducts) { x ->
                 OrderRow(x, orderProducts)
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(7.dp))
             }
         }
         VerticalScrollbar(
@@ -176,6 +180,7 @@ fun OrderRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
+            .height(50.dp)
             .background(Colores.color2, shape = RoundedCornerShape(10.dp))
             .padding(7.dp)
     ) {
@@ -207,7 +212,7 @@ fun OrderRow(
                 Icons.Filled.Close,
                 contentDescription = "-1 unidad",
                 tint = Color.White,
-                modifier = Modifier.size(27.dp)
+                modifier = Modifier.size(25.dp)
             )
         }
     }
@@ -239,10 +244,7 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
         val cardsSelected: MutableList<Product> = mutableListOf()
 
         for (product in productList) {
-            println(product)
-            if (typeText == "Todos") {
-                cardsSelected.add(product)
-            } else if (typeText == product.type) {
+            if (typeText == product.type || typeText == "Todos") {
                 cardsSelected.add(product)
             }
         }
@@ -324,13 +326,17 @@ fun MenuItem(
     orderItems: MutableList<ProdInOrder>,
     changeStock: () -> Unit
 ) {
-    Card(backgroundColor = Colores.color1,
+    val hasStock = card.stock != 0L
+    val color = if (!hasStock) Color.LightGray else Colores.color1
+    Card(
+        backgroundColor = color,
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.padding(10.dp).fillMaxWidth(0.23F).height(250.dp),
+        enabled = hasStock,
         onClick = {
             val orderProduct = orderItems.find { it.product.name == card.name }
             if (orderProduct == null) {
-                if (card.stock == 0L) {
+                if (!hasStock) {
                     changeStock()
                 } else {
                     orderItems.add(ProdInOrder(card, 1))
@@ -341,7 +347,6 @@ fun MenuItem(
                 val index = orderItems.indexOf(orderProduct)
                 orderItems[index] = orderProduct.copy(quantity = orderProduct.quantity + 1)
             }
-
         }
     ) {
         Column(modifier = Modifier.padding(15.dp)) {

@@ -115,10 +115,9 @@ fun Stock(
                             modifier = Modifier
                                 .height(40.dp)
                                 .fillMaxWidth()
-                                .background(color = Colores.color1, shape = RoundedCornerShape(10.dp))
-                                .padding(horizontal = 10.dp),
+                                .background(color = Colores.color1, shape = RoundedCornerShape(10.dp)),
                             centered = false,
-                            placeholderText = "Buscar ⌕"
+                            placeholderText = "  Buscar ⌕"
                         )
                     }
                     Spacer(modifier = Modifier.width(0.dp))
@@ -133,7 +132,7 @@ fun Stock(
                                     Colores.color2, shape = RoundedCornerShape(10.dp)
                                 )
                         ) {
-                            if (prod.imgPath.startsWith("C:")) {
+                            if (prod.imgPath.startsWith("C:")) { /////////////////////////////////////////////////
                                 Image(
                                     bitmap = loadImageBitmap(File(prod.imgPath).inputStream()),
                                     contentDescription = "product image",

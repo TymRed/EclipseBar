@@ -30,8 +30,8 @@ import java.io.File
 
 
 @Composable
-fun Stock(
-) {
+fun Stock()
+{
     val productList = database.productQueries.selectAll().executeAsList()
     var isOpen by remember { mutableStateOf(false) }
     var product: Product? by remember { mutableStateOf(null) }
@@ -39,12 +39,10 @@ fun Stock(
         product = productoPasado
         isOpen = !isOpen
     }
-
     val changeDialog = {
         isOpen = !isOpen
         product = null
     }
-
     var filterText by remember { mutableStateOf("") }
 
     Surface(color = Colores.color1) {
@@ -55,150 +53,11 @@ fun Stock(
                 modifier = Modifier.background(Color.White, shape = RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
                     .fillMaxWidth().fillMaxHeight(0.9F)
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 5.dp).fillMaxWidth().height(50.dp)
-
-                ) {
-                    Spacer(modifier = Modifier.fillMaxWidth(0.05F))
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth(0.7F)
-                    ) {
-                        Text(
-                            text = "Nombre",
-                            color = Colores.color4,
-                            fontSize = 17.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1F)
-                        )
-                        Text(
-                            text = "Categoría",
-                            color = Colores.color4,
-                            fontSize = 17.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1F)
-                        )
-                        Text(
-                            text = "Stock",
-                            color = Colores.color4,
-                            fontSize = 17.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1F)
-                        )
-                        Text(
-                            text = "Coste",
-                            color = Colores.color4,
-                            fontSize = 17.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1F)
-                        )
-                        Text(
-                            text = "PVP",
-                            color = Colores.color4,
-                            fontSize = 17.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1F)
-                        )
-                    }
-
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth(0.6F)
-                    ) {
-
-                        CustomTextField(
-                            text = filterText,
-                            valueChange = { filterText = it },
-                            modifier = Modifier
-                                .height(40.dp)
-                                .fillMaxWidth()
-                                .background(color = Colores.color1, shape = RoundedCornerShape(10.dp)),
-                            centered = false,
-                            placeholderText = "  Buscar ⌕"
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(0.dp))
-                }
+                SearchBar(filterText){  filterText = it }
                 LazyColumn {
-                    items(productList.filter { it.name.lowercase().contains(filterText.lowercase()) }) { prod ->
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .padding(10.dp, 5.dp, 10.dp, 5.dp)
-                                .fillMaxWidth()
-                                .height(50.dp)
-                                .background(Colores.color2, shape = RoundedCornerShape(10.dp))
-                                .padding(start = 10.dp)
-                        ) {
-                            if (prod.imgPath.contains(":")) {
-                                Image(
-                                    bitmap = loadImageBitmap(File(prod.imgPath).inputStream()),
-                                    contentDescription = "product image",
-                                    modifier = Modifier.fillMaxWidth(0.04F).fillMaxHeight(0.8F),
-                                    contentScale = ContentScale.Crop
-                                )
-                            } else {
-                                Image(
-                                    painter = painterResource(prod.imgPath),
-                                    contentDescription = "product image",
-                                    modifier = Modifier.fillMaxWidth(0.04F).fillMaxHeight(0.8F),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth(0.7F)
-                            ) {
-                                Text(text = prod.name, textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
-                                Text(
-                                    text = prod.type, textAlign = TextAlign.Center, modifier = Modifier.weight(1F)
-                                )
-                                Text(
-                                    text = prod.stock.toString(),
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.weight(1F)
-                                )
-                                Text(
-                                    text = "${prod.price}€",
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.weight(1F)
-                                )
-                                Text(
-                                    text = "${prod.pvp}€",
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.weight(1F)
-                                )
-                            }
-
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceAround,
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth(0.6F)
-                            ) {
-                                Boton(
-                                    text = "M",
-                                    function = { saveObject(prod) },
-                                    color = Color.Blue.copy(alpha = 0.9f),
-                                    modifier = Modifier.weight(1F)
-                                )
-                                Spacer(modifier = Modifier.width(20.dp))
-                                Boton(
-                                    text = "X",
-                                    function = { database.productQueries.delete(prod.name) },
-                                    color = Color.Red.copy(alpha = 0.9f),
-                                    modifier = Modifier.weight(1F)
-                                )
-                            }
-                            Spacer(
-                                modifier = Modifier.width(0.dp)
-                            )
-                        }
+                    items(
+                        productList.filter{it.name.lowercase().contains(filterText.lowercase())}
+                    ) { prod -> ProductCard(prod, saveObject)
                     }
                 }
             }
@@ -222,6 +81,161 @@ fun Stock(
     }
 }
 
+@Composable
+fun ProductCard(
+    prod: Product,
+    saveObject: (Product) -> Unit)
+{
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(10.dp, 5.dp, 10.dp, 5.dp)
+            .fillMaxWidth()
+            .height(50.dp)
+            .background(Colores.color2, shape = RoundedCornerShape(10.dp))
+            .padding(start = 10.dp)
+    ) {
+        if (prod.imgPath.contains(":")) {
+            Image(
+                bitmap = loadImageBitmap(File(prod.imgPath).inputStream()),
+                contentDescription = "product image",
+                modifier = Modifier.fillMaxWidth(0.04F).fillMaxHeight(0.8F),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Image(
+                painter = painterResource(prod.imgPath),
+                contentDescription = "product image",
+                modifier = Modifier.fillMaxWidth(0.04F).fillMaxHeight(0.8F),
+                contentScale = ContentScale.Crop
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(0.7F)
+        ) {
+            Text(text = prod.name, textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+            Text(
+                text = prod.type, textAlign = TextAlign.Center, modifier = Modifier.weight(1F)
+            )
+            Text(
+                text = prod.stock.toString(),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1F)
+            )
+            Text(
+                text = "${prod.price}€",
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1F)
+            )
+            Text(
+                text = "${prod.pvp}€",
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1F)
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(0.6F)
+        ) {
+            Boton(
+                text = "M",
+                function = { saveObject(prod) },
+                color = Color.Blue.copy(alpha = 0.9f),
+                modifier = Modifier.weight(1F)
+            )
+            Spacer(modifier = Modifier.width(20.dp))
+            Boton(
+                text = "X",
+                function = { database.productQueries.delete(prod.name) },
+                color = Color.Red.copy(alpha = 0.9f),
+                modifier = Modifier.weight(1F)
+            )
+        }
+        Spacer(
+            modifier = Modifier.width(0.dp)
+        )
+    }
+}
+
+@Composable
+fun SearchBar(
+    filterText: String,
+    changeFilterText: (String) -> Unit)
+{
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 5.dp).fillMaxWidth().height(50.dp)
+
+    ) {
+        Spacer(modifier = Modifier.fillMaxWidth(0.05F))
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(0.7F)
+        ) {
+            Text(
+                text = "Nombre",
+                color = Colores.color4,
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1F)
+            )
+            Text(
+                text = "Categoría",
+                color = Colores.color4,
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1F)
+            )
+            Text(
+                text = "Stock",
+                color = Colores.color4,
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1F)
+            )
+            Text(
+                text = "Coste",
+                color = Colores.color4,
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1F)
+            )
+            Text(
+                text = "PVP",
+                color = Colores.color4,
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1F)
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(0.6F)
+        ) {
+
+            CustomTextField(
+                text = filterText,
+                valueChange = changeFilterText,
+                modifier = Modifier
+                    .height(40.dp)
+                    .fillMaxWidth()
+                    .background(color = Colores.color1, shape = RoundedCornerShape(10.dp)),
+                centered = false,
+                placeholderText = "  Buscar ⌕"
+            )
+        }
+        Spacer(modifier = Modifier.width(0.dp))
+    }
+}
 
 @Composable
 fun AddProduct(

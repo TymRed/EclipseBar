@@ -286,8 +286,7 @@ fun CustomTextField(
                                 color = Colores.color2,
                                 fontSize = fontSize,
                                 textAlign = align),
-                            modifier = Modifier
-                                .fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                     innerTextField()

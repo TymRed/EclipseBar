@@ -32,7 +32,7 @@ import java.io.File
 @Composable
 fun Stock()
 {
-    val productList = database.productQueries.selectAll().executeAsList()
+    val productList = database.productQueries.selectAll().executeAsList().toMutableStateList()
     var isOpen by remember { mutableStateOf(false) }
     var product: Product? by remember { mutableStateOf(null) }
     val saveObject: (Product) -> Unit = { productoPasado ->
@@ -57,7 +57,8 @@ fun Stock()
                 LazyColumn {
                     items(
                         productList.filter{it.name.lowercase().contains(filterText.lowercase())}
-                    ) { prod -> ProductCard(prod, saveObject)
+                    ) {
+                        prod -> ProductCard(prod, saveObject, productList)
                     }
                 }
             }
@@ -73,18 +74,16 @@ fun Stock()
         }
     }
     if (isOpen) {
-        if (product != null) {
-            ModifyProducto(close = changeDialog, product = product!!)
-        } else {
-            AddProduct(close = changeDialog)
-        }
+        ChangeProduct(changeDialog, product)
     }
 }
 
 @Composable
 fun ProductCard(
     prod: Product,
-    saveObject: (Product) -> Unit)
+    saveObject: (Product) -> Unit,
+    productList: MutableList<Product>
+)
 {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -151,7 +150,10 @@ fun ProductCard(
             Spacer(modifier = Modifier.width(20.dp))
             Boton(
                 text = "X",
-                function = { database.productQueries.delete(prod.name) },
+                function = {
+                    productList.remove(prod)
+                    database.productQueries.delete(prod.name)
+                           },
                 color = Color.Red.copy(alpha = 0.9f),
                 modifier = Modifier.weight(1F)
             )
@@ -238,29 +240,29 @@ fun SearchBar(
 }
 
 @Composable
-fun AddProduct(
-    close: () -> Unit
+fun ChangeProduct(
+    close: () -> Unit,
+    product: Product?
 ) {
-    var filePath by remember { mutableStateOf("") }
+    var filePath by remember { mutableStateOf(product?.imgPath ?: "") }
     var imageBitmap: ImageBitmap? = null
-    if (filePath != "") {
+    if (!filePath.startsWith("prodImgs") && filePath != "") {
         val file = File(filePath)
         imageBitmap = remember(file) {
             loadImageBitmap(file.inputStream())
         }
     }
+
     var showFilePicker by remember { mutableStateOf(false) }
-
-
     Dialog(onDismissRequest = close) {
         val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
-        var name by remember { mutableStateOf("") }
-        var stock by remember { mutableStateOf("") }
-        var price by remember { mutableStateOf("") }
-        var pvp by remember { mutableStateOf("") }
+        var name by remember { mutableStateOf(product?.name ?: "") }
+        var stock by remember { mutableStateOf(product?.stock?.toString() ?: "" ) }
+        var price by remember { mutableStateOf(product?.price?.toString() ?: "") }
+        var pvp by remember { mutableStateOf(product?.pvp?.toString() ?: "") }
 
         val typeList = remember { listOf("Refrescos", "Cocteles", "Comida") }
-        var type by remember { mutableStateOf("Refrescos") }
+        var type by remember { mutableStateOf(product?.type ?: "Refrescos") }
         val changeType: (String) -> Unit = { type = it }
 
         Column(
@@ -278,172 +280,22 @@ fun AddProduct(
                     imageBitmap?.let {
                         Image(
                             painter = BitmapPainter(image = imageBitmap),
-                            contentDescription = "Logo product",
+                            contentDescription = "Logo producto",
                             modifier = Modifier.clip(RoundedCornerShape(10.dp))
-                                .clickable(onClick = { showFilePicker = true })
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.5F)
+                                .clickable(onClick = { showFilePicker = true }).fillMaxWidth().fillMaxHeight(0.5F)
                                 .background(Color.White)
                         )
                     } ?: run {
                         Image(
-                            painter = painterResource("prodImgs/noImage.png"),
+                            painter = painterResource(product?.imgPath ?: "prodImgs/noImage.png"),
                             contentDescription = "Logo producto",
-                            alpha = 0.5F,
+                            alpha = if (product == null) 0.5F else 1F,
                             modifier = Modifier.clip(RoundedCornerShape(10.dp))
                                 .clickable(onClick = { showFilePicker = true })
                                 .fillMaxWidth().fillMaxHeight(0.5F)
                                 .background(Color.White)
                         )
                     }
-
-                    ComboBox(type, typeList, changeType)
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-
-                Column(
-                    verticalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier.fillMaxHeight(0.9F).padding(start = 40.dp)
-                ) {
-                    Text("Nombre")
-                    Text("Stock")
-                    Text("Coste")
-                    Text("PVP")
-                }
-
-                Column(
-                    verticalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier.fillMaxHeight(0.9F).fillMaxWidth(0.7F)
-                ) {
-                    CustomTextField(
-                        text = name,
-                        valueChange = { name = it },
-                        modifier = Modifier
-                            .height(50.dp)
-                            .fillMaxWidth()
-                            .padding(end = 10.dp)
-                            .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
-                        centered = false,
-                        placeholderText = "Nombre"
-                    )
-                    CustomTextField(
-                        text = stock,
-                        valueChange = { if (it.matches(Regex("^[0-9]{0,6}?"))) stock = it },
-                        modifier = Modifier.height(50.dp)
-                            .fillMaxWidth()
-                            .padding(end = 10.dp)
-                            .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
-                        centered = false,
-                        placeholderText = "0u"
-                    )
-                    CustomTextField(
-                        text = price,
-                        valueChange = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) price = it },
-                        modifier = Modifier.height(50.dp)
-                            .fillMaxWidth()
-                            .padding(end = 10.dp)
-                            .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
-                        centered = false
-                    )
-                    CustomTextField(
-                        text = pvp,
-                        valueChange = { if (it.isEmpty() || it.matches(pattern) && it.length <= 6) pvp = it },
-                        modifier = Modifier
-                            .height(50.dp)
-                            .fillMaxWidth()
-                            .padding(end = 10.dp)
-                            .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
-                        centered = false
-                    )
-                }
-            }
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth().fillMaxHeight()
-            ) {
-                Boton("Cancelar", function = close)
-                Boton("Añadir", function = {
-                    if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty())) {
-                        database.productQueries.insert(
-                            name,
-                            price.toDouble(),
-                            pvp.toDouble(),
-                            stock.toLong(),
-                            filePath,
-                            type
-                        )
-                        close()
-                    }
-                })
-            }
-        }
-    }
-
-    val fileType = listOf("jpg", "png")
-    FilePicker(
-        show = showFilePicker,
-        fileExtensions = fileType
-    ) { platformFile ->
-        showFilePicker = false
-        filePath = platformFile?.path ?: filePath
-    }
-}
-
-@Composable
-fun ModifyProducto(
-    close: () -> Unit,
-    product: Product
-) {
-    var filePath by remember { mutableStateOf(product.imgPath) }
-    var imageBitmap: ImageBitmap? = null
-    if (!filePath.startsWith("prodImgs")) {
-        val file = File(filePath)
-        imageBitmap = remember(file) {
-            loadImageBitmap(file.inputStream())
-        }
-    }
-    var showFilePicker by remember { mutableStateOf(false) }
-
-    Dialog(onDismissRequest = close) {
-        val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
-        var name by remember { mutableStateOf(product.name) }
-        var stock by remember { mutableStateOf(product.stock.toString()) }
-        var price by remember { mutableStateOf(product.price.toString()) }
-        var pvp by remember { mutableStateOf(product.pvp.toString()) }
-
-        val typeList = remember { listOf("Refrescos", "Cocteles", "Comida") }
-        var type by remember { mutableStateOf(product.type) }
-        val changeType: (String) -> Unit = { type = it }
-
-        Column(
-            modifier = Modifier.clip(RoundedCornerShape(20.dp)).width(600.dp).height(350.dp)
-                .background(Colores.color1, shape = RoundedCornerShape(15.dp)).padding(10.dp)
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth().fillMaxHeight(0.85F)
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier.fillMaxWidth(0.3F).fillMaxHeight()
-                ) {
-
-                    imageBitmap?.let {
-                        Image(
-                            painter = BitmapPainter(image = imageBitmap),
-                            contentDescription = "Logo producto",
-                            modifier = Modifier.clip(RoundedCornerShape(10.dp))
-                                .clickable(onClick = { showFilePicker = true }).fillMaxWidth().fillMaxHeight(0.5F)
-                                .background(Color.White)
-                        )
-                    } ?: run {
-                        Image(
-                            painter = painterResource(product.imgPath),
-                            contentDescription = "Logo producto",
-                            modifier = Modifier.clip(RoundedCornerShape(10.dp))
-                                .clickable(onClick = { showFilePicker = true }).fillMaxWidth().fillMaxHeight(0.5F)
-                                .background(Color.White)
-                        )
-                    }
-
                     ComboBox(type, typeList, changeType)
                     Spacer(modifier = Modifier.height(10.dp))
                 }
@@ -499,16 +351,28 @@ fun ModifyProducto(
             ) {
                 Boton("Cancelar", function = close)
                 Boton("Guardar", function = {
-                    if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty())) {
-                        database.productQueries.update(
-                            product.name,
-                            price.toDouble(),
-                            pvp.toDouble(),
-                            stock.toLong(),
-                            filePath,
-                            type,
-                            product.name
-                        )
+                    if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty()))
+                    {
+                        if (product == null){
+                            database.productQueries.insert(name,
+                                price.toDouble(),
+                                pvp.toDouble(),
+                                stock.toLong(),
+                                filePath,
+                                type
+                            )
+                        }
+                        else{
+                            database.productQueries.update(
+                                product.name,
+                                price.toDouble(),
+                                pvp.toDouble(),
+                                stock.toLong(),
+                                filePath,
+                                type,
+                                product.name
+                            )
+                        }
                         close()
                     }
                 })

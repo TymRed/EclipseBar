@@ -13,7 +13,7 @@ SELECT *
 FROM OrderDB;
 
 maxId:
-SELECT MAX(id)
+SELECT max(id)
 FROM OrderDB;
 
 insert:

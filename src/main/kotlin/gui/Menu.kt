@@ -23,12 +23,12 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import db.OrderDB
 import db.Product
 import structure.*
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun Menu(username: String) {
@@ -39,11 +39,6 @@ fun Menu(username: String) {
     }
     val orderProducts: SnapshotStateList<ProdInOrder> = remember { mutableStateListOf() }
     val eraseOrder: () -> Unit = {
-        orderProducts.removeAll(orderProducts)
-        amount = ""
-    }
-    val addOrder: (OrderDB) -> Unit = {
-        orders.add(it)
         orderProducts.removeAll(orderProducts)
         amount = ""
     }
@@ -81,9 +76,9 @@ fun Menu(username: String) {
                             } else {
                                 subtractStock(orderProducts)
                                 orderQueries.insert(
-                                    id = orders.maxBy { it.id }.id + 1,
+                                    id = (orderQueries.maxId().executeAsOneOrNull()?.max ?: -1L) + 1,
                                     date = LocalDate.now(),
-                                    time = LocalTime.now().toString(),
+                                    time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")).toString(),
                                     amount = "%.2f".format(sum).replace(",", ".").toDouble(),
                                     waiter = username
                                 )

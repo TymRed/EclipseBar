@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import db.OrderDB
 import structure.Colores
 import structure.Filter
-import structure.orders
+import structure.orderQueries
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -28,9 +28,6 @@ import kotlin.math.roundToInt
 
 @Composable
 fun Historial() {
-//    var numb = orderQueries.maxId().executeAsOneOrNull()?.toString()?.toInt()
-//    print(numb ?: "error")
-
     Surface(
         color = Colores.color1
     ) {
@@ -73,7 +70,7 @@ fun OrderList(fil: Filter) {
             asc = true
         } else asc = !asc
     }
-
+    val orders = orderQueries.selectAll().executeAsList() ////////////////////////////////////////////////////////////
     val filterList = orders.filter { pedido ->
         passOrderNumber(pedido) && passWaiter(pedido) && passAmount(pedido) && passDate(pedido)
     }.mySort(typeSort, asc)
@@ -184,7 +181,9 @@ fun OrderRow(order: OrderDB) {
 }
 
 @Composable
-fun Filters(filChange: (Filter) -> Unit) {
+fun Filters(
+    filChange: (Filter) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
@@ -201,8 +200,7 @@ fun Filters(filChange: (Filter) -> Unit) {
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
-//        orders.maxByOrNull { it.id }?.id?.toInt() ?: 0
-        val max by remember { mutableStateOf(0) }
+        val max by remember { mutableStateOf((orderQueries.maxId().executeAsOneOrNull()?.max ?: 0).toInt()) } //////////////////////
         var minOrderNumber = 0
         var maxOrderNumber = max
 

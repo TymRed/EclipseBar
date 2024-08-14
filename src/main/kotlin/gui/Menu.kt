@@ -23,6 +23,7 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import db.OrderDB
 import db.Product
 import structure.*
 import java.io.File
@@ -41,7 +42,7 @@ fun Menu(username: String) {
         orderProducts.removeAll(orderProducts)
         amount = ""
     }
-    val addOrder: (Order) -> Unit = {
+    val addOrder: (OrderDB) -> Unit = {
         orders.add(it)
         orderProducts.removeAll(orderProducts)
         amount = ""
@@ -79,14 +80,12 @@ fun Menu(username: String) {
                                 errorText = "Falta dinero"
                             } else {
                                 subtractStock(orderProducts)
-                                addOrder(
-                                    Order(
-                                        number = orders.maxBy { it.number }.number + 1,
-                                        date = LocalDate.now(),
-                                        time = LocalTime.now(),
-                                        amount = "%.2f".format(sum).replace(",", ".").toDouble(),
-                                        waiter = username
-                                    )
+                                orderQueries.insert(
+                                    id = orders.maxBy { it.id }.id + 1,
+                                    date = LocalDate.now(),
+                                    time = LocalTime.now().toString(),
+                                    amount = "%.2f".format(sum).replace(",", ".").toDouble(),
+                                    waiter = username
                                 )
                             }
                         }

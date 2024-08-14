@@ -1,11 +1,15 @@
 package structure
 
+import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlCursor
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
+import db.OrderDB
 import example.EclipseDb
 import example.EclipseDb.Companion.Schema
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class DbSetup {
     val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:eclipse.db")
@@ -44,7 +48,21 @@ class DbSetup {
     }
 }
 
+val orderDBDateAdapter = object : ColumnAdapter<LocalDate, String> {
+    override fun decode(databaseValue: String): LocalDate {
+        println(databaseValue)
+        return LocalDate.parse(databaseValue, DateTimeFormatter.ofPattern("MM-dd-yyyy"))
+    }
+    override fun encode(value: LocalDate) = value.toString()
+}
+
 val driver = DbSetup().driver
-val database = EclipseDb(driver)
+val database = EclipseDb(
+    driver = driver,
+    OrderDBAdapter = OrderDB.Adapter(
+        dateAdapter = orderDBDateAdapter
+    )
+)
 val productQueries = database.productQueries
 val userQueries = database.userQueries
+val orderQueries = database.orderQueries

@@ -17,9 +17,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import db.OrderDB
 import structure.Colores
 import structure.Filter
-import structure.Order
 import structure.orders
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -28,6 +28,9 @@ import kotlin.math.roundToInt
 
 @Composable
 fun Historial() {
+//    var numb = orderQueries.maxId().executeAsOneOrNull()?.toString()?.toInt()
+//    print(numb ?: "error")
+
     Surface(
         color = Colores.color1
     ) {
@@ -49,18 +52,17 @@ fun Historial() {
 
 @Composable
 fun OrderList(fil: Filter) {
-
-    val passOrderNumber: (Order) -> Boolean = { pedido ->
-        pedido.number in fil.orderNumber
+    val passOrderNumber: (OrderDB) -> Boolean = { pedido ->
+        pedido.id in fil.orderNumber
     }
-    val passAmount: (Order) -> Boolean = { pedido ->
-        pedido.amount in fil.amountRange || (fil.amountRange.endInclusive == 100f && pedido.amount >= 100f)
+    val passAmount: (OrderDB) -> Boolean = { ord ->
+        ord.amount in fil.amountRange || (fil.amountRange.endInclusive == 100f && ord.amount >= 100f)
     }
-    val passWaiter: (Order) -> Boolean = { pedido ->
-        pedido.waiter == fil.waiter || fil.waiter == "Todos"
+    val passWaiter: (OrderDB) -> Boolean = { ord ->
+        ord.waiter == fil.waiter || fil.waiter == "Todos"
     }
-    val passDate: (Order) -> Boolean = { pedido ->
-        pedido.date in fil.dateRange
+    val passDate: (OrderDB) -> Boolean = { ord ->
+        ord.date in fil.dateRange
     }
 
     var typeSort by remember { mutableStateOf(1) }
@@ -152,9 +154,9 @@ fun TextSort(
     )
 }
 
-private fun List<Order>.mySort(type: Int, asc: Boolean): List<Order> {
+private fun List<OrderDB>.mySort(type: Int, asc: Boolean): List<OrderDB> {
     return when (type) {
-        1 -> if (asc) this.sortedBy { it.number } else this.sortedByDescending { it.number }
+        1 -> if (asc) this.sortedBy { it.id } else this.sortedByDescending { it.id }
         2 -> if (asc) this.sortedBy { it.date } else this.sortedByDescending { it.date }
         3 -> if (asc) this.sortedBy { it.time } else this.sortedByDescending { it.time }
         4 -> if (asc) this.sortedBy { it.amount } else this.sortedByDescending { it.amount }
@@ -164,12 +166,12 @@ private fun List<Order>.mySort(type: Int, asc: Boolean): List<Order> {
 }
 
 @Composable
-fun OrderRow(order: Order) {
+fun OrderRow(order: OrderDB) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth().background(Colores.color2, RoundedCornerShape(10.dp)).padding(10.dp)
     ) {
-        Text(order.number.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
+        Text(order.id.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
         Text(order.date.toString(), textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
         Text(
             order.time.format(DateTimeFormatter.ofPattern("HH:mm")),
@@ -199,8 +201,8 @@ fun Filters(filChange: (Filter) -> Unit) {
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
-
-        val max by remember { mutableStateOf(orders.maxBy { it.number }.number) }
+//        orders.maxByOrNull { it.id }?.id?.toInt() ?: 0
+        val max by remember { mutableStateOf(0) }
         var minOrderNumber = 0
         var maxOrderNumber = max
 

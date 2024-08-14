@@ -1,6 +1,8 @@
-CREATE TABLE Orders (
+import java.time.LocalDate;
+
+CREATE TABLE OrderDB (
     id INTEGER PRIMARY KEY,
-    date TEXT NOT NULL,
+    date TEXT AS LocalDate NOT NULL,
     time TEXT NOT NULL,
     amount REAL NOT NULL,
     waiter TEXT NOT NULL
@@ -8,12 +10,16 @@ CREATE TABLE Orders (
 
 selectAll:
 SELECT *
-FROM Orders;
+FROM OrderDB;
+
+maxId:
+SELECT MAX(id)
+FROM OrderDB;
 
 insert:
-INSERT OR IGNORE INTO Orders (id, date, time, amount, waiter)
+INSERT OR IGNORE INTO OrderDB (id, date, time, amount, waiter)
 VALUES (?, ?, ?, ?, ?);
 
 delete:
-DELETE FROM Orders
+DELETE FROM OrderDB
 WHERE id = ?;

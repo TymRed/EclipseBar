@@ -1,7 +1,7 @@
 CREATE TABLE Product (
     name TEXT PRIMARY KEY,
     stock INTEGER NOT NULL,
-    price REAL NOT NULL,
+    cost REAL NOT NULL,
     pvp REAL NOT NULL,
     imgPath TEXT NOT NULL,
     type TEXT NOT NULL
@@ -12,11 +12,11 @@ SELECT *
 FROM Product;
 
 insert:
-INSERT OR IGNORE INTO Product (name, price, pvp, stock, imgPath, type)
+INSERT OR IGNORE INTO Product (name, cost, pvp, stock, imgPath, type)
 VALUES (?, ?, ?, ?, ?, ?);
 
 update:
-UPDATE Product SET name = ?, price = ?, pvp = ?, stock = ?, imgPath = ?, type = ?
+UPDATE Product SET name = ?, cost = ?, pvp = ?, stock = ?, imgPath = ?, type = ?
 WHERE name = ?;
 
 delete:

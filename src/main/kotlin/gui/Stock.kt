@@ -127,7 +127,7 @@ fun ProductCard(
                 modifier = Modifier.weight(1F)
             )
             Text(
-                text = "${prod.price}€",
+                text = "${prod.cost}€",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1F)
             )
@@ -265,7 +265,7 @@ fun ChangeProduct(
         val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
         var name by remember { mutableStateOf(product?.name ?: "") }
         var stock by remember { mutableStateOf(product?.stock?.toString() ?: "" ) }
-        var price by remember { mutableStateOf(product?.price?.toString() ?: "") }
+        var price by remember { mutableStateOf(product?.cost?.toString() ?: "") }
         var pvp by remember { mutableStateOf(product?.pvp?.toString() ?: "") }
 
         val typeList = remember { listOf("Refrescos", "Cocteles", "Comida") }

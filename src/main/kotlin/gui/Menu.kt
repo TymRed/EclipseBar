@@ -52,7 +52,7 @@ fun Menu(username: String) {
             Column(
                 modifier = Modifier.fillMaxHeight().fillMaxWidth(0.3F), verticalArrangement = Arrangement.SpaceBetween
             ) {
-                val sum = orderProducts.sumOf { it.product.price * it.quantity }
+                val sum = orderProducts.sumOf { it.product.pvp * it.quantity }
                 val amountDouble: Double = if (amount.isEmpty()) 0.0 else amount.toDouble()
 
                 var errorText by remember { mutableStateOf("") }
@@ -194,7 +194,7 @@ fun OrderRow(
             modifier = Modifier.fillMaxWidth().weight(1F)
         )
         Text(
-            "%.2f€".format(order.product.price * order.quantity),
+            "%.2f€".format(order.product.cost * order.quantity),
             modifier = Modifier.fillMaxWidth().weight(1F)
         )
         Button(
@@ -260,9 +260,7 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
                     val cartItemData = cardsSelected[index]
                     var maxStock by remember { mutableStateOf(false) }
                     val changeStock = { maxStock = !maxStock }
-                    if (typeText == "Todos" || cartItemData.type == typeText) {
-                        MenuItem(cartItemData, orderItems, changeStock)
-                    }
+                    MenuItem(cartItemData, orderItems, changeStock)
                     if (maxStock) {
                         TextDialog("No hay más stock", changeStock)
                     }
@@ -341,9 +339,9 @@ fun MenuItem(
                 } else {
                     orderItems.add(ProdInOrder(card, 1))
                 }
-            } else if (orderProduct.quantity.toLong() == card.stock) {
+            } else if (orderProduct.quantity.toLong() == card.stock)
                 changeStock()
-            } else {
+            else {
                 val index = orderItems.indexOf(orderProduct)
                 orderItems[index] = orderProduct.copy(quantity = orderProduct.quantity + 1)
             }
@@ -367,7 +365,7 @@ fun MenuItem(
             }
 
             Spacer(modifier = Modifier.height(30.dp))
-            Text("${card.price}€")
+            Text("${card.pvp}€")
             Text(card.name)
         }
     }

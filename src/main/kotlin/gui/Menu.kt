@@ -43,6 +43,11 @@ fun Menu(username: String) {
         amount = ""
     }
 
+    var productList = remember{ database.productQueries.selectAll().executeAsList().toMutableStateList() }
+    val updatePL: (List<Product>) -> Unit = {
+        productList = it.toMutableStateList()
+    }
+
     Surface(color = Colores.color1) {
         Row(modifier = Modifier.fillMaxSize().padding(20.dp), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(
@@ -74,7 +79,7 @@ fun Menu(username: String) {
                             } else if (amountDouble < sum) {
                                 errorText = "Falta dinero"
                             } else {
-                                subtractStock(orderProducts)
+                                subtractStock(orderProducts, productList, updatePL)
                                 orderQueries.insert(
                                     id = (orderQueries.maxId().executeAsOneOrNull()?.max ?: -1L) + 1,
                                     date = LocalDate.now(),
@@ -82,6 +87,8 @@ fun Menu(username: String) {
                                     amount = "%.2f".format(sum).replace(",", ".").toDouble(),
                                     waiter = username
                                 )
+                                eraseOrder()
+                                amount = ""
                             }
                         }
                     )
@@ -90,14 +97,24 @@ fun Menu(username: String) {
                     TextDialog(errorText) { errorText = "" }
                 }
             }
-            ProductsArea(orderProducts)
+            ProductsArea(orderProducts, productList)
         }
     }
 }
 
-fun subtractStock(orderProducts: SnapshotStateList<ProdInOrder>) {
+fun subtractStock(
+    orderProducts: SnapshotStateList<ProdInOrder>,
+    productList: SnapshotStateList<Product>,
+    updatePL: (List<Product>) -> Unit
+) {
     for (prodOrd in orderProducts) {
-        database.productQueries.subtractStock(prodOrd.product.stock - prodOrd.quantity, prodOrd.product.name)
+        productQueries.subtractStock(prodOrd.product.stock - prodOrd.quantity, prodOrd.product.name)
+        updatePL(productList.map { item ->
+            if(item.name == prodOrd.product.name)
+                item.copy(stock = prodOrd.product.stock - prodOrd.quantity)
+            else
+                item
+        })
     }
 }
 
@@ -213,7 +230,7 @@ fun OrderRow(
 }
 
 @Composable
-fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
+fun ProductsArea(orderItems: MutableList<ProdInOrder>, productList: SnapshotStateList<Product>) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -234,7 +251,7 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>) {
 
         ChooseType(changeType, activeType)
 
-        val productList = database.productQueries.selectAll().executeAsList()
+
         val cardsSelected: MutableList<Product> = mutableListOf()
 
         for (product in productList) {

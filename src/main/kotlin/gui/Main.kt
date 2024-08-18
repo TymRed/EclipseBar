@@ -31,7 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import db.User
-import structure.*
+import structure.Colores
+import structure.DbSetup
+import structure.getString
+import structure.userQueries
 
 @Composable
 fun Application() {
@@ -46,8 +49,8 @@ fun Application() {
         admin = it.username == "Toño"
     }
     when (wind) {
-        1 -> LogIn (logInto) {windChange(2)}
-        2 -> App (username, admin) {windChange(1)}
+        1 -> LogIn(logInto) { windChange(2) }
+        2 -> App(username, admin) { windChange(1) }
     }
 }
 
@@ -93,8 +96,7 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
                             if (usr?.password == password) {
                                 logInto(usr)
                                 windChange()
-                            }
-                            else{
+                            } else {
                                 errorText = getString("Incorrect username or password")
                             }
                         },
@@ -169,7 +171,7 @@ fun MenuBar(
         modifier = modifier.fillMaxWidth().fillMaxHeight(0.1F)
     ) {
         MenuBarText(getString("Main menu"), active == 1) { activeChange(1) }
-        MenuBarText(getString("Stock"),  active == 2, usable = admin) { activeChange(2) }
+        MenuBarText(getString("Stock"), active == 2, usable = admin) { activeChange(2) }
         MenuBarText(getString("History"), active == 3, usable = admin) { activeChange(3) }
         Image(
             painterResource("Logo.svg"),
@@ -187,8 +189,8 @@ fun MenuBarText(
     changePanel: () -> Unit
 ) {
     val color = if (!usable) Color.Gray
-        else if (active) Colores.color3
-        else Colores.color1
+    else if (active) Colores.color3
+    else Colores.color1
 
     Text(
         text,
@@ -275,13 +277,14 @@ fun CustomTextField(
             ) {
                 if (leadingIcon != null) leadingIcon()
                 Box {
-                    if (text.isEmpty()){
+                    if (text.isEmpty()) {
                         Text(
                             placeholderText,
                             style = LocalTextStyle.current.copy(
                                 color = Colores.color2,
                                 fontSize = fontSize,
-                                textAlign = align),
+                                textAlign = align
+                            ),
                             modifier = Modifier.fillMaxWidth()
                         )
                     }

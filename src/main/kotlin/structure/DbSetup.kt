@@ -50,9 +50,9 @@ class DbSetup {
 
 val orderDBDateAdapter = object : ColumnAdapter<LocalDate, String> {
     override fun decode(databaseValue: String): LocalDate {
-        println(databaseValue)
         return LocalDate.parse(databaseValue, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     }
+
     override fun encode(value: LocalDate) = value.toString()
 }
 

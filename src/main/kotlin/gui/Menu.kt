@@ -1,12 +1,15 @@
 package gui
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -43,7 +46,7 @@ fun Menu(username: String) {
         amount = ""
     }
 
-    var productList = remember{ database.productQueries.selectAll().executeAsList().toMutableStateList() }
+    var productList = remember { database.productQueries.selectAll().executeAsList().toMutableStateList() }
     val updatePL: (List<Product>) -> Unit = {
         productList = it.toMutableStateList()
     }
@@ -110,7 +113,7 @@ fun subtractStock(
     for (prodOrd in orderProducts) {
         productQueries.subtractStock(prodOrd.product.stock - prodOrd.quantity, prodOrd.product.name)
         updatePL(productList.map { item ->
-            if(item.name == prodOrd.product.name)
+            if (item.name == prodOrd.product.name)
                 item.copy(stock = prodOrd.product.stock - prodOrd.quantity)
             else
                 item

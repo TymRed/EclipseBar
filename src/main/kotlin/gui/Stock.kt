@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,8 +35,7 @@ import java.io.File
 
 
 @Composable
-fun Stock()
-{
+fun Stock() {
     val productList = productQueries.selectAll().executeAsList().toMutableStateList()
     var isOpen by remember { mutableStateOf(false) }
     var product: Product? by remember { mutableStateOf(null) }
@@ -55,12 +57,12 @@ fun Stock()
                 modifier = Modifier.background(Color.White, shape = RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
                     .fillMaxWidth().fillMaxHeight(0.9F)
             ) {
-                SearchBar(filterText){  filterText = it }
+                SearchBar(filterText) { filterText = it }
                 LazyColumn {
                     items(
-                        productList.filter{it.name.lowercase().contains(filterText.lowercase())}
-                    ) {
-                        prod -> ProductCard(prod, saveObject, productList)
+                        productList.filter { it.name.lowercase().contains(filterText.lowercase()) }
+                    ) { prod ->
+                        ProductCard(prod, saveObject, productList)
                     }
                 }
             }
@@ -85,8 +87,7 @@ fun ProductCard(
     prod: Product,
     saveObject: (Product) -> Unit,
     productList: MutableList<Product>
-)
-{
+) {
     var visiblePopUp by remember { mutableStateOf(false) }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -162,11 +163,13 @@ fun ProductCard(
             modifier = Modifier.width(0.dp)
         )
     }
-    if (visiblePopUp){
+    if (visiblePopUp) {
         AreYouSurePopUp(
-            { productList.remove(prod)
-            productQueries.delete(prod.name)
-            visiblePopUp = false },
+            {
+                productList.remove(prod)
+                productQueries.delete(prod.name)
+                visiblePopUp = false
+            },
             { visiblePopUp = false }
         )
     }
@@ -175,8 +178,8 @@ fun ProductCard(
 @Composable
 fun SearchBar(
     filterText: String,
-    changeFilterText: (String) -> Unit)
-{
+    changeFilterText: (String) -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -265,7 +268,7 @@ fun ChangeProduct(
     Dialog(onDismissRequest = close) {
         val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
         var name by remember { mutableStateOf(product?.name ?: "") }
-        var stock by remember { mutableStateOf(product?.stock?.toString() ?: "" ) }
+        var stock by remember { mutableStateOf(product?.stock?.toString() ?: "") }
         var price by remember { mutableStateOf(product?.cost?.toString() ?: "") }
         var pvp by remember { mutableStateOf(product?.pvp?.toString() ?: "") }
 
@@ -359,18 +362,17 @@ fun ChangeProduct(
             ) {
                 Boton(getString("Cancel"), function = close)
                 Boton(getString("Save"), function = {
-                    if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty()))
-                    {
-                        if (product == null){
-                            productQueries.insert(name,
+                    if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty())) {
+                        if (product == null) {
+                            productQueries.insert(
+                                name,
                                 price.toDouble(),
                                 pvp.toDouble(),
                                 stock.toLong(),
                                 filePath,
                                 type
                             )
-                        }
-                        else{
+                        } else {
                             productQueries.update(
                                 product.name,
                                 price.toDouble(),
@@ -406,7 +408,7 @@ fun AreYouSurePopUp(
     Dialog(
         onDismissRequest = upsie
     ) {
-        Column (
+        Column(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -416,13 +418,14 @@ fun AreYouSurePopUp(
                 .background(Colores.color1, RoundedCornerShape(16.dp))
                 .background(Colores.color2.copy(alpha = 0.1f))
                 .padding(horizontal = 30.dp)
-        ){
+        ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(getString("Are you sure?"),
+                Text(
+                    getString("Are you sure?"),
                     color = Colores.color5,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.SemiBold

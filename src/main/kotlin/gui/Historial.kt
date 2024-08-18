@@ -1,6 +1,5 @@
 package gui
 
-import datePicker.DialogDatePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import datePicker.DialogDatePicker
 import db.OrderDB
 import structure.*
 import java.time.LocalDate

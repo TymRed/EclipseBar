@@ -311,7 +311,7 @@ fun ComboBox(
                 .background(Color.White, RoundedCornerShape(10.dp))
                 .padding(start = 5.dp)
         ) {
-            Text(text)
+            Text(getString(text))
             IconButton(onClick = { visible = true }) {
                 Icon(Icons.Default.ArrowDropDown, contentDescription = "Open list")
             }

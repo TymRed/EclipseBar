@@ -120,7 +120,7 @@ fun ProductCard(
         ) {
             Text(text = prod.name, textAlign = TextAlign.Center, modifier = Modifier.weight(1F))
             Text(
-                text = prod.type, textAlign = TextAlign.Center, modifier = Modifier.weight(1F)
+                text = getString(prod.type), textAlign = TextAlign.Center, modifier = Modifier.weight(1F)
             )
             Text(
                 text = prod.stock.toString(),
@@ -269,8 +269,8 @@ fun ChangeProduct(
         var price by remember { mutableStateOf(product?.cost?.toString() ?: "") }
         var pvp by remember { mutableStateOf(product?.pvp?.toString() ?: "") }
 
-        val typeList = remember { listOf("Refrescos", "Cocteles", "Comida") }
-        var type by remember { mutableStateOf(product?.type ?: "Refrescos") }
+        val typeList = remember { productQueries.selectTypes().executeAsList() }
+        var type by remember { mutableStateOf(product?.type ?: "Sodas") }
         val changeType: (String) -> Unit = { type = it }
 
         Column(

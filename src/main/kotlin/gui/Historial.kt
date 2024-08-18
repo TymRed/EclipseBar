@@ -198,7 +198,7 @@ fun Filters(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
-        val max by remember { mutableStateOf((orderQueries.maxId().executeAsOneOrNull()?.max ?: 0).toInt()) } //////////////////////
+        val max by remember { mutableStateOf((orderQueries.maxId().executeAsOneOrNull()?.max ?: 0).toInt()) }
         var minOrderNumber = 0
         var maxOrderNumber = max
 
@@ -221,12 +221,12 @@ fun Filters(
             RangeSliderFloat(slider1Position, changeRange, max.toFloat())
         }
 
-        var waiter by remember { mutableStateOf("Todos") }
+        var waiter by remember { mutableStateOf(getString("All")) }
         Surface(
             color = Color.White,
             shape = RoundedCornerShape(10.dp),
         ) {
-            val waiters = remember { listOf("Todos", "Toño", "Camarero 2", "Camarero 3") } /////////////////
+            val waiters = remember { listOf(getString("All")) + userQueries.selectNames().executeAsList() }
             val changeWaiter: (String) -> Unit = { waiter = it }
             val text = "${getString("Waiter")}: $waiter"
             ComboBox(text, waiters, changeWaiter)
@@ -290,7 +290,7 @@ fun Filters(
                 modifier = Modifier.weight(1F),
                 function = {
                     slider1Position = 0f..max.toFloat()
-                    waiter = "Todos"
+                    waiter = getString("All")
                     slider2Position = 0f..rangeMax
                     firstDate = LocalDate.of(2024, 1, 1)
                     secondDate = LocalDate.now()

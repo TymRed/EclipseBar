@@ -1,6 +1,6 @@
 package structure
 
-var lang = "ru"
+var lang = "es"
 
 val langPack = mapOf(
     "es" to mapOf(
@@ -20,7 +20,7 @@ val langPack = mapOf(
         "POS App" to "Aplicacion TPV",
         "Name" to "Nombre",
         "Password" to "Contraseña",
-        "Incorrect user or password" to "Usuario o contraseña incorrectos",
+        "Incorrect username or password" to "Usuario o contraseña incorrectos",
         "Software developed by Tymur Kulivar and Javier Redondo" to "Sofware desarrollado por Tymur Kulivar y Javier Redondo",
         "History" to "Historial",
         "Stock" to "Stock",

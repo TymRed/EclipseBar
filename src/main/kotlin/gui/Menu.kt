@@ -239,10 +239,10 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>, productList: SnapshotStat
     ) {
         var activeType by remember { mutableStateOf(1) }
         val typeText = when (activeType) {
-            1 -> "Todos"
-            2 -> "Refrescos"
-            3 -> "Cocteles"
-            4 -> "Comida"
+            1 -> "All"
+            2 -> "Sodas"
+            3 -> "Cocktails"
+            4 -> "Food"
             else -> ""
         }
         val changeType: (Int) -> Unit = { index ->
@@ -251,11 +251,10 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>, productList: SnapshotStat
 
         ChooseType(changeType, activeType)
 
-
         val cardsSelected: MutableList<Product> = mutableListOf()
 
         for (product in productList) {
-            if (typeText == product.type || typeText == "Todos") {
+            if (typeText == product.type || typeText == "All") {
                 cardsSelected.add(product)
             }
         }

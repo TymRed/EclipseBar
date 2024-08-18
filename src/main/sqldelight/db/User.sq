@@ -10,6 +10,9 @@ INSERT OR IGNORE INTO User(username, password, name) VALUES('Camarero1', '1234',
 selectAll:
 SELECT * FROM User;
 
+selectNames:
+SELECT name FROM User;
+
 findByUsername:
 SELECT * FROM User
 WHERE username = ?;

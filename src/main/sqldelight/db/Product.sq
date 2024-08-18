@@ -7,9 +7,27 @@ CREATE TABLE Product (
     type TEXT NOT NULL
 );
 
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Fanta", 2.2, 3.0, 5, "prodImgs/Fanta.png", "Sodas");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Coca-Cola", 1.5, 2.2, 7, "prodImgs/coca-cola.png", "Sodas");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Nestea", 1.9, 2.5, 3, "prodImgs/Nestea.png", "Sodas");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Aquarius", 1.9, 2.5, 14, "prodImgs/Aquarius.png", "Sodas");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Pepsi", 2.7, 3.2, 10, "prodImgs/pepsi.png", "Sodas");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Sprite", 2.1, 3.2, 6, "prodImgs/Sprite.png", "Sodas");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Mojito", 5.0, 7.0, 4, "prodImgs/Mojito.jpg", "Cocktails");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Cuba Libre", 5.0, 7.0, 2, "prodImgs/CubaLibre.jpg", "Cocktails");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Gin Tonic", 6.2, 7.7, 32, "prodImgs/GinTonic.jpg", "Cocktails");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Margarita", 5.6, 7.3, 63, "prodImgs/Margarita.jpg", "Cocktails");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Tortilla", 3.5, 4.0, 12, "prodImgs/Tortilla.jpg", "Food");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Patatas Bravas", 3.5, 4.0, 24, "prodImgs/PatatasBravas.jpg", "Food");
+INSERT OR IGNORE INTO Product(name, cost, pvp, stock, imgPath, type) VALUES ("Croquetas", 3.5, 4.0, 8, "prodImgs/Croquetas.jpeg", "Food");
+
+
 selectAll:
 SELECT *
 FROM Product;
+
+selectTypes:
+SELECT DISTINCT type FROM Product;
 
 insert:
 INSERT OR IGNORE INTO Product (name, cost, pvp, stock, imgPath, type)

@@ -370,22 +370,4 @@ fun main() = application {
         Application()
     }
     DbSetup().setUp()
-    doDatabaseThings()
-}
-
-fun doDatabaseThings() {
-    productQueries.insert("Fanta", 2.2, 3.0, 5, "prodImgs/Fanta.png", "Refrescos")
-    productQueries.insert("Coca-Cola", 1.5, 2.2, 7, "prodImgs/coca-cola.png", "Refrescos")
-    productQueries.insert("Nestea", 1.9, 2.5, 3, "prodImgs/Nestea.png", "Refrescos")
-    productQueries.insert("Aquarius", 1.9, 2.5, 14, "prodImgs/Aquarius.png", "Refrescos")
-    productQueries.insert("Pepsi", 2.7, 3.2, 10, "prodImgs/pepsi.png", "Refrescos")
-    productQueries.insert("Sprite", 2.1, 3.2, 6, "prodImgs/Sprite.png", "Refrescos")
-    productQueries.insert("Mojito", 5.0, 7.0, 4, "prodImgs/Mojito.jpg", "Cocteles")
-    productQueries.insert("Cuba Libre", 5.0, 7.0, 2, "prodImgs/CubaLibre.jpg", "Cocteles")
-    productQueries.insert("Gin Tonic", 6.2, 7.7, 32, "prodImgs/GinTonic.jpg", "Cocteles")
-    productQueries.insert("Margarita", 5.6, 7.3, 63, "prodImgs/Margarita.jpg", "Cocteles")
-    productQueries.insert("Tortilla", 3.5, 4.0, 12, "prodImgs/Tortilla.jpg", "Comida")
-    productQueries.insert("Patatas Bravas", 3.5, 4.0, 24, "prodImgs/PatatasBravas.jpg", "Comida")
-    productQueries.insert("Croquetas", 3.5, 4.0, 8, "prodImgs/Croquetas.jpeg", "Comida")
-    println(productQueries.selectAll().executeAsList())
 }

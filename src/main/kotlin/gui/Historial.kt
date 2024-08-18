@@ -18,9 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import db.OrderDB
-import structure.Colores
-import structure.Filter
-import structure.orderQueries
+import structure.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -70,7 +68,7 @@ fun OrderList(fil: Filter) {
             asc = true
         } else asc = !asc
     }
-    val orders = orderQueries.selectAll().executeAsList() ////////////////////////////////////////////////////////////
+    val orders = orderQueries.selectAll().executeAsList()
     val filterList = orders.filter { pedido ->
         passOrderNumber(pedido) && passWaiter(pedido) && passAmount(pedido) && passDate(pedido)
     }.mySort(typeSort, asc)
@@ -83,35 +81,35 @@ fun OrderList(fil: Filter) {
                 .background(Color.Transparent, RoundedCornerShape(10.dp))
         ) {
             TextSort(
-                text = "Numero",
+                text = getString("Number"),
                 { changeSort(1) },
                 active = typeSort == 1,
                 asc = asc,
                 Modifier.weight(1F)
             )
             TextSort(
-                text = "Fecha",
+                text = getString("Date"),
                 { changeSort(2) },
                 active = typeSort == 2,
                 asc = asc,
                 Modifier.weight(1F)
             )
             TextSort(
-                text = "Hora",
+                text = getString("Time"),
                 { changeSort(3) },
                 active = typeSort == 3,
                 asc = asc,
                 Modifier.weight(1F)
             )
             TextSort(
-                text = "Importe",
+                text = getString("Total"),
                 { changeSort(4) },
                 active = typeSort == 4,
                 asc = asc,
                 Modifier.weight(1F)
             )
             TextSort(
-                text = "Camarero",
+                text = getString("Waiter"),
                 { changeSort(5) },
                 active = typeSort == 5,
                 asc = asc,
@@ -194,7 +192,7 @@ fun Filters(
             .padding(horizontal = 10.dp)
     ) {
         Text(
-            text = "FILTROS:",
+            text = "${getString("Filters").uppercase()}:",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -217,7 +215,7 @@ fun Filters(
             maxOrderNumber = slider1Position.endInclusive.roundToInt()
 
             Text(
-                text = "Numero pedido: $minOrderNumber - $maxOrderNumber",
+                text = "${getString("Order number")}: $minOrderNumber - $maxOrderNumber",
                 modifier = Modifier.offset(y = 7.dp, x = 6.dp)
             )
             RangeSliderFloat(slider1Position, changeRange, max.toFloat())
@@ -228,9 +226,9 @@ fun Filters(
             color = Color.White,
             shape = RoundedCornerShape(10.dp),
         ) {
-            val waiters = remember { listOf("Todos", "Toño", "Camarero 2", "Camarero 3") }
+            val waiters = remember { listOf("Todos", "Toño", "Camarero 2", "Camarero 3") } /////////////////
             val changeWaiter: (String) -> Unit = { waiter = it }
-            val text = "Camarero: $waiter"
+            val text = "${getString("Waiter")}: $waiter"
             ComboBox(text, waiters, changeWaiter)
         }
 
@@ -254,7 +252,7 @@ fun Filters(
             minAmount = ((slider2Position.start * 100.0).toInt() / 100.0).toFloat()
             maxAmount = ((slider2Position.endInclusive * 100.0).toInt() / 100.0).toFloat()
             Text(
-                text = "Importe: Minimo: $minAmount  Maximo: $maxAmount",
+                text = "${getString("Amount")}: ${getString("Min")}: $minAmount  ${getString("Max")}: $maxAmount",
                 modifier = Modifier.offset(y = 7.dp, x = 6.dp)
             )
             RangeSliderFloat(slider2Position, changeRange, rangeMax, steps)
@@ -265,15 +263,15 @@ fun Filters(
         var secondDate by remember { mutableStateOf(LocalDate.now()) }
         val changeFirstDate: (LocalDate) -> Unit = { firstDate = it }
         val changeSecondDate: (LocalDate) -> Unit = { secondDate = it }
-        Dates("Inicio", firstDate, changeFirstDate)
-        Dates("Final", secondDate, changeSecondDate)
+        Dates(true, firstDate, changeFirstDate)
+        Dates(false, secondDate, changeSecondDate)
 
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
             Boton(
-                text = "Aplicar",
+                text = getString("Apply"),
                 modifier = Modifier.weight(1F),
                 function = {
                     filChange(
@@ -288,7 +286,7 @@ fun Filters(
             )
             Spacer(modifier = Modifier.width(15.dp))
             Boton(
-                text = "Resetear",
+                text = getString("Reset"),
                 modifier = Modifier.weight(1F),
                 function = {
                     slider1Position = 0f..max.toFloat()
@@ -305,14 +303,14 @@ fun Filters(
 
 @Composable
 fun Dates(
-    tipo: String,
+    start: Boolean,
     locDate: LocalDate,
     changeDateLoc: (LocalDate) -> Unit
 ) {
     var isOpen by remember { mutableStateOf(false) }
     val closeCalendar = { isOpen = false }
 
-    val loc = Locale.Builder().setRegion("ES").setLanguage("es").build()
+    val loc = Locale.Builder().setRegion(lang.uppercase()).setLanguage(lang).build()
     val formatterDate = locDate.format(DateTimeFormatter.ofPattern("EEE, d MMM (YYYY)", loc))
 
     Row(
@@ -323,9 +321,9 @@ fun Dates(
             .background(Color.White, RoundedCornerShape(10.dp))
             .padding(start = 5.dp)
     ) {
-        Text("Fecha $tipo : $formatterDate")
+        Text("${if (start) getString("Start date") else "End date"} : $formatterDate")
         IconButton(onClick = { isOpen = true }) {
-            Icon(Icons.Default.MoreVert, contentDescription = "Abrir calendario")
+            Icon(Icons.Default.MoreVert, contentDescription = "Open calendar")
         }
     }
 

@@ -26,14 +26,15 @@ import androidx.compose.ui.window.Dialog
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import db.Product
 import structure.Colores
-import structure.database
+import structure.getString
+import structure.productQueries
 import java.io.File
 
 
 @Composable
 fun Stock()
 {
-    val productList = database.productQueries.selectAll().executeAsList().toMutableStateList()
+    val productList = productQueries.selectAll().executeAsList().toMutableStateList()
     var isOpen by remember { mutableStateOf(false) }
     var product: Product? by remember { mutableStateOf(null) }
     val saveObject: (Product) -> Unit = { productoPasado ->
@@ -70,7 +71,7 @@ fun Stock()
                 elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp),
                 modifier = Modifier.fillMaxWidth().fillMaxHeight()
             ) {
-                Text("Añadir producto", color = Colores.color1)
+                Text(getString("Add product"), color = Colores.color1)
             }
         }
     }
@@ -107,7 +108,7 @@ fun ProductCard(
         } else {
             Image(
                 painter = painterResource(prod.imgPath),
-                contentDescription = "product image",
+                contentDescription = "Product image",
                 modifier = Modifier.fillMaxWidth(0.04F).fillMaxHeight(0.8F),
                 contentScale = ContentScale.Crop
             )
@@ -164,7 +165,7 @@ fun ProductCard(
     if (visiblePopUp){
         AreYouSurePopUp(
             { productList.remove(prod)
-            database.productQueries.delete(prod.name)
+            productQueries.delete(prod.name)
             visiblePopUp = false },
             { visiblePopUp = false }
         )
@@ -189,35 +190,35 @@ fun SearchBar(
             modifier = Modifier.fillMaxWidth(0.7F)
         ) {
             Text(
-                text = "Nombre",
+                text = getString("Name"),
                 color = Colores.color4,
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1F)
             )
             Text(
-                text = "Categoría",
+                text = getString("Category"),
                 color = Colores.color4,
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1F)
             )
             Text(
-                text = "Stock",
+                text = getString("Stock"),
                 color = Colores.color4,
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1F)
             )
             Text(
-                text = "Coste",
+                text = getString("Price"),
                 color = Colores.color4,
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1F)
             )
             Text(
-                text = "PVP",
+                text = getString("RRP"),
                 color = Colores.color4,
                 fontSize = 17.sp,
                 textAlign = TextAlign.Center,
@@ -239,7 +240,7 @@ fun SearchBar(
                     .fillMaxWidth()
                     .background(color = Colores.color1, shape = RoundedCornerShape(10.dp)),
                 centered = false,
-                placeholderText = "  Buscar ⌕"
+                placeholderText = "  ${getString("Search")} ⌕"
             )
         }
         Spacer(modifier = Modifier.width(0.dp))
@@ -287,7 +288,7 @@ fun ChangeProduct(
                     imageBitmap?.let {
                         Image(
                             painter = BitmapPainter(image = imageBitmap),
-                            contentDescription = "Logo producto",
+                            contentDescription = "Product Image",
                             modifier = Modifier.clip(RoundedCornerShape(10.dp))
                                 .clickable(onClick = { showFilePicker = true }).fillMaxWidth().fillMaxHeight(0.5F)
                                 .background(Color.White)
@@ -295,7 +296,7 @@ fun ChangeProduct(
                     } ?: run {
                         Image(
                             painter = painterResource(product?.imgPath ?: "prodImgs/noImage.png"),
-                            contentDescription = "Logo producto",
+                            contentDescription = "Product Image",
                             alpha = if (product == null) 0.5F else 1F,
                             modifier = Modifier.clip(RoundedCornerShape(10.dp))
                                 .clickable(onClick = { showFilePicker = true })
@@ -311,10 +312,10 @@ fun ChangeProduct(
                     verticalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier.fillMaxHeight(0.9F).padding(start = 40.dp)
                 ) {
-                    Text("Nombre")
-                    Text("Stock")
-                    Text("Coste")
-                    Text("PVP")
+                    Text(getString("Name"))
+                    Text(getString("Stock"))
+                    Text(getString("Total"))
+                    Text(getString("RRP"))
                 }
 
                 Column(
@@ -327,7 +328,7 @@ fun ChangeProduct(
                         modifier = Modifier.height(50.dp).fillMaxWidth().padding(end = 10.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp)),
                         centered = false,
-                        placeholderText = "Nombre"
+                        placeholderText = getString("Name")
                     )
                     CustomTextField(
                         text = stock,
@@ -356,12 +357,12 @@ fun ChangeProduct(
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth().fillMaxHeight()
             ) {
-                Boton("Cancelar", function = close)
-                Boton("Guardar", function = {
+                Boton(getString("Cancel"), function = close)
+                Boton(getString("Save"), function = {
                     if (!(name.isEmpty() || price.isEmpty() || pvp.isEmpty() || stock.isEmpty() || filePath.isEmpty()))
                     {
                         if (product == null){
-                            database.productQueries.insert(name,
+                            productQueries.insert(name,
                                 price.toDouble(),
                                 pvp.toDouble(),
                                 stock.toLong(),
@@ -370,7 +371,7 @@ fun ChangeProduct(
                             )
                         }
                         else{
-                            database.productQueries.update(
+                            productQueries.update(
                                 product.name,
                                 price.toDouble(),
                                 pvp.toDouble(),
@@ -421,7 +422,7 @@ fun AreYouSurePopUp(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Estas seguro?",
+                Text(getString("Are you sure?"),
                     color = Colores.color5,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.SemiBold
@@ -433,8 +434,8 @@ fun AreYouSurePopUp(
                 modifier = Modifier.fillMaxWidth()
 
             ) {
-                Boton("Cancelar", function = upsie, modifier = Modifier.height(65.dp).width(130.dp))
-                Boton("Confirmar", function = agree, modifier = Modifier.height(65.dp).width(130.dp))
+                Boton(getString("Cancel"), function = upsie, modifier = Modifier.height(65.dp).width(130.dp))
+                Boton(getString("Confirm"), function = agree, modifier = Modifier.height(65.dp).width(130.dp))
             }
         }
     }

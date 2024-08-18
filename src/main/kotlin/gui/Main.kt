@@ -31,10 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import db.User
-import structure.Colores
-import structure.DbSetup
-import structure.productQueries
-import structure.userQueries
+import structure.*
 
 @Composable
 fun Application() {
@@ -80,14 +77,14 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
 
                     Image(
                         painter = painterResource("Vector.svg"),
-                        contentDescription = "Imagen de la aplicacion",
+                        contentDescription = "Logo",
                         modifier = Modifier.fillMaxWidth(0.5F)
                     )
-                    Text("Aplicacion TPV")
+                    Text(getString("POS App"))
 
 
-                    MyTextField(name, "Nombre") { name = it }
-                    MyTextField(password, "Contraseña") { password = it }
+                    MyTextField(name, getString("Name")) { name = it }
+                    MyTextField(password, getString("Password")) { password = it }
 
 
                     Button(
@@ -98,20 +95,20 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
                                 windChange()
                             }
                             else{
-                                errorText = "Usuario o contraseña incorrectos"
+                                errorText = getString("Incorrect username or password")
                             }
                         },
                         colors = ButtonDefaults.buttonColors(backgroundColor = Colores.color4),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.shadow(elevation = 10.dp, shape = RoundedCornerShape(8.dp)).height(50.dp)
                     ) {
-                        Text("iniciar sesión".uppercase(), color = Color.White)
+                        Text(getString("Login").uppercase(), color = Color.White)
                     }
                     Spacer(modifier = Modifier.height(100.dp))
                 }
                 Image(
                     painter = painterResource("Planeta 1.png"),
-                    contentDescription = "Imagen de la aplicacion",
+                    contentDescription = "Planet img",
                     modifier = Modifier.fillMaxHeight(0.75F)
                 )
             }
@@ -120,7 +117,7 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.Bottom
             ) {
-                Text("Sofware desarrollado por Tymur Kulivar y Javier Redondo", color = Colores.color6)
+                Text(getString("Software developed by Tymur Kulivar and Javier Redondo"), color = Colores.color6)
                 Spacer(modifier = Modifier.fillMaxWidth(0.9F))
                 Text("Ver. 1.4", color = Colores.color6)
             }
@@ -171,13 +168,12 @@ fun MenuBar(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth().fillMaxHeight(0.1F)
     ) {
-        if (!admin) println("Pleb")
-        MenuBarText("Panel Principal", active == 1) { activeChange(1) }
-        MenuBarText("Stock",  active == 2, usable = admin) { activeChange(2) }
-        MenuBarText("Historial", active == 3, usable = admin) { activeChange(3) }
+        MenuBarText(getString("Main menu"), active == 1) { activeChange(1) }
+        MenuBarText(getString("Stock"),  active == 2, usable = admin) { activeChange(2) }
+        MenuBarText(getString("History"), active == 3, usable = admin) { activeChange(3) }
         Image(
             painterResource("Logo.svg"),
-            "Logo atrás",
+            "Return to login",
             modifier = Modifier.clip(CircleShape).clickable(onClick = windChange).size(40.dp)
         )
     }
@@ -317,7 +313,7 @@ fun ComboBox(
         ) {
             Text(text)
             IconButton(onClick = { visible = true }) {
-                Icon(Icons.Default.ArrowDropDown, contentDescription = "Abrir lista")
+                Icon(Icons.Default.ArrowDropDown, contentDescription = "Open list")
             }
         }
         ExposedDropdownMenu(
@@ -327,7 +323,7 @@ fun ComboBox(
         ) {
             for (item in list) {
                 DropdownMenuItem(onClick = { visible = false; change(item) }) {
-                    Text(item)
+                    Text(getString(item))
                 }
                 Divider()
             }
@@ -355,7 +351,7 @@ fun TextDialog(
                 .background(Color.Red.copy(alpha = 0.1f))
                 .clickable(onClick = eraseText).padding(horizontal = 30.dp)
         ) {
-            Icon(Icons.Filled.Close, contentDescription = "Cerrar", tint = Color.Red)
+            Icon(Icons.Filled.Close, contentDescription = getString("Close"), tint = Color.Red)
             Text(text, color = Color.Red, fontSize = 20.sp)
         }
     }

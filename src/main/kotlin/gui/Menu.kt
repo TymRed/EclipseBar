@@ -63,21 +63,21 @@ fun Menu(username: String) {
                     modifier = Modifier.fillMaxHeight(0.9F).fillMaxWidth(),
                 ) {
                     Boton(
-                        "Borrar",
+                        getString("Erase"),
                         modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
                         function = eraseOrder
                     )
                     Spacer(modifier = Modifier.fillMaxWidth().weight(0.5F))
                     Boton(
-                        "Cobrar",
+                        getString("Charge"),
                         modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
                         function = {
                             if (sum == 0.0) {
-                                errorText = "No hay productos"
+                                errorText = getString("No products")
                             } else if (amount.isEmpty()) {
-                                errorText = "Introduce el importe"
+                                errorText = getString("Enter the amount")
                             } else if (amountDouble < sum) {
-                                errorText = "Falta dinero"
+                                errorText = getString("Not enough money")
                             } else {
                                 subtractStock(orderProducts, productList, updatePL)
                                 orderQueries.insert(
@@ -163,7 +163,7 @@ fun Orders(
         ) {
 
             Text(
-                text = "Total: %.2f€".format(sum), Modifier.weight(1F), color = Colores.color1
+                text = "${getString("Total")}: %.2f€".format(sum), Modifier.weight(1F), color = Colores.color1
             )
             CustomTextField(
                 amount,
@@ -172,7 +172,7 @@ fun Orders(
                     .background(color = Colores.color1, shape = RoundedCornerShape(10.dp))
             )
             Text(
-                text = "Cambio: %.2f€".format(amountDouble - sum),
+                text = "${getString("Change")}: %.2f€".format(amountDouble - sum),
                 textAlign = TextAlign.Right,
                 modifier = Modifier.weight(1F),
                 color = Colores.color1
@@ -221,7 +221,7 @@ fun OrderRow(
         ) {
             Icon(
                 Icons.Filled.Close,
-                contentDescription = "-1 unidad",
+                contentDescription = "-1 ${getString("unit")}",
                 tint = Color.White,
                 modifier = Modifier.size(25.dp)
             )
@@ -273,7 +273,7 @@ fun ProductsArea(orderItems: MutableList<ProdInOrder>, productList: SnapshotStat
                     val changeStock = { maxStock = !maxStock }
                     MenuItem(cartItemData, orderItems, changeStock)
                     if (maxStock) {
-                        TextDialog("No hay más stock", changeStock)
+                        TextDialog(getString("Not in stock"), changeStock)
                     }
                 }
             )
@@ -293,16 +293,26 @@ fun ChooseType(
         modifier = Modifier.fillMaxHeight(0.12F).fillMaxWidth().padding(5.dp, 15.dp, 5.dp, 10.dp)
     ) {
         BotonFiltro(
-            "TODOS", RoundedCornerShape(topStart = 20.dp), Modifier.weight(1F), tipoEleg == 1
+            getString("All").uppercase(),
+            RoundedCornerShape(topStart = 20.dp),
+            Modifier.weight(1F),
+            active = tipoEleg == 1
         ) { cambiarTipo(1) }
         BotonFiltro(
-            "REFRESCOS", modifier = Modifier.weight(1F), active = tipoEleg == 2
+            getString("Sodas").uppercase(),
+            modifier = Modifier.weight(1F),
+            active = tipoEleg == 2
         ) { cambiarTipo(2) }
         BotonFiltro(
-            "CÓCTELES", modifier = Modifier.weight(1F), active = tipoEleg == 3
+            getString("Cocktails").uppercase(),
+            modifier = Modifier.weight(1F),
+            active = tipoEleg == 3
         ) { cambiarTipo(3) }
         BotonFiltro(
-            "COMIDA", RoundedCornerShape(topEnd = 20.dp), Modifier.weight(1F), tipoEleg == 4
+            getString("Food").uppercase(),
+            RoundedCornerShape(topEnd = 20.dp),
+            Modifier.weight(1F),
+            active = tipoEleg == 4
         ) { cambiarTipo(4) }
     }
 }

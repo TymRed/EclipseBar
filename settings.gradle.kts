@@ -12,4 +12,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "Try"
+rootProject.name = "Eclipse"

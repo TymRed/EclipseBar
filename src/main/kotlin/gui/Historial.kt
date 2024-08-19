@@ -54,7 +54,7 @@ fun OrderList(fil: Filter) {
         ord.amount in fil.amountRange || (fil.amountRange.endInclusive == 100f && ord.amount >= 100f)
     }
     val passWaiter: (OrderDB) -> Boolean = { ord ->
-        ord.waiter == fil.waiter || fil.waiter == "Todos"
+        ord.waiter == fil.waiter || getString(fil.waiter) == getString("All")
     }
     val passDate: (OrderDB) -> Boolean = { ord ->
         ord.date in fil.dateRange

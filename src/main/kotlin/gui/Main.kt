@@ -207,7 +207,7 @@ fun MyTextField(
     placeholder: String,
     change: (String) -> Unit
 ) {
-    val fontSize = if (placeholder == "Contraseña") 20.sp else 16.sp
+    val fontSize = if (placeholder == getString("Password")) 20.sp else 16.sp
     TextField(
         value = name,
         textStyle = TextStyle(color = Colores.color3, fontSize = fontSize),
@@ -218,7 +218,7 @@ fun MyTextField(
         shape = RoundedCornerShape(20.dp, 20.dp),
         placeholder = { Text(placeholder, color = Colores.color2) },
         singleLine = true,
-        visualTransformation = if (placeholder == "Contraseña") PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation = if (placeholder == getString("Password")) PasswordVisualTransformation() else VisualTransformation.None,
         modifier = Modifier.fillMaxWidth(0.4F)
     )
 }

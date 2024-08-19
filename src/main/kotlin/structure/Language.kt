@@ -1,6 +1,6 @@
 package structure
 
-var lang = "es"
+var lang = "ru"
 
 val langPack = mapOf(
     "es" to mapOf(
@@ -49,6 +49,53 @@ val langPack = mapOf(
         "Price" to "Precio",
         "Search" to "Buscar",
         "Are you sure?" to "¿Estás seguro?",
+    ),
+    "ru" to mapOf(
+        "Charge" to "Заплатить",
+        "Erase" to "Стереть",
+        "No products" to "Недостаточно продуктов",
+        "Enter the amount" to "Введите сумму",
+        "Not enough money" to "Недостаточно денег",
+        "Change" to "Сдача",
+        "unit" to "единица",
+        "All" to "Все",
+        "Sodas" to "Газировка",
+        "Cocktails" to "Коктейли",
+        "Food" to "Еда",
+        "Not in stock" to "Нет в наличии",
+        "Total" to "Итого",
+        "POS App" to "Цифровая касса",
+        "Name" to "Имя",
+        "Password" to "Пароль",
+        "Incorrect username or password" to "Неверное имя пользователя или пароль",
+        "Software developed by Tymur Kulivar and Javier Redondo" to "Программное обеспечение разработано Тимуром Куливаром и Хавьером Редондо",
+        "History" to "История",
+        "Stock" to "Склад",
+        "Main menu" to "Главное меню",
+        "Close" to "Закрыть",
+        "Number" to "Номер",
+        "Date" to "Дата",
+        "Time" to "Время",
+        "Waiter" to "Официант",
+        "Filters" to "Фильтры",
+        "Order number" to "Номер заказа",
+        "Min" to "Мин",
+        "Max" to "Макс",
+        "Amount" to "Сумма",
+        "Apply" to "Применить",
+        "Reset" to "Сбросить",
+        "Start date" to "Дата начала",
+        "End date" to "Дата окончания",
+        "Login" to "Войти",
+        "Add product" to "Добавить продукт",
+        "RRP" to "РЦП",
+        "Cancel" to "Отмена",
+        "Save" to "Сохранить",
+        "Confirm" to "Подтвердить",
+        "Category" to "Категория",
+        "Price" to "Цена",
+        "Search" to "Поиск",
+        "Are you sure?" to "Вы уверены?"
     )
 )
 

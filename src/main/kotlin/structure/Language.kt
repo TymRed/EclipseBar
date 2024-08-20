@@ -1,8 +1,12 @@
 package structure
 
-var lang = "ru"
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
-val langPack = mapOf(
+var lang by mutableStateOf("en")
+
+private val langPack = mapOf(
     "es" to mapOf(
         "Charge" to "Cobrar",
         "Erase" to "Borrar",
@@ -101,4 +105,8 @@ val langPack = mapOf(
 
 fun getString(key: String): String {
     return langPack[lang]?.get(key) ?: key
+}
+
+fun langlist(): List<String> {
+    return listOf("en") + langPack.keys.toList()
 }

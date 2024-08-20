@@ -31,10 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import db.User
-import structure.Colores
-import structure.DbSetup
-import structure.getString
-import structure.userQueries
+import structure.*
 
 @Composable
 fun Application() {
@@ -62,11 +59,23 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
     var errorText by remember { mutableStateOf("") }
 
     Surface(color = Colores.color1) {
-        Box(
+        Column (
             modifier = Modifier.fillMaxWidth().fillMaxHeight(),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                modifier = Modifier.fillMaxWidth().weight(0.1F),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val list = langlist()
+                ComboBox(
+                    lang, list, { lang = it },
+                    modifier = Modifier.width(IntrinsicSize.Min).height(25.dp)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth().weight(0.8F),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -74,9 +83,8 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
                     verticalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier.fillMaxHeight().fillMaxWidth(0.5F),
                     horizontalAlignment = Alignment.CenterHorizontally
-
                 ) {
-                    Spacer(modifier = Modifier.height(100.dp))
+                    Spacer(modifier = Modifier.height(50.dp))
 
                     Image(
                         painter = painterResource("Vector.svg"),
@@ -85,10 +93,8 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
                     )
                     Text(getString("POS App"))
 
-
                     MyTextField(name, getString("Name")) { name = it }
                     MyTextField(password, getString("Password")) { password = it }
-
 
                     Button(
                         onClick = {
@@ -106,18 +112,18 @@ fun LogIn(logInto: (User) -> Unit, windChange: () -> Unit) {
                     ) {
                         Text(getString("Login").uppercase(), color = Color.White)
                     }
-                    Spacer(modifier = Modifier.height(100.dp))
+                    Spacer(modifier = Modifier.height(50.dp))
                 }
                 Image(
                     painter = painterResource("Planeta 1.png"),
                     contentDescription = "Planet img",
-                    modifier = Modifier.fillMaxHeight(0.75F)
+                    modifier = Modifier.fillMaxHeight(0.95f)
                 )
             }
             Row(
-                modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth().offset(y = (-40).dp),
+                modifier = Modifier.fillMaxWidth().weight(0.1F),
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.Bottom
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(getString("Software developed by Tymur Kulivar and Javier Redondo"), color = Colores.color6)
                 Spacer(modifier = Modifier.fillMaxWidth(0.9F))
@@ -301,7 +307,8 @@ fun CustomTextField(
 fun ComboBox(
     text: String,
     list: List<String>,
-    change: (String) -> Unit
+    change: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var visible by remember { mutableStateOf(false) }
 
@@ -309,7 +316,7 @@ fun ComboBox(
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .background(Color.White, RoundedCornerShape(10.dp))
                 .padding(start = 5.dp)

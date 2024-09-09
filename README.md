@@ -15,6 +15,7 @@ Jetpack Compose-based desktop Point of Sale (POS) application, offering a modern
 
 ## Table of Contents
 - [Images](#images)
+- [Video](#video)
 - [Installation](#installation)
 - [Components](#components-usedmodified)
 - [Contribors](#contributors)
@@ -26,6 +27,9 @@ Jetpack Compose-based desktop Point of Sale (POS) application, offering a modern
 |![image](https://github.com/Timasostima-RedondoDEV/EclipseBar/assets/72166965/06759d07-2551-4c8d-a8c6-8d598b6c93c6)|![image](https://github.com/user-attachments/assets/7a140f0d-fdae-4d64-a7f0-ea6756493345)|
 | Stock | History |
 |![image](https://github.com/user-attachments/assets/ba072f79-d1fd-4bd6-8c58-def357670988)|![image](https://github.com/user-attachments/assets/aaf5b8e9-26f5-44eb-94ad-24aeb791babe)|
+
+## Video
+https://github.com/user-attachments/assets/3794eaf9-5374-4fdb-b20c-a0c5884bba2a
 
 ## Installation
 1. Go to the [latest release](https://github.com/TymRed/EclipseBar/releases/latest)

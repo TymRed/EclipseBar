@@ -35,16 +35,8 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun Menu(username: String) {
-    var amount: String by remember { mutableStateOf("") }
-    val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
-    val changeAmount: (String) -> Unit = {
-        if (it.isEmpty() || it.matches(pattern) && it.length <= 6) amount = it
-    }
     val orderProducts: SnapshotStateList<ProdInOrder> = remember { mutableStateListOf() }
-    val eraseOrder: () -> Unit = {
-        orderProducts.removeAll(orderProducts)
-        amount = ""
-    }
+
 
     var productList = remember { database.productQueries.selectAll().executeAsList().toMutableStateList() }
     val updatePL: (List<Product>) -> Unit = {
@@ -53,54 +45,80 @@ fun Menu(username: String) {
 
     Surface(color = Colores.color1) {
         Row(modifier = Modifier.fillMaxSize().padding(20.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Column(
-                modifier = Modifier.fillMaxHeight().fillMaxWidth(0.3F), verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                val sum = orderProducts.sumOf { it.product.pvp * it.quantity }
-                val amountDouble: Double = if (amount.isEmpty()) 0.0 else amount.toDouble()
 
-                var errorText by remember { mutableStateOf("") }
 
-                Orders(orderProducts, amount, sum, amountDouble, changeAmount)
-                Row(
-                    modifier = Modifier.fillMaxHeight(0.9F).fillMaxWidth(),
-                ) {
-                    Boton(
-                        getString("Erase"),
-                        modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
-                        function = eraseOrder
-                    )
-                    Spacer(modifier = Modifier.fillMaxWidth().weight(0.5F))
-                    Boton(
-                        getString("Charge"),
-                        modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
-                        function = {
-                            if (sum == 0.0) {
-                                errorText = getString("No products")
-                            } else if (amount.isEmpty()) {
-                                errorText = getString("Enter the amount")
-                            } else if (amountDouble < sum) {
-                                errorText = getString("Not enough money")
-                            } else {
-                                subtractStock(orderProducts, productList, updatePL)
-                                orderQueries.insert(
-                                    id = (orderQueries.maxId().executeAsOneOrNull()?.max ?: -1L) + 1,
-                                    date = LocalDate.now(),
-                                    time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")).toString(),
-                                    amount = "%.2f".format(sum).replace(",", ".").toDouble(),
-                                    waiter = username
-                                )
-                                eraseOrder()
-                                amount = ""
-                            }
-                        }
-                    )
-                }
-                if (errorText.isNotEmpty()) {
-                    TextDialog(errorText) { errorText = "" }
-                }
-            }
+            OrderArea(
+                orderProducts,
+                productList,
+                updatePL,
+                username
+            )
             ProductsArea(orderProducts, productList)
+        }
+    }
+}
+
+@Composable
+private fun OrderArea(
+    orderProducts: SnapshotStateList<ProdInOrder>,
+    productList: SnapshotStateList<Product>,
+    updatePL: (List<Product>) -> Unit,
+    username: String
+) {
+    var amount: String by remember { mutableStateOf("") }
+    val pattern = remember { Regex("^\\d*\\.?\\d*\$") }
+    val changeAmount: (String) -> Unit = {
+        if (it.isEmpty() || it.matches(pattern) && it.length <= 6) amount = it
+    }
+    val sum = orderProducts.sumOf { it.product.pvp * it.quantity }
+    val amountDouble: Double = if (amount.isEmpty()) 0.0 else amount.toDouble()
+    val eraseOrder: () -> Unit = {
+        orderProducts.removeAll(orderProducts)
+        changeAmount("")
+    }
+    Column(
+        modifier = Modifier.fillMaxHeight().fillMaxWidth(0.3F), verticalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        var errorText by remember { mutableStateOf("") }
+
+        Orders(orderProducts, amount, sum, amountDouble, changeAmount)
+        Row(
+            modifier = Modifier.fillMaxHeight(0.9F).fillMaxWidth(),
+        ) {
+            Boton(
+                getString("Erase"),
+                modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
+                function = eraseOrder
+            )
+            Spacer(modifier = Modifier.fillMaxWidth().weight(0.5F))
+            Boton(
+                getString("Charge"),
+                modifier = Modifier.fillMaxHeight().fillMaxWidth().weight(1F),
+                function = {
+                    if (sum == 0.0) {
+                        errorText = getString("No products")
+                    } else if (amount.isEmpty()) {
+                        errorText = getString("Enter the amount")
+                    } else if (amountDouble < sum) {
+                        errorText = getString("Not enough money")
+                    } else {
+                        subtractStock(orderProducts, productList, updatePL)
+                        orderQueries.insert(
+                            id = (orderQueries.maxId().executeAsOneOrNull()?.max ?: -1L) + 1,
+                            date = LocalDate.now(),
+                            time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")).toString(),
+                            amount = "%.2f".format(sum).replace(",", ".").toDouble(),
+                            waiter = username
+                        )
+                        eraseOrder()
+                        changeAmount("")
+                    }
+                }
+            )
+        }
+        if (errorText.isNotEmpty()) {
+            TextDialog(errorText) { errorText = "" }
         }
     }
 }
